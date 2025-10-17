@@ -294,11 +294,47 @@ Legend:
    - 76 files changed, 1359 insertions(+), 154 deletions(-)
    - working tree clean (추가 변경사항 없음)
 
-**다음 단계 (Task 4.0)**:
-- Validator 함수 스켈레톤 생성
-- 73개 함수에 대해 빈 함수 틀 자동 생성
-- src/core/analyzer/validators/linux/ 디렉토리 구조 생성
-- 각 함수에 docstring 및 파라미터 추가
+**Task 4.0 완료**: Validator 스켈레톤 생성 (2025-10-17)
+
+**구현 내용**:
+1. generate_validator_skeleton() 함수 (70줄)
+   - FunctionInfo → Python 함수 코드 생성
+   - Docstring 자동 생성 (KISA 코드, 규칙 이름, TODO)
+   - 파라미터: List[str], 리턴: CheckResult
+   - f-string 템플릿 기반 코드 생성
+
+2. save_validator_files() 함수 (95줄)
+   - 카테고리별 그룹화 (5개 파일)
+   - UTF-8 인코딩 (allow_unicode=True)
+   - import 문 자동 추가 (typing, models)
+   - 파일 헤더 (docstring, 생성일) 추가
+
+3. create_init_file() 함수 (105줄)
+   - __init__.py 생성
+   - 73개 함수 export
+   - __all__ 리스트 자동 생성
+   - import 문 카테고리별 정리
+
+**생성 결과**:
+- 6개 파일 생성 (src/core/analyzer/validators/linux/)
+  * __init__.py (2.8K)
+  * account_management.py (14K, 15개 함수)
+  * file_management.py (19K, 20개 함수)
+  * service_management.py (31K, 35개 함수)
+  * patch_management.py (1.3K, 1개 함수)
+  * log_management.py (2.1K, 2개 함수)
+- 73개 validator 함수 스켈레톤 (check_u01 ~ check_u73)
+- 모든 함수: List[str] 파라미터, CheckResult 리턴, Status.MANUAL 기본값
+
+**검증 완료**:
+- 구문 검증: py_compile 성공 (6개 파일 모두)
+- Import 테스트: check_u01, check_u42, check_u73 import 성공
+- 함수 호출 테스트: CheckResult 리턴 확인 (status=Status.MANUAL)
+- 함수 개수: grep으로 73개 확인
+
+**다음 단계 (Task 5.0)**:
+- 10개 함수 시범 마이그레이션 시작
+- Validator 로직 구현 (U-01, U-04, U-07 등)
 
 ---
 

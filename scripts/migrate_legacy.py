@@ -933,6 +933,271 @@ def save_yaml_file(
         raise
 
 
+def generate_validator_skeleton(func_info: FunctionInfo) -> str:
+    """Validator 함수 스켈레톤 코드 생성 (Task 4.0)
+
+    FunctionInfo 객체로부터 validator 함수의 Python 코드를 생성합니다.
+    함수는 실행 가능한 스켈레톤이며, TODO 주석으로 구현 위치를 표시합니다.
+
+    Args:
+        func_info: 함수 정보 (FunctionInfo)
+
+    Returns:
+        Python 함수 코드 문자열
+
+    Example:
+        >>> func_info = FunctionInfo(
+        ...     name="_1SCRIPT",
+        ...     kisa_code="U-01",
+        ...     severity=Severity.HIGH,
+        ...     ...
+        ... )
+        >>> code = generate_validator_skeleton(func_info)
+        >>> print(code)
+        def check_u01(command_outputs: List[str]) -> CheckResult:
+            \"\"\"U-01: root 계정 원격 접속 제한
+            ...
+            \"\"\"
+            ...
+    """
+    # U-01 → u01, U-42 → u42
+    kisa_code_lower = func_info.kisa_code.lower().replace('-', '')
+    func_name = f"check_{kisa_code_lower}"
+
+    # 규칙 이름
+    name = KISA_NAMES.get(func_info.kisa_code, "알 수 없는 항목")
+
+    # 함수 코드 생성
+    code = f'''def {func_name}(command_outputs: List[str]) -> CheckResult:
+    """{func_info.kisa_code}: {name}
+
+    점검 항목을 자동으로 검증합니다.
+
+    Args:
+        command_outputs: 점검 명령어 실행 결과 리스트
+            - 각 문자열은 하나의 명령어 실행 결과
+            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+
+    Returns:
+        CheckResult: 점검 결과
+            - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
+            - message: 결과 설명 메시지
+
+    TODO: 구현 필요
+        - Legacy 코드 {func_info.name}의 로직 참고
+        - command_outputs 파싱 및 검증 로직 추가
+        - 심각도: {func_info.severity.value}
+    """
+    # TODO: 구현 필요
+    return CheckResult(
+        status=Status.MANUAL,
+        message="구현 예정 - {func_info.kisa_code} {name}"
+    )
+
+
+'''
+    return code
+
+
+def save_validator_files(
+    functions: List[FunctionInfo],
+    output_dir: Path,
+    logger: logging.Logger
+) -> None:
+    """Validator 함수들을 카테고리별 파일로 저장 (Task 4.0)
+
+    73개 validator 함수를 카테고리별로 그룹화하여 5개 Python 파일로 저장합니다.
+    각 파일은 UTF-8 인코딩으로 저장되며, 필요한 import 문이 자동으로 추가됩니다.
+
+    Args:
+        functions: 함수 정보 목록 (FunctionInfo)
+        output_dir: 출력 디렉토리 (src/core/analyzer/validators/linux/)
+        logger: Logger 인스턴스
+
+    Raises:
+        OSError: 디렉토리 생성 실패
+        IOError: 파일 쓰기 실패
+
+    Example:
+        >>> functions = [...]  # 73개 FunctionInfo
+        >>> output_dir = Path("src/core/analyzer/validators/linux/")
+        >>> save_validator_files(functions, output_dir, logger)
+        # account_management.py, file_management.py 등 5개 파일 생성
+    """
+    logger.info("Validator 파일 저장 시작")
+
+    # 카테고리별로 함수 그룹화
+    categories = {
+        "계정관리": ("account_management.py", []),
+        "파일 및 디렉터리 관리": ("file_management.py", []),
+        "서비스 관리": ("service_management.py", []),
+        "패치 관리": ("patch_management.py", []),
+        "로그 관리": ("log_management.py", [])
+    }
+
+    # 각 함수를 카테고리에 할당
+    for func in functions:
+        category = infer_category(func.kisa_code)
+        if category in categories:
+            categories[category][1].append(func)
+        else:
+            logger.warning(f"{func.kisa_code}: 알 수 없는 카테고리 {category}")
+
+    # 카테고리별로 파일 생성
+    for category_name, (filename, funcs) in categories.items():
+        if not funcs:
+            logger.debug(f"{category_name}: 함수 없음, 파일 생략")
+            continue
+
+        file_path = output_dir / filename
+        logger.info(f"{filename}: {len(funcs)}개 함수 저장 중...")
+
+        try:
+            # 파일 헤더
+            header = f'''"""
+Linux 보안 점검 Validator 함수 모음 - {category_name}
+
+이 모듈은 KISA 기준 Linux 보안 점검 항목 중 {category_name} 관련
+validator 함수들을 포함합니다.
+
+생성일: 2025-10-17
+자동 생성: scripts/migrate_legacy.py (Task 4.0)
+"""
+
+from typing import List
+from src.core.domain.models import CheckResult, Status
+
+
+'''
+
+            # 각 함수 스켈레톤 생성
+            function_codes = []
+            for func in funcs:
+                code = generate_validator_skeleton(func)
+                function_codes.append(code)
+
+            # 파일 내용 조합
+            file_content = header + '\n'.join(function_codes)
+
+            # UTF-8로 파일 쓰기
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(file_content)
+
+            logger.info(f"{filename} 저장 완료: {len(funcs)}개 함수")
+            logger.debug(f"파일 경로: {file_path.absolute()}")
+
+        except IOError as e:
+            logger.error(f"{filename}: 파일 쓰기 실패: {e}")
+            raise
+
+    logger.info("Validator 파일 저장 완료")
+
+
+def create_init_file(
+    functions: List[FunctionInfo],
+    output_dir: Path,
+    logger: logging.Logger
+) -> None:
+    """validators/linux/__init__.py 파일 생성 (Task 4.0)
+
+    모든 validator 함수를 import하는 __init__.py를 생성합니다.
+    이를 통해 다른 모듈에서 간단하게 validator를 사용할 수 있습니다.
+
+    Args:
+        functions: 함수 정보 목록 (FunctionInfo)
+        output_dir: 출력 디렉토리 (src/core/analyzer/validators/linux/)
+        logger: Logger 인스턴스
+
+    Raises:
+        IOError: 파일 쓰기 실패
+
+    Example:
+        >>> create_init_file(functions, output_dir, logger)
+        # __init__.py 파일 생성됨
+        # from .account_management import check_u01, check_u02, ...
+    """
+    logger.info("__init__.py 파일 생성 중...")
+
+    init_file = output_dir / "__init__.py"
+
+    # 카테고리별 파일명 매핑
+    category_files = {
+        "계정관리": "account_management",
+        "파일 및 디렉터리 관리": "file_management",
+        "서비스 관리": "service_management",
+        "패치 관리": "patch_management",
+        "로그 관리": "log_management"
+    }
+
+    # 카테고리별로 함수 그룹화
+    imports_by_category = {}
+    for func in functions:
+        category = infer_category(func.kisa_code)
+        module_name = category_files.get(category)
+        if not module_name:
+            continue
+
+        if module_name not in imports_by_category:
+            imports_by_category[module_name] = []
+
+        kisa_lower = func.kisa_code.lower().replace('-', '')
+        func_name = f"check_{kisa_lower}"
+        imports_by_category[module_name].append(func_name)
+
+    # __init__.py 내용 생성
+    header = '''"""Linux validator 함수 모듈
+
+이 모듈은 KISA 기준 Linux 보안 점검 항목(U-01 ~ U-73)의
+validator 함수들을 제공합니다.
+
+생성일: 2025-10-17
+자동 생성: scripts/migrate_legacy.py (Task 4.0)
+
+사용 예시:
+    >>> from src.core.analyzer.validators.linux import check_u01
+    >>> result = check_u01(["..."])
+    >>> print(result.status)
+"""
+
+'''
+
+    import_lines = []
+    all_functions = []
+
+    # 각 모듈에서 import
+    for module_name in sorted(imports_by_category.keys()):
+        funcs = sorted(imports_by_category[module_name])
+        all_functions.extend(funcs)
+
+        # import 문 생성 (한 줄에 최대 4개)
+        for i in range(0, len(funcs), 4):
+            chunk = funcs[i:i+4]
+            import_line = f"from .{module_name} import {', '.join(chunk)}"
+            import_lines.append(import_line)
+
+    imports = '\n'.join(import_lines)
+
+    # __all__ 리스트 생성
+    all_list = '__all__ = [\n'
+    for i in range(0, len(all_functions), 4):
+        chunk = all_functions[i:i+4]
+        all_list += '    ' + ', '.join(f'"{f}"' for f in chunk) + ',\n'
+    all_list += ']\n'
+
+    file_content = header + imports + '\n\n' + all_list
+
+    try:
+        with open(init_file, 'w', encoding='utf-8') as f:
+            f.write(file_content)
+
+        logger.info(f"__init__.py 생성 완료: {len(all_functions)}개 함수 export")
+        logger.debug(f"파일 경로: {init_file.absolute()}")
+
+    except IOError as e:
+        logger.error(f"__init__.py 쓰기 실패: {e}")
+        raise
+
+
 def filter_functions(
     functions: List[FunctionInfo],
     args: argparse.Namespace,
@@ -1067,7 +1332,26 @@ def main() -> int:
             logger.info(f"저장 위치: {output_dir.absolute()}")
             logger.info("=" * 60)
 
-            # TODO: Task 4.4 - Validator 파일 저장
+            # Task 4.0 - Validator 파일 저장
+            logger.info("=" * 60)
+            logger.info("Validator 파일 생성 중...")
+            logger.info("=" * 60)
+
+            # Validator 디렉토리: src/core/analyzer/validators/linux/
+            validator_dir = PROJECT_ROOT / "src/core/analyzer/validators/linux"
+            validator_dir.mkdir(parents=True, exist_ok=True)
+            logger.debug(f"Validator 디렉토리: {validator_dir.absolute()}")
+
+            # Validator 파일 저장 (5개 파일: 카테고리별)
+            save_validator_files(selected_functions, validator_dir, logger)
+
+            # __init__.py 생성
+            create_init_file(selected_functions, validator_dir, logger)
+
+            logger.info("=" * 60)
+            logger.info(f"Validator 파일 생성 완료: {len(selected_functions)}개 함수")
+            logger.info(f"저장 위치: {validator_dir.absolute()}")
+            logger.info("=" * 60)
 
         else:
             logger.info("Dry-run 모드: 파일 저장 생략")

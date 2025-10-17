@@ -121,7 +121,10 @@ bluepy/
 
 | Phase | 기간 | 주요 기능 | 상태 |
 |-------|------|----------|------|
-| **Phase 1** | 4주 | Linux MVP | 🔄 진행 예정 |
+| **Week 1** | 완료 | Validator 73개 함수 마이그레이션 | ✅ 완료 |
+| **Week 2** | 완료 | Scanner/Analyzer 엔진 | ✅ 완료 |
+| **Week 3** | 완료 | GUI 기본 구조 + DB | ✅ 완료 |
+| **Week 4** | 완료 | 통합 + Excel 보고서 | ✅ 완료 |
 | **Phase 2** | 1.5주 | macOS 지원 | ⏳ 대기 |
 | **Phase 3** | 2주 | 자동 수정 | ⏳ 대기 |
 | **Phase 4** | 3주 | Windows 지원 | ⏳ 대기 |

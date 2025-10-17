@@ -2,25 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# AI Dev Tasks
-Use these files when I request structured feature development using PRDs:
-/ai-dev-tasks/create-prd.md
-/ai-dev-tasks/generate-tasks.md
-/ai-dev-tasks/process-task-list.md
-
 # agents 사용 지침
 - **반드시** 병렬 수행에 유리한 작업을 스스로 판단하고 적절한 agents를 배정해서 사용.
 
 # 철칙
-- **반드시** 📋 ❌ ✅ 🔴 📂 와 같거나 유사한 이모티콘은 **절대적으로** 작성 금지.
-
-## AI Dev Tasks 사용법
-1. **PRD 생성**: `Use @create-prd.md` + 기능 설명
-   - 결과: `tasks/prd-[feature-name].md`
-2. **Task List 생성**: `@prd-[feature-name].md와 @generate-tasks.md 사용`
-   - 결과: `tasks/tasks-prd-[feature-name].md`
-3. **구현 진행**: `@process-task-list.md 사용`
-   - Task 단위로 단계별 구현 및 검증
+- **반드시** 이모티콘 사용 금지 (📋 ❌ ✅ 🔴 📂 등)
 
 ## BluePy 2.0 프로젝트
 
@@ -116,6 +102,47 @@ remediation:
 - `scripts/import_rules.py` - YAML 규칙 검증/가져오기
 - `scripts/build.py` - PyInstaller 빌드 자동화
 - `scripts/setup_dev.sh` - 개발 환경 자동 설정
+
+### 코드 품질 도구
+```bash
+# 코드 포맷팅 (black)
+black src/ tests/
+black --check src/  # 포맷 검증만
+
+# 린팅 (ruff)
+ruff check src/ tests/
+ruff check --fix src/  # 자동 수정
+
+# 타입 체킹 (mypy)
+mypy src/
+mypy --strict src/core/  # 엄격 모드
+
+# 전체 품질 체크
+black src/ tests/ && ruff check src/ tests/ && mypy src/ && pytest
+```
+
+### 빌드 및 패키징
+```bash
+# PyInstaller로 실행 파일 빌드 (개발 예정)
+python scripts/build.py
+
+# 플랫폼별 빌드
+python scripts/build.py --platform linux
+python scripts/build.py --platform macos
+python scripts/build.py --platform windows
+
+# 결과물
+# - dist/bluepy (Linux/macOS)
+# - dist/bluepy.exe (Windows)
+```
+
+### 데이터베이스 마이그레이션 (개발 예정)
+```bash
+# Alembic을 사용한 DB 마이그레이션
+alembic revision --autogenerate -m "Add new table"
+alembic upgrade head
+alembic downgrade -1
+```
 
 ## 프로젝트 필수 지침
 

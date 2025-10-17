@@ -114,11 +114,52 @@ remediation:
 - `legacy/infra/linux/자동점검 코드/점검자료분석/Linux_Check_2.py` - 73개 점검 함수 (`_1SCRIPT` ~ `_73SCRIPT`)
 - Python 2 코드이므로 직접 실행 불가, 로직만 참고
 
-### 스크립트 (개발 예정)
-- `scripts/migrate_legacy.py` - Legacy Python 2 → 3 변환
-- `scripts/import_rules.py` - YAML 규칙 검증/가져오기
-- `scripts/build.py` - PyInstaller 빌드 자동화
-- `scripts/setup_dev.sh` - 개발 환경 자동 설정
+### 스크립트
+
+#### scripts/migrate_legacy.py (완성)
+Legacy Python 2 코드를 Python 3로 마이그레이션하고 YAML 규칙 파일 생성
+
+**주요 기능**:
+- Legacy Python 2 코드 파싱 및 변환
+- FunctionInfo 데이터 구조 추출 (73개 함수)
+- bash 명령어 추출 및 분석
+- YAML 템플릿 자동 생성 (KISA 규칙 73개)
+- UTF-8 인코딩으로 파일 저장
+
+**사용 방법**:
+```bash
+# 전체 마이그레이션 (73개 파일 생성)
+python3.12 scripts/migrate_legacy.py \
+  --input "legacy/infra/linux/자동점검 코드/점검자료분석/Linux_Check_2.py" \
+  --output-dir config/rules/linux/ \
+  --all
+
+# 특정 함수만 마이그레이션
+python3.12 scripts/migrate_legacy.py \
+  --input "legacy/infra/linux/자동점검 코드/점검자료분석/Linux_Check_2.py" \
+  --output-dir config/rules/linux/ \
+  --functions _1SCRIPT _4SCRIPT _18SCRIPT
+
+# Dry-run 모드 (파일 생성 안함)
+python3.12 scripts/migrate_legacy.py \
+  --input "..." \
+  --output-dir config/rules/linux/ \
+  --all --dry-run
+```
+
+**완료 상태** (2025-10-17):
+- Task 1.0-3.3 완료
+- 73개 YAML 파일 생성 완료 (config/rules/linux/)
+- 5단계 재검증 완료
+
+#### scripts/import_rules.py (개발 예정)
+- YAML 규칙 검증/가져오기
+
+#### scripts/build.py (개발 예정)
+- PyInstaller 빌드 자동화
+
+#### scripts/setup_dev.sh (개발 예정)
+- 개발 환경 자동 설정
 
 ### 코드 품질 도구
 ```bash

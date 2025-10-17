@@ -265,6 +265,35 @@ Legend:
 - ✅ YAML 파싱 테스트: yaml.safe_load() 성공, 데이터 무결성 확인
 - ✅ 파일 개수 확인: ls config/rules/linux/*.yaml | wc -l = 73
 
+**재검증 완료** (Task 3.3 - 5단계):
+1. ✅ **파일 생성 재검증**:
+   - 73개 파일 확인 (0바이트 파일 없음)
+   - 파일 크기: 255~412 바이트 (YAML 구조에 따라 정상 범위)
+   - 파일명 패턴: U-01.yaml ~ U-73.yaml 정확
+
+2. ✅ **내용 재검증 (5개 카테고리 샘플)**:
+   - 계정관리 (U-08): commands 1개, severity mid, 한글 정상
+   - 파일 관리 (U-27): commands 1개, severity high, 한글 정상
+   - 서비스 관리 (U-42, U-59): commands 빈 리스트 (수동 점검), severity high/mid
+   - 패치 관리 (U-71): commands 빈 리스트, severity high
+   - 로그 관리 (U-73): commands 빈 리스트, severity low
+
+3. ✅ **파싱 재검증**:
+   - 3개 샘플 (U-01, U-42, U-73) yaml.safe_load() 성공
+   - 데이터 타입 검증: str, dict, list, bool 모두 정확
+   - 중첩 구조: check.commands, remediation.auto 접근 정상
+   - 8개 필드 전체 존재 및 순서 일치
+
+4. ✅ **코드 재검증**:
+   - import yaml 존재 (Line 37)
+   - save_yaml_file() 함수: UTF-8 인코딩, yaml.dump() 옵션, 에러 처리 정확
+   - main() 함수: 출력 디렉토리 생성, results 루프, 에러 처리 정확
+
+5. ✅ **문서/Git 재검증**:
+   - commit 3f8fd58: "feat: Complete Task 3.3 - YAML file saving and generation"
+   - 76 files changed, 1359 insertions(+), 154 deletions(-)
+   - working tree clean (추가 변경사항 없음)
+
 **다음 단계 (Task 4.0)**:
 - Validator 함수 스켈레톤 생성
 - 73개 함수에 대해 빈 함수 틀 자동 생성

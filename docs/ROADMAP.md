@@ -162,8 +162,19 @@ Legend:
   - 3단계 검증 프로세스 (구문/스키마/통합)
   - 리스크 및 대응 방안
   - 결과: `docs/MIGRATION_STRATEGY.md`
-- [ ] 마이그레이션 스크립트 개발 (scripts/migrate_legacy.py) - 진행 예정 (Task 2.0)
-- [ ] 10개 함수 시범 마이그레이션 (테스트용) - 진행 예정 (Task 3.0-6.0)
+- [x] 마이그레이션 스크립트 핵심 엔진 개발 (scripts/migrate_legacy.py) - Task 2.0 완료
+  - CLI 인터페이스 (argparse, --input, --output-dir, --all, --functions)
+  - 듀얼 로깅 시스템 (console + file)
+  - 입력 검증 (파일 존재, 출력 디렉토리, KISA 코드 형식)
+  - 다중 인코딩 fallback (utf-8-sig → utf-8 → cp949 → euc-kr → latin-1)
+  - 정규식 기반 Python 2→3 변환 (lib2to3 대체, Python 3.12 호환)
+  - FunctionInfo dataclass (name, number, kisa_code, source, complexity, severity, ast_node)
+  - AST 기반 함수 추출 (extract_severity, extract_function_info, extract_functions)
+  - 73개 함수 추출 성공 (U-01 ~ U-73)
+  - 결과: `scripts/migrate_legacy.py` (700+ 줄)
+- [ ] YAML 규칙 생성 시스템 구현 - 진행 예정 (Task 3.0)
+- [ ] Validator 함수 스켈레톤 생성 - 진행 예정 (Task 4.0)
+- [ ] 10개 함수 시범 마이그레이션 완료 및 보고서 생성 - 진행 예정 (Task 5.0-6.0)
 
 **결과물** (Task 1.0 완료):
 - ✅ Legacy 코드 분석 문서 (LEGACY_ANALYSIS_DETAIL.md, 530+ 줄)
@@ -178,16 +189,34 @@ Legend:
 - ✅ 마이그레이션 전략 문서 (MIGRATION_STRATEGY.md, 850+ 줄)
 - ✅ Task List 생성 및 추적 (tasks/tasks-prd-python2-to-3-migration.md, Task 1.0 완료)
 
-**검증 완료**:
+**결과물** (Task 2.0 완료):
+- ✅ 마이그레이션 스크립트 핵심 엔진 (scripts/migrate_legacy.py, 700+ 줄)
+  - CLI 인터페이스: argparse, --input, --output-dir, --all, --functions, --dry-run, --verbose
+  - 듀얼 로깅: console (INFO/DEBUG) + file (모든 레벨, migration.log)
+  - 다중 인코딩 지원: utf-8-sig → utf-8 → cp949 → euc-kr → latin-1 fallback
+  - 정규식 기반 Python 2→3 변환 (lib2to3 대체, Python 3.12 호환)
+  - FunctionInfo dataclass (7 fields)
+  - AST 기반 함수 추출 엔진 (extract_severity, extract_function_info, extract_functions)
+- ✅ tasks-prd 파일 업데이트 (Task 2.0-2.6 완료 표시)
+
+**검증 완료** (Task 1.0):
 - ✅ Python 구문 검증 (py_compile)
 - ✅ 도메인 모델 동작 테스트 (Status, Severity, CheckResult, RemediationInfo)
 - ✅ pydantic validation 테스트 (RuleMetadata, 패턴 매칭, 필드 제약)
 - ✅ YAML 파싱 및 검증 (3개 파일 pydantic 통과)
 
-**다음 단계 (Task 2.0)**:
-- 마이그레이션 스크립트 핵심 엔진 개발
-- 인코딩 변환, Python 2→3 변환, AST 기반 함수 추출
-- bash 명령어 추출, YAML/Validator 자동 생성
+**검증 완료** (Task 2.0):
+- ✅ 인코딩 변환 테스트: Legacy 파일 18,421 문자, utf-8-sig 성공
+- ✅ Python 2→3 변환 테스트: 6개 bare except 변환, 구문 검증 통과
+- ✅ 통합 테스트: 73개 함수 추출 성공 (U-01 ~ U-73)
+- ✅ 복잡도 측정: 21 ~ 128 AST 노드
+- ✅ 심각도 분류: 44 HIGH, 17 MID, 12 LOW (1개 경고: _42SCRIPT)
+
+**다음 단계 (Task 3.0)**:
+- YAML 규칙 생성 시스템 구현
+- bash 명령어 추출 (os.popen/subprocess 찾기)
+- YAML 템플릿 생성 (KISA 코드 매핑, 자동 추론)
+- YAML 파일 저장 및 검증
 
 ---
 

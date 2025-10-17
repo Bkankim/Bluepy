@@ -464,6 +464,71 @@ Batch 3 (1개):
 
 **다음 Phase**: file_management.py 나머지 (U-16, U-17, U-19~U-26, U-28~U-35 - 18개 함수)
 
+**Phase 4 완료**: file_management.py 나머지 (U-16, U-17, U-19~U-26, U-28~U-35 - 18개 함수) (2025-10-18)
+
+**구현 내용**:
+
+**Batch 1 (6개)**: U-16, U-17, U-19, U-20, U-21, U-22
+1. check_u16: root 홈, 패스 디렉터리 권한 및 패스 설정
+   - PATH에 '.' 문자 체크 → FAIL
+2. check_u17: 파일 및 디렉터리 소유자 설정
+   - 2개 명령어, 모두 빈 출력이면 PASS
+3. check_u19: /etc/shadow 파일 소유자 및 권한 설정
+   - 권한 r-------- root 체크
+4. check_u20: /etc/hosts 파일 소유자 및 권한 설정
+   - 권한 rw------- root 체크
+5. check_u21: /etc/(x)inetd.conf 파일 소유자 및 권한 설정
+   - 권한 rw------- root 또는 빈 파일 허용
+6. check_u22: /etc/syslog.conf 파일 소유자 및 권한 설정
+   - 권한 rw-r--r-- root 또는 빈 파일 허용
+
+**Batch 2 (6개)**: U-23, U-24, U-25, U-26, U-28, U-29
+7. check_u23: /etc/services 파일 소유자 및 권한 설정
+   - 권한 rw-r--r-- root (u22와 동일)
+8. check_u24: SUID, SGID, Sticky bit 설정파일 점검
+   - 항상 MANUAL (파일 목록 확인 필요)
+9. check_u25: 사용자, 시스템 시작파일 및 환경파일 소유자 및 권한 설정
+   - 항상 MANUAL (Legacy 미완성)
+10. check_u26: world writable 파일 점검
+    - 항상 MANUAL (파일 목록 확인 필요)
+11. check_u28: $HOME/.rhosts, hosts.equiv 사용 금지
+    - 3개 명령어, 모두 빈 출력이면 PASS, 아니면 권한 체크
+12. check_u29: 접속 IP 및 포트 제한
+    - 'ALL:ALL' 설정 체크
+
+**Batch 3 (6개)**: U-30, U-31, U-32, U-33, U-34, U-35
+13. check_u30: hosts.lpd 파일 소유자 및 권한 설정
+    - 권한[9] == '-' (other 실행 없음) and root
+14. check_u31: NIS 서비스 비활성화
+    - 항상 MANUAL (프로세스 확인 필요)
+15. check_u32: UMASK 설정 관리
+    - 'umask 022' 설정 체크
+16. check_u33: 홈 디렉터리 소유자 및 권한 설정
+    - 항상 MANUAL (Legacy 미완성)
+17. check_u34: 홈 디렉터리로 지정한 디렉터리의 존재 관리
+    - 항상 MANUAL (디렉터리 존재 확인 필요)
+18. check_u35: 숨겨진 파일 및 디렉터리 검색 및 제거
+    - 항상 MANUAL (Legacy 미완성)
+
+**검증 완료**:
+- py_compile 성공: 문법 오류 없음
+- Batch 1: 13개 테스트 케이스 통과
+- Batch 2: 10개 테스트 케이스 통과
+- Batch 3: 9개 테스트 케이스 통과
+- 총 32개 테스트 케이스 모두 통과
+- Git commit: (예정)
+
+**진행 상황**: 38/73 함수 구현 완료 (52.1%)
+- 완료 카테고리:
+  * account_management.py: 15/15 (100%)
+  * file_management.py: 20/20 (100%) ← 완료!
+  * log_management.py: 2/2 (100%)
+  * patch_management.py: 1/1 (100%)
+- 진행 중 카테고리:
+  * service_management.py: 0/35 (0%)
+
+**다음 Phase**: service_management.py (U-36~U-70 - 35개 함수)
+
 ---
 
 ### 3.3 Week 2: Core 모듈 구현

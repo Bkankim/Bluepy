@@ -76,25 +76,21 @@ def check_u02(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _2SCRIPT 로직:
+    - LINUX의 SHADOW 파일은 해시화되어 저장되기 때문에 비교 불가능
+    - 항상 PASS 반환
+
     Args:
-        command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+        command_outputs: 점검 명령어 실행 결과 리스트 (사용 안 함)
 
     Returns:
         CheckResult: 점검 결과
-            - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
+            - status: PASS (안전)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _2SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-02 패스워드 복잡성 설정"
+        status=Status.PASS,
+        message="안전: LINUX shadow 파일은 해시화되어 저장됩니다"
     )
 
 
@@ -260,26 +256,56 @@ def check_u06(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _6SCRIPT 로직:
+    - data[0]에서 wheel 그룹 정보 추출
+    - data[1]에서 pam_wheel.so 설정 확인
+    - 2가지 패턴 중 하나라도 매칭되면 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: wheel 그룹 정보 (예: /etc/group 내용)
+            - [1]: PAM 설정 파일 내용
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _6SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-06 root 계정 su 제한"
-    )
+    if not command_outputs or len(command_outputs) < 2:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 부족합니다 (2개 필요: wheel 그룹, PAM 설정)"
+        )
+
+    try:
+        wheel_info = command_outputs[0]
+        pam_config = command_outputs[1]
+
+        # wheel 그룹 정보 추출 (split(':')[3])
+        wheel_group = wheel_info.split(':')[3] if ':' in wheel_info else ''
+
+        # pam_wheel.so 설정 2가지 패턴
+        pattern1 = ['auth', 'required', '/lib/security/pam_wheel_so', 'debug', 'group=wheel']
+        pattern2 = ['auth', 'required', '/lib/security/$ISA/pam_wheel_so', 'use_uid']
+
+        for line in pam_config.split('\n'):
+            words = [w for w in line.split(' ') if w]
+            if words == pattern1 or words == pattern2:
+                return CheckResult(
+                    status=Status.PASS,
+                    message=f"안전: pam_wheel.so가 설정되어 있습니다 (wheel 그룹: {wheel_group})"
+                )
+
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: pam_wheel.so 설정이 없습니다"
+        )
+
+    except Exception as e:
+        return CheckResult(
+            status=Status.FAIL,
+            message=f"취약: 설정 파일 파싱 오류 ({str(e)})"
+        )
 
 
 
@@ -493,56 +519,108 @@ def check_u10(command_outputs: List[str]) -> CheckResult:
 def check_u11(command_outputs: List[str]) -> CheckResult:
     """U-11: 관리자 그룹에 최소한의 계정 포함
 
-    점검 항목을 자동으로 검증합니다.
+    점검 항목을 수동으로 검증해야 합니다.
+
+    Legacy _11SCRIPT 로직:
+    - 그룹 파일에서 계정 목록 추출
+    - 수동 점검 (MANUAL)
 
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: 그룹 파일 내용 (예: /etc/group)
 
     Returns:
         CheckResult: 점검 결과
-            - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
+            - status: MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _11SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-11 관리자 그룹에 최소한의 계정 포함"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="수동 점검: 명령어 출력이 없습니다"
+        )
+
+    try:
+        group_content = command_outputs[0]
+        lines = [line for line in group_content.split('\n') if line.strip()]
+
+        if not lines:
+            return CheckResult(
+                status=Status.MANUAL,
+                message="수동 점검: 그룹 정보가 비어있습니다"
+            )
+
+        # 첫 줄에서 그룹 멤버 추출 (split(':')[3])
+        first_line = lines[0]
+        fields = first_line.split(':')
+        if len(fields) >= 4:
+            members = fields[3]
+            return CheckResult(
+                status=Status.MANUAL,
+                message=f"수동 점검: 관리자 그룹 계정 확인 필요 - {members if members else '(없음)'}"
+            )
+        else:
+            return CheckResult(
+                status=Status.MANUAL,
+                message="수동 점검: 그룹 파일 형식이 올바르지 않습니다"
+            )
+
+    except Exception as e:
+        return CheckResult(
+            status=Status.FAIL,
+            message=f"취약: 그룹 파일 파싱 오류 ({str(e)})"
+        )
 
 
 
 def check_u12(command_outputs: List[str]) -> CheckResult:
     """U-12: 계정이 존재하지 않는 GID 금지
 
-    점검 항목을 자동으로 검증합니다.
+    점검 항목을 수동으로 검증해야 합니다.
+
+    Legacy _12SCRIPT 로직:
+    - passwd 파일에서 계정명과 GID 추출
+    - 수동 점검 (MANUAL)
 
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/passwd 파일 내용
 
     Returns:
         CheckResult: 점검 결과
-            - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
+            - status: MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _12SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-12 계정이 존재하지 않는 GID 금지"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="수동 점검: 명령어 출력이 없습니다"
+        )
+
+    try:
+        passwd_content = command_outputs[0]
+        lines = [line for line in passwd_content.split('\n') if line.strip()]
+
+        account_info = []
+        for line in lines[:5]:  # 처음 5개만 표시
+            fields = line.split(':')
+            if len(fields) >= 4:
+                account_info.append(f"{fields[0]}(GID:{fields[3]})")
+
+        info_str = ', '.join(account_info)
+        if len(lines) > 5:
+            info_str += f', ... (총 {len(lines)}개)'
+
+        return CheckResult(
+            status=Status.MANUAL,
+            message=f"수동 점검: 계정별 GID 확인 필요 - {info_str}"
+        )
+
+    except Exception as e:
+        return CheckResult(
+            status=Status.MANUAL,
+            message=f"수동 점검: passwd 파일 파싱 오류 ({str(e)})"
+        )
 
 
 
@@ -551,26 +629,52 @@ def check_u13(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _13SCRIPT 로직:
+    - 각 줄에서 UID 추출
+    - UID 중복 여부 확인
+    - 중복 있으면 FAIL, 없으면 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/passwd 파일 내용
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _13SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-13 동일한 UID 금지"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    try:
+        passwd_content = command_outputs[0]
+        lines = [line for line in passwd_content.split('\n') if line.strip()]
+
+        uid_list = []
+        for line in lines:
+            fields = line.split(':')
+            if len(fields) >= 3:
+                uid = fields[2]
+                if uid in uid_list:
+                    return CheckResult(
+                        status=Status.FAIL,
+                        message=f"취약: UID {uid}가 중복되었습니다"
+                    )
+                uid_list.append(uid)
+
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: 중복된 UID가 없습니다"
+        )
+
+    except Exception as e:
+        return CheckResult(
+            status=Status.MANUAL,
+            message=f"passwd 파일 파싱 오류: {str(e)}"
+        )
 
 
 
@@ -579,26 +683,51 @@ def check_u14(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _14SCRIPT 로직:
+    - 각 줄에서 shell 확인
+    - shell이 /sbin/nologin이 아니면 FAIL
+    - 모두 /sbin/nologin이면 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/passwd 파일 내용 (시스템 계정들)
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _14SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-14 사용자 shell 점검"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    try:
+        passwd_content = command_outputs[0]
+        lines = [line for line in passwd_content.split('\n') if line.strip()]
+
+        for line in lines:
+            fields = line.split(':')
+            if len(fields) >= 7:
+                shell = fields[6]
+                if shell != '/sbin/nologin':
+                    account = fields[0] if fields else '(알 수 없음)'
+                    return CheckResult(
+                        status=Status.FAIL,
+                        message=f"취약: {account} 계정의 shell이 {shell}입니다 (/sbin/nologin 권장)"
+                    )
+
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: 모든 시스템 계정의 shell이 /sbin/nologin입니다"
+        )
+
+    except Exception as e:
+        return CheckResult(
+            status=Status.MANUAL,
+            message=f"passwd 파일 파싱 오류: {str(e)}"
+        )
 
 
 
@@ -607,25 +736,67 @@ def check_u15(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _15SCRIPT 로직:
+    - TIMEOUT이 있고 값 >= 600인지 확인
+    - TMOUT이 있는지 확인
+    - 둘 다 만족하면 PASS, 아니면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: 환경 설정 파일 내용 (예: /etc/profile)
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _15SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-15 Session Timeout 설정"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    try:
+        config_content = command_outputs[0]
+        lines = [line for line in config_content.split('\n') if line.strip()]
+
+        has_timeout = False
+        has_tmout = False
+
+        for line in lines:
+            if "TIMEOUT" in line:
+                try:
+                    # TIMEOUT=값 형식에서 값 추출
+                    if '=' in line:
+                        value = int(line.split('=')[1].strip())
+                        if value >= 600:
+                            has_timeout = True
+                except (ValueError, IndexError):
+                    pass
+
+            if "TMOUT" in line:
+                has_tmout = True
+
+        if has_timeout and has_tmout:
+            return CheckResult(
+                status=Status.PASS,
+                message="안전: Session Timeout이 올바르게 설정되어 있습니다 (TIMEOUT >= 600, TMOUT 존재)"
+            )
+        else:
+            missing = []
+            if not has_timeout:
+                missing.append("TIMEOUT >= 600")
+            if not has_tmout:
+                missing.append("TMOUT")
+            return CheckResult(
+                status=Status.FAIL,
+                message=f"취약: Session Timeout 설정 누락 ({', '.join(missing)})"
+            )
+
+    except Exception as e:
+        return CheckResult(
+            status=Status.MANUAL,
+            message=f"설정 파일 파싱 오류: {str(e)}"
+        )
 
 

@@ -17,26 +17,39 @@ def check_u36(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _36SCRIPT 로직:
+    - /etc/inetd.conf 파일에서 finger 서비스 확인
+    - 출력이 없으면 PASS (서비스 비활성화)
+    - 출력이 있으면 FAIL (서비스 활성화)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/inetd.conf 파일 내용 또는 ps 출력
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _36SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-36 Finger 서비스 비활성화"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Finger 서비스가 비활성화되어 있습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: Finger 서비스가 활성화되어 있습니다"
+        )
 
 
 
@@ -45,26 +58,39 @@ def check_u37(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _37SCRIPT 로직:
+    - /etc/passwd에서 ftp 계정 확인
+    - 출력이 없으면 PASS (FTP 계정 없음)
+    - 출력이 있으면 FAIL (FTP 계정 존재)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: ftp 계정 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _37SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-37 Anonymous FTP 비활성화"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Anonymous FTP 계정이 존재하지 않습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: Anonymous FTP 계정이 존재합니다"
+        )
 
 
 
@@ -73,26 +99,39 @@ def check_u38(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _38SCRIPT 로직:
+    - rsh, rlogin, rexec 서비스 확인
+    - 출력이 없으면 PASS (서비스 비활성화)
+    - 출력이 있으면 FAIL (서비스 활성화)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: r계열 서비스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _38SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-38 r계열 서비스 비활성화"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: r계열 서비스(rsh, rlogin, rexec)가 비활성화되어 있습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: r계열 서비스가 활성화되어 있습니다"
+        )
 
 
 
@@ -101,26 +140,63 @@ def check_u39(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _39SCRIPT 로직:
+    - ls -al /var/spool/cron/crontabs/* 출력 파싱
+    - 파일이 없거나 권한이 rw-r----- root이면 PASS
+    - 그 외는 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: ls -al 출력
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _39SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-39 cron 파일 소유자 및 권한 설정"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: cron 파일이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: cron 파일이 없습니다"
+        )
+
+    # ls -l 출력 형식: -rw-r----- 1 root root 1234 Jan 1 12:00 filename
+    parts = lines[0].split()
+    if len(parts) < 3:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="ls 출력 형식이 올바르지 않습니다"
+        )
+
+    permissions = parts[0]
+    owner = parts[2]
+
+    # 권한 체크: rw-r----- (1:10 = rw-r-----)
+    if len(permissions) >= 10:
+        if permissions[1:10] == 'rw-r-----' and owner == 'root':
+            return CheckResult(
+                status=Status.PASS,
+                message=f"안전: cron 파일 권한이 {permissions}이고 소유자가 root입니다"
+            )
+        else:
+            return CheckResult(
+                status=Status.FAIL,
+                message=f"취약: cron 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다 (rw-r----- root 권장)"
+            )
+    else:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="권한 문자열 형식이 올바르지 않습니다"
+        )
 
 
 
@@ -129,25 +205,42 @@ def check_u40(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _40SCRIPT 로직:
+    - _SPLIT(data) → 4개 명령어 (echo, discard, daytime, chargen)
+    - 모든 출력이 비어있으면 PASS
+    - 하나라도 있으면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0~3]: echo, discard, daytime, chargen 서비스 설정 파일
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _40SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    # 모든 명령어 결과 확인
+    for idx, output in enumerate(command_outputs):
+        lines = [line for line in output.strip().split('\n') if line.strip()]
+        if lines:
+            # 하나라도 서비스가 활성화되어 있음
+            service_names = ["echo", "discard", "daytime", "chargen"]
+            service_name = service_names[idx] if idx < len(service_names) else f"서비스 {idx+1}"
+            return CheckResult(
+                status=Status.FAIL,
+                message=f"취약: DOS 취약 서비스({service_name})가 활성화되어 있습니다"
+            )
+
+    # 모든 서비스가 비활성화
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-40 DOS 공격에 취약한 서비스 비활성화"
+        status=Status.PASS,
+        message="안전: DOS 취약 서비스(echo, discard, daytime, chargen)가 모두 비활성화되어 있습니다"
     )
 
 
@@ -157,26 +250,39 @@ def check_u41(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _41SCRIPT 로직:
+    - ps -ef | grep nfsd 출력 확인
+    - 출력이 없으면 PASS (NFS 서비스 비활성화)
+    - 출력이 있으면 FAIL (NFS 서비스 활성화)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: nfsd 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _41SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-41 NFS 서비스 비활성화"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: NFS 서비스가 비활성화되어 있습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: NFS 서비스가 활성화되어 있습니다"
+        )
 
 
 
@@ -185,26 +291,40 @@ def check_u42(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _42SCRIPT 로직:
+    - /etc/exports 파일 내용 확인
+    - _DELGREP (grep 라인 제외) 후 출력이 없으면 PASS
+    - 출력이 있으면 FAIL (NFS export 설정 존재)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/exports 파일 내용
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _42SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-42 NFS 접근 통제"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    # grep이 포함된 라인 제외 (_DELGREP)
+    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: NFS export 설정이 없습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: NFS export 설정이 존재합니다"
+        )
 
 
 
@@ -213,26 +333,39 @@ def check_u43(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _43SCRIPT 로직:
+    - ps -ef | grep automount 출력 확인
+    - 출력이 없으면 PASS (automountd 제거됨)
+    - 출력이 있으면 FAIL (automountd 실행 중)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: automount 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _43SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-43 automountd 제거"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: automountd가 제거되었습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: automountd가 실행 중입니다"
+        )
 
 
 
@@ -241,26 +374,40 @@ def check_u44(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _44SCRIPT 로직:
+    - ps -ef | egrep "rpc.*|sadmind|..." 출력 확인
+    - grep이 포함된 라인 제외
+    - 빈 출력이면 PASS, 출력이 있으면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: RPC 관련 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _44SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-44 RPC 서비스 확인"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    # grep이 포함된 라인 제외
+    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: RPC 관련 서비스가 실행되지 않습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: RPC 관련 서비스가 실행 중입니다"
+        )
 
 
 
@@ -269,26 +416,40 @@ def check_u45(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _45SCRIPT 로직:
+    - ps -ef | egrep "ypserv|ypbind|..." 출력 확인
+    - grep이 포함된 라인 제외
+    - 빈 출력이면 PASS, 출력이 있으면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: NIS/NIS+ 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _45SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-45 NIS, NIS+ 점검"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    # grep이 포함된 라인 제외
+    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: NIS/NIS+ 서비스가 실행되지 않습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: NIS/NIS+ 서비스가 실행 중입니다"
+        )
 
 
 

@@ -73,26 +73,65 @@ def check_u18(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _18SCRIPT 로직:
+    - ls -l 출력에서 권한이 rw------- (644) 이고 소유자가 root인지 확인
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: ls -l 출력 (예: -rw------- 1 root root 1234 ...)
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _18SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-18 /etc/passwd 파일 소유자 및 권한 설정"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    ls_output = command_outputs[0].strip()
+    lines = [line for line in ls_output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="파일 정보가 없습니다"
+        )
+
+    # ls -l 출력 형식: -rw------- 1 root root 1234 Jan 1 12:00 filename
+    parts = lines[0].split()
+    if len(parts) < 3:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="ls 출력 형식이 올바르지 않습니다"
+        )
+
+    permissions = parts[0]
+    owner = parts[2] if len(parts) >= 3 else ""
+
+    # 권한 체크: rw-------  (1:3 = rw, 4:6 = ---, 7:9 = ---)
+    if len(permissions) >= 10:
+        read_write = permissions[1:3] == 'rw'
+        group_none = permissions[4:7] == '---'
+        other_none = permissions[7:10] == '---'
+
+        if read_write and group_none and other_none and owner == 'root':
+            return CheckResult(
+                status=Status.PASS,
+                message=f"안전: 파일 권한이 {permissions}이고 소유자가 root입니다"
+            )
+        else:
+            return CheckResult(
+                status=Status.FAIL,
+                message=f"취약: 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다 (rw------- root 권장)"
+            )
+    else:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="권한 문자열 형식이 올바르지 않습니다"
+        )
 
 
 
@@ -325,26 +364,41 @@ def check_u27(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _27SCRIPT 로직:
+    - 출력이 비어있으면 PASS (불필요한 device 파일 없음)
+    - 출력이 있으면 FAIL (불필요한 device 파일 존재)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: find 명령어 결과 (존재하지 않아야 할 device 파일 목록)
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _27SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-27 /dev에 존재하지 않는 device 파일 점검"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: 불필요한 device 파일이 없습니다"
+        )
+
+    device_files = command_outputs[0].strip()
+    lines = [line for line in device_files.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: 불필요한 device 파일이 없습니다"
+        )
+    else:
+        file_list = ', '.join(lines[:5])  # 처음 5개만 표시
+        if len(lines) > 5:
+            file_list += f', ... (총 {len(lines)}개)'
+        return CheckResult(
+            status=Status.FAIL,
+            message=f"취약: 불필요한 device 파일이 존재합니다 - {file_list}"
+        )
 
 
 

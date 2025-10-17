@@ -332,9 +332,38 @@ Legend:
 - 함수 호출 테스트: CheckResult 리턴 확인 (status=Status.MANUAL)
 - 함수 개수: grep으로 73개 확인
 
-**다음 단계 (Task 5.0)**:
-- 10개 함수 시범 마이그레이션 시작
-- Validator 로직 구현 (U-01, U-04, U-07 등)
+**Task 5.0 완료**: 10개 함수 시범 마이그레이션 (2025-10-17)
+
+**구현 내용**:
+1. 10개 함수 선정 (KISA 코드 기준)
+   - U-01: root 계정 원격 접속 제한 (high)
+   - U-03: 계정잠금 임계값 설정 (high)
+   - U-04: 패스워드 파일 보호 (high)
+   - U-05: root 이외의 UID가 '0' 금지 (mid)
+   - U-07: 패스워드 최소 길이 설정 (mid)
+   - U-08: 패스워드 최대 사용기간 설정 (mid)
+   - U-09: 패스워드 최소 사용기간 설정 (mid)
+   - U-10: 불필요한 계정 제거 (low)
+   - U-18: /etc/passwd 파일 소유자 및 권한 설정 (high)
+   - U-27: /dev에 존재하지 않는 device 파일 점검 (high)
+
+2. Legacy 로직 분석 및 Python 3 변환
+   - Legacy _1SCRIPT ~ _10SCRIPT, _18SCRIPT, _27SCRIPT 로직 분석
+   - Python 2 → Python 3 문법 변환 (리스트 컴프리헨션, 예외 처리 등)
+   - command_outputs 파싱 로직 구현
+   - Status.PASS / Status.FAIL / Status.MANUAL 판단 로직 추가
+
+3. 파일 수정
+   - account_management.py: 7개 함수 구현 (U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10)
+   - file_management.py: 2개 함수 구현 (U-18, U-27)
+
+**검증 완료**:
+- py_compile 성공: 문법 오류 없음
+- import 테스트: 10개 함수 정상 import
+- 실행 테스트: CheckResult 반환 확인 (Status 올바르게 설정)
+- 패턴 확립: 나머지 63개 함수 구현 가능
+
+**다음 단계**: 나머지 63개 함수 마이그레이션
 
 ---
 

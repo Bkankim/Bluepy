@@ -135,22 +135,35 @@ Legend:
 #### Day 3-5: Python 2 → 3 마이그레이션
 
 **작업 항목**:
-- [ ] Linux_Check_2.py 분석
+- [x] Linux_Check_2.py 분석
   - 73개 `_1SCRIPT` ~ `_73SCRIPT` 함수 파악
   - 각 함수의 로직 이해
-- [ ] 마이그레이션 스크립트 작성 (scripts/migrate_legacy.py)
+  - 11개 헬퍼 함수 파악
+  - 결과: `docs/LEGACY_ANALYSIS_DETAIL.md` (957줄 분석 완료)
+- [x] 10개 함수 선정 및 문서화
+  - 복잡도 평가 완료
+  - KISA 코드 매핑 완료 (U-04, U-07, U-08, U-09, U-05, U-18, U-27, U-01, U-03, U-10)
+  - 선정 근거 문서화 완료
+- [x] 도메인 모델 설계
+  - Status, Severity Enum 설계
+  - CheckResult, RuleMetadata, RemediationInfo 설계
+  - 결과: `docs/DOMAIN_MODEL_DESIGN.md`
+- [ ] 마이그레이션 스크립트 작성 (scripts/migrate_legacy.py) - 진행 예정
   ```python
   # 자동 변환 가능한 부분
   - print문 → print()
   - except: → except Exception:
   - 문자열 인코딩 (cp949 → utf-8)
   ```
-- [ ] 수동 변환 필요 항목 목록 작성
-- [ ] 10개 함수 시범 마이그레이션 (테스트용)
+- [ ] 수동 변환 필요 항목 목록 작성 - 진행 예정
+- [ ] 10개 함수 시범 마이그레이션 (테스트용) - 진행 예정
 
-**결과물**:
-- ✅ 마이그레이션 전략 문서
-- ✅ 10개 함수 변환 완료
+**결과물** (진행 중):
+- ✅ Legacy 코드 분석 문서 (LEGACY_ANALYSIS_DETAIL.md)
+- ✅ 도메인 모델 설계 문서 (DOMAIN_MODEL_DESIGN.md)
+- ✅ Task List 생성 (tasks/tasks-prd-python2-to-3-migration.md)
+- 🔄 마이그레이션 스크립트 (진행 예정)
+- 🔄 10개 함수 변환 (진행 예정)
 
 **리스크**:
 - ⚠️ 인코딩 문제 (한글 깨짐)

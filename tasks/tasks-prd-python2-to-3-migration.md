@@ -18,6 +18,8 @@
 - `tests/unit/test_validators.py` - Validator 함수 테스트
 - `tests/unit/test_yaml_rules.py` - YAML 규칙 검증 테스트
 - `docs/MIGRATION_REPORT.md` - 마이그레이션 결과 보고서 (자동 생성)
+- `docs/LEGACY_ANALYSIS_DETAIL.md` - Legacy 코드 상세 분석 (73개 함수, 복잡도, 패턴, 10개 선정)
+- `docs/DOMAIN_MODEL_DESIGN.md` - 도메인 모델 설계 (Status, Severity, CheckResult, RuleMetadata, RemediationInfo)
 
 ### 참조할 파일
 - `legacy/infra/linux/자동점검 코드/점검자료분석/Linux_Check_2.py` - 73개 Legacy 점검 함수 (Python 2)
@@ -33,9 +35,9 @@
 ## Tasks
 
 - [ ] 1.0 Legacy 코드 분석 및 도메인 모델 정의
-  - [ ] 1.1 Legacy 코드 전체 읽기 및 구조 파악 (`Linux_Check_2.py` 전체 분석, 73개 함수 목록 작성, 헬퍼 함수 파악)
-  - [ ] 1.2 10개 함수 선정 및 문서화 (복잡도 평가, KISA 코드 매핑, 선정 근거 문서화)
-  - [ ] 1.3 도메인 모델 설계 (CheckResult, RuleMetadata, Severity/Status Enum 설계)
+  - [x] 1.1 Legacy 코드 전체 읽기 및 구조 파악 (`Linux_Check_2.py` 전체 분석, 73개 함수 목록 작성, 헬퍼 함수 파악)
+  - [x] 1.2 10개 함수 선정 및 문서화 (복잡도 평가, KISA 코드 매핑, 선정 근거 문서화)
+  - [x] 1.3 도메인 모델 설계 (CheckResult, RuleMetadata, Severity/Status Enum 설계)
   - [ ] 1.4 `src/core/domain/models.py` 구현 (데이터클래스, type hints, pydantic 검증)
   - [ ] 1.5 YAML 스키마 설계 (필수/선택 필드 확정, 예시 YAML 작성)
   - [ ] 1.6 마이그레이션 전략 문서 작성 (변환 순서, 자동화 범위, 검증 방법)

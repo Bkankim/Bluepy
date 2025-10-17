@@ -148,9 +148,8 @@ python3.12 scripts/migrate_legacy.py \
 ```
 
 **완료 상태** (2025-10-17):
-- Task 1.0-3.3 완료
-- 73개 YAML 파일 생성 완료 (config/rules/linux/)
-- 5단계 재검증 완료
+- Task 1.0-4.0 완료: 73개 YAML 파일 생성, Validator 스켈레톤 생성
+- Task 5.0 완료: 10개 함수 시범 마이그레이션 (U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10, U-18, U-27)
 
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기

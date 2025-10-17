@@ -594,7 +594,15 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
     * 6개 파일 생성 (src/core/analyzer/validators/linux/)
     * 73개 validator 함수 스켈레톤 (check_u01 ~ check_u73)
     * 검증 완료: py_compile, import 테스트, 함수 호출 테스트
-  - 진행 예정: Task 5.0 (10개 함수 시범 마이그레이션)
+  - Task 5.0 완료: 10개 함수 시범 마이그레이션
+    * 10개 함수 선정: U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10 (계정관리 8개), U-18, U-27 (파일관리 2개)
+    * Legacy 로직 분석 및 Python 3 변환 완료
+    * account_management.py: 7개 함수 구현 (U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10)
+    * file_management.py: 2개 함수 구현 (U-18, U-27)
+    * 모든 함수 Status.PASS/FAIL/MANUAL 판단 로직 추가
+    * 검증 완료: py_compile, import, 실행 테스트 통과
+    * Git commit: 634d85a (3 files, 399 insertions, 118 deletions)
+  - 진행 예정: Task 6.0 (나머지 63개 함수 마이그레이션)
 
 - [ ] Week 2: Linux 스캐너 구현
   - BaseScanner 추상 클래스

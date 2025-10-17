@@ -34,13 +34,13 @@
 
 ## Tasks
 
-- [ ] 1.0 Legacy 코드 분석 및 도메인 모델 정의
+- [x] 1.0 Legacy 코드 분석 및 도메인 모델 정의
   - [x] 1.1 Legacy 코드 전체 읽기 및 구조 파악 (`Linux_Check_2.py` 전체 분석, 73개 함수 목록 작성, 헬퍼 함수 파악)
   - [x] 1.2 10개 함수 선정 및 문서화 (복잡도 평가, KISA 코드 매핑, 선정 근거 문서화)
   - [x] 1.3 도메인 모델 설계 (CheckResult, RuleMetadata, Severity/Status Enum 설계)
-  - [ ] 1.4 `src/core/domain/models.py` 구현 (데이터클래스, type hints, pydantic 검증)
-  - [ ] 1.5 YAML 스키마 설계 (필수/선택 필드 확정, 예시 YAML 작성)
-  - [ ] 1.6 마이그레이션 전략 문서 작성 (변환 순서, 자동화 범위, 검증 방법)
+  - [x] 1.4 `src/core/domain/models.py` 구현 (데이터클래스, type hints, pydantic 검증)
+  - [x] 1.5 YAML 스키마 설계 (필수/선택 필드 확정, 예시 YAML 작성)
+  - [x] 1.6 마이그레이션 전략 문서 작성 (변환 순서, 자동화 범위, 검증 방법)
 
 - [ ] 2.0 마이그레이션 스크립트 핵심 엔진 개발 (Python 2→3 변환 + 함수 추출)
   - [ ] 2.1 스크립트 기본 구조 생성 (`scripts/migrate_legacy.py`, argparse CLI, logging 설정)

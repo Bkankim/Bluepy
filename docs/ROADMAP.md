@@ -144,30 +144,50 @@ Legend:
   - 복잡도 평가 완료
   - KISA 코드 매핑 완료 (U-04, U-07, U-08, U-09, U-05, U-18, U-27, U-01, U-03, U-10)
   - 선정 근거 문서화 완료
-- [x] 도메인 모델 설계
-  - Status, Severity Enum 설계
-  - CheckResult, RuleMetadata, RemediationInfo 설계
-  - 결과: `docs/DOMAIN_MODEL_DESIGN.md`
-- [ ] 마이그레이션 스크립트 작성 (scripts/migrate_legacy.py) - 진행 예정
-  ```python
-  # 자동 변환 가능한 부분
-  - print문 → print()
-  - except: → except Exception:
-  - 문자열 인코딩 (cp949 → utf-8)
-  ```
-- [ ] 수동 변환 필요 항목 목록 작성 - 진행 예정
-- [ ] 10개 함수 시범 마이그레이션 (테스트용) - 진행 예정
+- [x] 도메인 모델 설계 및 구현
+  - Status, Severity Enum 설계 및 구현
+  - CheckResult dataclass 구현
+  - RuleMetadata, RemediationInfo pydantic BaseModel 구현
+  - 결과: `docs/DOMAIN_MODEL_DESIGN.md`, `src/core/domain/models.py`
+- [x] YAML 스키마 설계 및 예시 작성
+  - RuleMetadata 기반 YAML 스키마 정의
+  - 필수/선택 필드 확정
+  - 3개 예시 YAML 작성 (U-01, U-04, U-18)
+  - 결과: `docs/YAML_SCHEMA_GUIDE.md`, `config/rules/linux/U-{01,04,18}.yaml`
+- [x] 마이그레이션 전략 문서 작성
+  - 인코딩 변환 전략 (BOM-UTF8/cp949 → UTF-8)
+  - lib2to3 기반 Python 2→3 구문 변환
+  - AST 기반 함수 추출 전략
+  - YAML 및 Validator 자동 생성 전략
+  - 3단계 검증 프로세스 (구문/스키마/통합)
+  - 리스크 및 대응 방안
+  - 결과: `docs/MIGRATION_STRATEGY.md`
+- [ ] 마이그레이션 스크립트 개발 (scripts/migrate_legacy.py) - 진행 예정 (Task 2.0)
+- [ ] 10개 함수 시범 마이그레이션 (테스트용) - 진행 예정 (Task 3.0-6.0)
 
-**결과물** (진행 중):
-- ✅ Legacy 코드 분석 문서 (LEGACY_ANALYSIS_DETAIL.md)
+**결과물** (Task 1.0 완료):
+- ✅ Legacy 코드 분석 문서 (LEGACY_ANALYSIS_DETAIL.md, 530+ 줄)
 - ✅ 도메인 모델 설계 문서 (DOMAIN_MODEL_DESIGN.md)
-- ✅ Task List 생성 (tasks/tasks-prd-python2-to-3-migration.md)
-- 🔄 마이그레이션 스크립트 (진행 예정)
-- 🔄 10개 함수 변환 (진행 예정)
+- ✅ 도메인 모델 구현 (src/core/domain/models.py, 207줄)
+  - Status, Severity Enum
+  - CheckResult dataclass (is_passed/is_failed/is_manual 헬퍼)
+  - RemediationInfo, RuleMetadata (pydantic v2, frozen=True)
+  - 완전한 type hints 및 validation
+- ✅ YAML 스키마 가이드 (YAML_SCHEMA_GUIDE.md, 400+ 줄)
+- ✅ 3개 YAML 규칙 예시 (U-01, U-04, U-18)
+- ✅ 마이그레이션 전략 문서 (MIGRATION_STRATEGY.md, 850+ 줄)
+- ✅ Task List 생성 및 추적 (tasks/tasks-prd-python2-to-3-migration.md, Task 1.0 완료)
 
-**리스크**:
-- ⚠️ 인코딩 문제 (한글 깨짐)
-- 대응: UTF-8로 통일, 테스트 강화
+**검증 완료**:
+- ✅ Python 구문 검증 (py_compile)
+- ✅ 도메인 모델 동작 테스트 (Status, Severity, CheckResult, RemediationInfo)
+- ✅ pydantic validation 테스트 (RuleMetadata, 패턴 매칭, 필드 제약)
+- ✅ YAML 파싱 및 검증 (3개 파일 pydantic 통과)
+
+**다음 단계 (Task 2.0)**:
+- 마이그레이션 스크립트 핵심 엔진 개발
+- 인코딩 변환, Python 2→3 변환, AST 기반 함수 추출
+- bash 명령어 추출, YAML/Validator 자동 생성
 
 ---
 

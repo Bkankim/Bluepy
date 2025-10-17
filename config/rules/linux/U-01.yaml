@@ -1,0 +1,44 @@
+# U-01: root 계정 원격 로그인 제한
+# KISA 주요정보통신기반시설 기술적 취약점 분석평가 기준
+
+# 메타데이터
+id: "U-01"
+name: "root 계정 원격 로그인 제한"
+category: "계정관리"
+severity: "high"
+kisa_standard: "U-01"
+
+# 설명
+description: |
+  root 계정의 원격 로그인을 제한하여 시스템 보안을 강화합니다.
+  PAM(Pluggable Authentication Modules) 설정을 통해 제어합니다.
+
+  취약점:
+  - root 계정의 직접 원격 접속 허용 시 무차별 대입 공격에 노출
+  - 감사 추적 어려움 (어떤 관리자가 접속했는지 불명확)
+
+  조치:
+  - 일반 계정으로 접속 후 su/sudo 사용
+  - PAM securetty 모듈로 root 원격 로그인 차단
+
+# 점검 명령어
+commands:
+  - "cat /etc/pam.d/login"
+  - "cat /etc/securetty"
+
+# Validator 함수
+validator: "validators.linux.check_u01_root_remote_login"
+
+# 기대 결과
+expected_result: |
+  /etc/pam.d/login에 pam_securetty.so가 설정되어 있고,
+  /etc/securetty에 pts 터미널이 포함되지 않아야 함
+
+# 자동 수정 정보
+remediation:
+  auto: false
+  manual_steps:
+    - "/etc/pam.d/login 파일에 'auth required pam_securetty.so' 추가"
+    - "/etc/securetty 파일에서 pts/* 항목 제거 또는 주석 처리"
+    - "설정 후 SSH 접속 테스트 (일반 계정으로)"
+    - "문제 없으면 root 원격 로그인 차단 확인"

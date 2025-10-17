@@ -458,26 +458,40 @@ def check_u46(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _46SCRIPT 로직:
+    - ps -ef | egrep "tftp|talk" 출력 확인
+    - grep이 포함된 라인 제외
+    - 빈 출력이면 PASS, 출력이 있으면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: tftp, talk 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _46SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-46 tftp, talk 서비스 비활성화"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    # grep이 포함된 라인 제외
+    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: tftp, talk 서비스가 비활성화되어 있습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: tftp 또는 talk 서비스가 실행 중입니다"
+        )
 
 
 
@@ -486,26 +500,39 @@ def check_u47(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _47SCRIPT 로직:
+    - ps -ef | grep sendmail 출력 확인
+    - 빈 출력이면 PASS (Sendmail 없음)
+    - 출력이 있으면 MANUAL (버전 확인 필요)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: sendmail 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _47SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-47 Sendmail 버전 점검"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Sendmail이 실행되지 않습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="수동 점검: Sendmail 버전을 확인하세요"
+        )
 
 
 
@@ -514,25 +541,59 @@ def check_u48(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _48SCRIPT 로직:
+    - 2개 명령어: sendmail 실행 여부 + 설정 파일
+    - sendmail이 없으면 PASS
+    - 설정 파일에서 "Relaying denied" 확인
+    - 주석(#)이면 FAIL, 아니면 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: sendmail 프로세스 조회 결과
+            - [1]: sendmail.cf 설정 파일 (Relaying denied)
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _48SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs or len(command_outputs) < 2:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 부족합니다"
+        )
+
+    sendmail_output = command_outputs[0].strip()
+    lines = [line for line in sendmail_output.split('\n') if line.strip()]
+
+    # sendmail이 실행되지 않으면 PASS
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Sendmail이 실행되지 않습니다"
+        )
+
+    # 설정 파일 확인
+    config_output = command_outputs[1].strip()
+    config_lines = [line for line in config_output.split('\n') if line.strip()]
+
+    if not config_lines:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: Relaying denied 설정이 없습니다"
+        )
+
+    # 주석이 아닌 라인 확인
+    for line in config_lines:
+        if line.strip() and line.strip()[0] != '#':
+            return CheckResult(
+                status=Status.PASS,
+                message="안전: Relaying denied 설정이 활성화되어 있습니다"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-48 스팸 메일 릴레이 제한"
+        status=Status.FAIL,
+        message="취약: Relaying denied 설정이 주석 처리되어 있습니다"
     )
 
 
@@ -542,25 +603,50 @@ def check_u49(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _49SCRIPT 로직:
+    - 2개 명령어: sendmail 실행 여부 + 설정 파일
+    - sendmail이 없으면 PASS
+    - 설정 파일 확인 (PrivacyOptions)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: sendmail 프로세스 조회 결과
+            - [1]: sendmail.cf 설정 파일 (PrivacyOptions)
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _49SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs or len(command_outputs) < 2:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 부족합니다"
+        )
+
+    sendmail_output = command_outputs[0].strip()
+    lines = [line for line in sendmail_output.split('\n') if line.strip()]
+
+    # sendmail이 실행되지 않으면 PASS
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Sendmail이 실행되지 않습니다"
+        )
+
+    # 설정 파일 확인 (PrivacyOptions)
+    config_output = command_outputs[1].strip()
+    config_lines = [line for line in config_output.split('\n') if line.strip()]
+
+    if not config_lines:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: PrivacyOptions 설정이 없습니다"
+        )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-49 스팸 메일 릴레이 제한"
+        status=Status.PASS,
+        message="안전: PrivacyOptions 설정이 존재합니다"
     )
 
 
@@ -570,26 +656,39 @@ def check_u50(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _50SCRIPT 로직:
+    - ps -ef | grep named 출력 확인
+    - 빈 출력이면 PASS (DNS 없음)
+    - 출력이 있으면 MANUAL (버전 확인 필요)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: named 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _50SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-50 DNS 보안 버전 패치"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: DNS(named) 서비스가 실행되지 않습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="수동 점검: DNS 버전을 확인하고 최신 보안 패치를 적용하세요"
+        )
 
 
 
@@ -598,25 +697,42 @@ def check_u51(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _51SCRIPT 로직:
+    - 3개 명령어: named 실행 여부 + 설정 파일 2개
+    - named가 없으면 PASS
+    - 설정 파일 확인 (MANUAL)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: named 프로세스 조회 결과
+            - [1]: named.conf 설정 파일 (allow-transfer)
+            - [2]: named.boot 설정 파일 (xfrnets)
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _51SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    named_output = command_outputs[0].strip()
+    lines = [line for line in named_output.split('\n') if line.strip()]
+
+    # named가 실행되지 않으면 PASS
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: DNS(named) 서비스가 실행되지 않습니다"
+        )
+
+    # named가 실행 중이면 MANUAL (설정 확인 필요)
     return CheckResult(
         status=Status.MANUAL,
-        message="구현 예정 - U-51 DNS Zone Transfer 설정"
+        message="수동 점검: DNS Zone Transfer 설정을 확인하세요 (allow-transfer, xfrnets)"
     )
 
 
@@ -626,25 +742,46 @@ def check_u52(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _52SCRIPT 로직:
+    - httpd.conf 파일에서 "Indexes" 검색
+    - 빈 출력이면 PASS
+    - "Indexes"가 있으면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: httpd.conf 파일에서 Indexes 검색 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _52SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Apache 디렉터리 리스팅이 비활성화되어 있습니다"
+        )
+
+    # "Indexes"가 있으면 FAIL
+    for line in lines:
+        if 'Indexes' in line:
+            return CheckResult(
+                status=Status.FAIL,
+                message="취약: Apache 디렉터리 리스팅이 활성화되어 있습니다 (Indexes 옵션)"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-52 Apache 디렉터리 리스팅 제거"
+        status=Status.PASS,
+        message="안전: Apache 디렉터리 리스팅이 비활성화되어 있습니다"
     )
 
 
@@ -654,25 +791,46 @@ def check_u53(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _53SCRIPT 로직:
+    - httpd.conf 파일에서 User/Group 검색
+    - 빈 출력이면 PASS
+    - "User root" 또는 "Group root"가 있으면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: httpd.conf 파일에서 User/Group 검색 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _53SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Apache 설정 파일이 없거나 User/Group 설정이 없습니다"
+        )
+
+    # "User root" 또는 "Group root" 체크
+    for line in lines:
+        if ('User' in line and 'root' in line) or ('Group' in line and 'root' in line):
+            return CheckResult(
+                status=Status.FAIL,
+                message="취약: Apache가 root 권한으로 실행되고 있습니다"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-53 Apache 웹 프로세스 권한 제한"
+        status=Status.PASS,
+        message="안전: Apache가 root 권한으로 실행되지 않습니다"
     )
 
 
@@ -682,25 +840,46 @@ def check_u54(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _54SCRIPT 로직:
+    - httpd.conf 파일에서 AllowOverride 검색
+    - 빈 출력이면 PASS
+    - "AllowOverride None"이 있으면 PASS, 아니면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: httpd.conf 파일에서 AllowOverride 검색 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _54SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Apache 설정 파일이 없거나 AllowOverride 설정이 없습니다"
+        )
+
+    # "AllowOverride None" 체크
+    for line in lines:
+        if 'AllowOverride' in line and 'None' in line:
+            return CheckResult(
+                status=Status.PASS,
+                message="안전: AllowOverride가 None으로 설정되어 있습니다"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-54 Apache 상위 디렉터리 접근 금지"
+        status=Status.FAIL,
+        message="취약: AllowOverride가 None이 아닙니다"
     )
 
 
@@ -710,25 +889,39 @@ def check_u55(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _55SCRIPT 로직:
+    - 2개 명령어: htdocs/manual, manual 디렉터리 확인
+    - 모두 빈 출력이면 PASS (불필요한 파일 없음)
+    - 하나라도 있으면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: htdocs/manual 디렉터리 ls 결과
+            - [1]: manual 디렉터리 ls 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _55SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    # 모든 명령어 결과 확인
+    for output in command_outputs:
+        lines = [line for line in output.strip().split('\n') if line.strip()]
+        if lines:
+            return CheckResult(
+                status=Status.FAIL,
+                message="취약: Apache 불필요한 파일(manual 디렉터리)이 존재합니다"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-55 Apache 불필요한 파일 제거"
+        status=Status.PASS,
+        message="안전: Apache 불필요한 파일이 제거되었습니다"
     )
 
 

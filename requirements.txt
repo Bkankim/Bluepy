@@ -1,0 +1,46 @@
+# BluePy 2.0 - Python Dependencies
+# Python 3.12+ required
+
+# Core
+pydantic>=2.0            # Data validation
+pyyaml>=6.0              # Rule files
+rich>=13.0               # CLI output
+python-dotenv>=1.0       # Environment variables
+
+# GUI
+PySide6>=6.6             # Qt GUI framework
+qt-material>=2.0         # Material Design theme
+
+# Network
+asyncssh>=2.14           # SSH (async)
+paramiko>=3.4            # SSH (sync, backup)
+pywinrm>=0.4             # Windows Remote Management
+
+# Database
+sqlalchemy>=2.0          # ORM
+alembic>=1.13            # Database migrations
+
+# Reporting
+openpyxl>=3.1            # Excel generation
+reportlab>=4.0           # PDF generation
+jinja2>=3.1              # HTML templates
+
+# Security
+cryptography>=42.0       # Encryption
+keyring>=25.0            # Credential storage
+
+# Testing
+pytest>=8.0
+pytest-asyncio>=0.23
+pytest-qt>=4.3
+pytest-cov>=4.1
+pytest-mock>=3.12
+
+# Development
+black>=24.0              # Code formatter
+ruff>=0.1                # Linter
+mypy>=1.8                # Type checker
+pre-commit>=3.5          # Git hooks
+
+# Build
+pyinstaller>=6.0         # Executable packaging

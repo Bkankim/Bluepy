@@ -1,0 +1,116 @@
+# BluePy 2.0 - Git Ignore
+
+# ===== Data & Artifacts =====
+# 데이터베이스, 보고서, 백업 파일 제외
+/data/databases/*.db
+/data/reports/
+/data/backups/
+
+# Legacy 코드 (참고용, Git 추적 불필요)
+/legacy/
+
+# 로그 파일
+/logs/
+*.log
+
+# ===== Python =====
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# ===== Virtual Environments =====
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ===== IDE =====
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ===== OS =====
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ===== Environment =====
+.env
+.env.local
+.env.*.local
+
+# ===== Database =====
+*.db
+*.sqlite
+*.sqlite3
+
+# ===== Keep Empty Directories =====
+# data/ 폴더는 유지하되 내용은 제외
+!data/.gitkeep
+!data/databases/.gitkeep
+!data/reports/.gitkeep
+!data/backups/.gitkeep
+
+# ===== Temporary Files =====
+*.tmp
+*.temp
+*.swp
+*.swo
+.~*

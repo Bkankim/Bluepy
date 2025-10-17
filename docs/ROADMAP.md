@@ -529,6 +529,70 @@ Batch 3 (1개):
 
 **다음 Phase**: service_management.py (U-36~U-70 - 35개 함수)
 
+**Phase 5 완료**: service_management.py (U-36~U-70 - 35개 함수) (2025-10-18)
+
+**구현 내용**:
+
+**Batch 1 (10개)**: U-36~U-45
+1. check_u36: Finger 서비스 비활성화
+2. check_u37: Anonymous FTP 비활성화
+3. check_u38: r계열 서비스 비활성화
+4. check_u39: cron 파일 소유자 및 권한 설정 (rw-r-----)
+5. check_u40: DOS 공격에 취약한 서비스 비활성화 (4개 서비스)
+6. check_u41: NFS 서비스 비활성화
+7. check_u42: NFS 접근 통제 (grep 제외)
+8. check_u43: automountd 제거
+9. check_u44: RPC 서비스 확인 (grep 제외)
+10. check_u45: NIS, NIS+ 점검 (grep 제외)
+
+**Batch 2 (10개)**: U-46~U-55
+11. check_u46: tftp, talk 서비스 비활성화
+12. check_u47: Sendmail 버전 점검 (MANUAL)
+13. check_u48: 스팸 메일 릴레이 제한 (Relaying denied)
+14. check_u49: 스팸 메일 릴레이 제한 (PrivacyOptions)
+15. check_u50: DNS 보안 버전 패치 (MANUAL)
+16. check_u51: DNS Zone Transfer 설정 (MANUAL)
+17. check_u52: Apache 디렉터리 리스팅 제거 (Indexes)
+18. check_u53: Apache 웹 프로세스 권한 제한 (User/Group root)
+19. check_u54: Apache 상위 디렉터리 접근 금지 (AllowOverride None)
+20. check_u55: Apache 불필요한 파일 제거 (manual 디렉터리)
+
+**Batch 3+4 (15개)**: U-56~U-70
+21. check_u56: Apache 링크 사용금지 (FollowSymLinks)
+22. check_u57: Apache 파일 업로드/다운로드 제한 (LimitRequestBody)
+23. check_u58: Apache 웹 서비스 영역 분리 (DocumentRoot)
+24. check_u59: ssh 원격접속 허용 (telnet/ftp 체크)
+25. check_u60: ftp 서비스 확인 (xinetd, ps)
+26. check_u61: ftp 계정 shell 제한 (/sbin/nologin)
+27. check_u62: ftpusers 파일 소유자/권한 (rw-r-----)
+28. check_u63: ftpusers 파일 설정 (MANUAL)
+29. check_u64: at 파일 소유자/권한 (rw-r-----)
+30. check_u65: SNMP 서비스 구동 점검
+31. check_u66: SNMP Community String 복잡성 (public/private)
+32. check_u67: 로그온 시 경고 메시지 (/etc/motd)
+33. check_u68: NFS 설정파일 접근 권한 (rw-r--r--)
+34. check_u69: expn, vrfy 명령어 제한 (MANUAL)
+35. check_u70: Apache 웹서비스 정보 숨김 (ServerTokens Prod)
+
+**검증 완료**:
+- py_compile 성공: 문법 오류 없음
+- Batch 1: 24개 테스트 케이스 통과
+- Batch 2: 25개 테스트 케이스 통과
+- Batch 3+4: 24개 테스트 케이스 통과 (agent 구현)
+- 총 73개 테스트 케이스 통과
+- Git commits: 76075b6, 1b6c59b, 8a23c3d
+- 파일 크기: 1,699 라인
+
+**진행 상황**: 73/73 함수 구현 완료 (100%)!
+- 완료 카테고리:
+  * account_management.py: 15/15 (100%)
+  * file_management.py: 20/20 (100%)
+  * service_management.py: 35/35 (100%) ← 완료!
+  * patch_management.py: 1/1 (100%)
+  * log_management.py: 2/2 (100%)
+
+**Task 6.0 완료!** 모든 73개 함수 마이그레이션 성공!
+
 ---
 
 ### 3.3 Week 2: Core 모듈 구현

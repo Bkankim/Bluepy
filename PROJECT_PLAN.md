@@ -602,7 +602,7 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
     * 모든 함수 Status.PASS/FAIL/MANUAL 판단 로직 추가
     * 검증 완료: py_compile, import, 실행 테스트 통과
     * Git commit: 634d85a (3 files, 399 insertions, 118 deletions)
-  - **Task 6.0 진행 중: 나머지 63개 함수 마이그레이션 (28개 완료, 35개 남음)**
+  - **Task 6.0 완료: 나머지 63개 함수 마이그레이션 (73/73 완료, 100%)**
     * **Phase 1 완료** (2025-10-17): log_management.py (U-72, U-73 - 2개)
       - check_u72: 로그의 정기적 검토 및 보고 (MANUAL)
       - check_u73: 로그 기록 정책 수립 (MANUAL)
@@ -622,9 +622,15 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
       - Batch 3: check_u30~u35 (hosts.lpd, NIS, umask, 홈 디렉터리)
       - 총 32개 테스트 케이스 통과
       - Git commit: 4a098bf
-    * **진행 상황**: 38/73 함수 구현 완료 (52.1%)
-      - 완료 카테고리: account_management (15/15), file_management (20/20), log_management (2/2), patch_management (1/1)
-      - 진행 예정: service_management.py (U-36~U-70 - 35개)
+    * **Phase 5 완료** (2025-10-18): service_management.py (U-36~U-70 - 35개)
+      - Batch 1: check_u36~u45 (Finger, FTP, r계열, cron, DOS, NFS, RPC, NIS)
+      - Batch 2: check_u46~u55 (tftp, Sendmail, DNS, Apache 디렉터리/권한/파일)
+      - Batch 3+4: check_u56~u70 (Apache 링크/업로드/ssh, FTP 계정/설정/at, SNMP, NFS, expn/vrfy)
+      - 총 73개 테스트 케이스 통과 (24 + 25 + 24)
+      - Git commits: 76075b6, 1b6c59b, 8a23c3d
+    * **완료 상황**: 73/73 함수 구현 완료 (100%)!
+      - 완료 카테고리: account_management (15/15), file_management (20/20), service_management (35/35), log_management (2/2), patch_management (1/1)
+      - Task 6.0 완료!
 
 - [ ] Week 2: Linux 스캐너 구현
   - BaseScanner 추상 클래스

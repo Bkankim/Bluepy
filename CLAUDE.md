@@ -22,7 +22,100 @@ Use these files when I request structured feature development using PRDs:
 3. **구현 진행**: `@process-task-list.md 사용`
    - Task 단위로 단계별 구현 및 검증
 
-**현재 PRD**: `tasks/prd-dialogue-summarization-performance-improvement.md`
+## BluePy 2.0 프로젝트
+
+### 프로젝트 개요
+멀티플랫폼(Linux, macOS, Windows) 인프라 보안 점검 및 자동 수정 도구.
+2017년 Legacy 시스템을 Python 3.12, Clean Architecture로 재구성.
+
+**참고 문서:**
+- `PROJECT_PLAN.md` - 전체 프로젝트 계획 및 로드맵
+- `docs/ARCHITECTURE.md` - Clean Architecture 설계
+- `docs/ROADMAP.md` - Phase별 상세 개발 일정
+- `docs/LEGACY_ANALYSIS.md` - 2017년 시스템 분석
+
+### 개발 환경 설정
+```bash
+# 가상환경 생성 및 활성화
+python3.12 -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
+
+# 의존성 설치
+pip install -r requirements.txt
+```
+
+### 테스트 실행
+```bash
+# 전체 테스트
+pytest
+
+# 단위 테스트만
+pytest tests/unit
+
+# 통합 테스트만
+pytest tests/integration
+
+# 커버리지 리포트 (목표 60%+)
+pytest --cov=src --cov-report=html
+# 결과: htmlcov/index.html
+
+# 특정 테스트만 실행
+pytest tests/unit/test_scanner.py::test_connect
+```
+
+### GUI 실행
+```bash
+# GUI 애플리케이션 실행
+python -m src.gui.app
+
+# CLI 모드 (고급 사용자)
+python -m src.cli.commands scan --server myserver.com
+```
+
+### 프로젝트 아키텍처
+
+**Clean Architecture (Hexagonal) 레이어:**
+- `src/core/domain/` - 도메인 모델 (Entity, Value Object)
+- `src/core/scanner/` - 스캔 엔진 (Linux/macOS/Windows Scanner)
+- `src/core/analyzer/` - 분석 엔진 (결과 파싱, 평가)
+- `src/core/remediation/` - 자동 수정 엔진 (백업, 실행, 롤백)
+- `src/application/` - 유스케이스 (비즈니스 로직 조율)
+- `src/infrastructure/` - 외부 어댑터 (DB, Network, Reporting)
+- `src/gui/` - PySide6 GUI (Presentation Layer)
+
+**핵심 패턴:**
+- Factory Pattern: Scanner 생성 (플랫폼별 분기)
+- Repository Pattern: DB 접근 추상화
+- YAML 기반 규칙 시스템: 확장 가능한 점검 항목
+
+**규칙 파일 구조:**
+```yaml
+# config/rules/linux/U-01.yaml
+id: U-01
+name: root 원격 로그인 제한
+severity: high
+check:
+  commands:
+    - cat /etc/pam.d/login | grep pam_securetty
+validator: validators.linux.check_pam_securetty
+remediation:
+  auto: true
+  backup_files:
+    - /etc/pam.d/login
+  commands:
+    - echo "auth required pam_securetty.so" >> /etc/pam.d/login
+```
+
+### Legacy 코드 참고
+- `legacy/infra/linux/자동점검 코드/점검자료분석/Linux_Check_2.py` - 73개 점검 함수 (`_1SCRIPT` ~ `_73SCRIPT`)
+- Python 2 코드이므로 직접 실행 불가, 로직만 참고
+
+### 스크립트 (개발 예정)
+- `scripts/migrate_legacy.py` - Legacy Python 2 → 3 변환
+- `scripts/import_rules.py` - YAML 규칙 검증/가져오기
+- `scripts/build.py` - PyInstaller 빌드 자동화
+- `scripts/setup_dev.sh` - 개발 환경 자동 설정
 
 ## 프로젝트 필수 지침
 

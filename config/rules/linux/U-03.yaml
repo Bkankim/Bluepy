@@ -1,0 +1,13 @@
+id: U-03
+name: 계정잠금 임계값 설정
+category: 계정관리
+severity: high
+description: 계정잠금 임계값 설정 취약점을 점검합니다.
+check:
+  commands:
+  - cat ls -al /etc/xinet.d/* | egrep "rsh|rlogin|rexec" | egrep -v "grep|klogin|kshell|kexec"
+validator: validators.linux.check_u03
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

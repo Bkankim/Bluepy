@@ -1,0 +1,13 @@
+id: U-31
+name: NIS 서비스 비활성화
+category: 파일 및 디렉터리 관리
+severity: mid
+description: NIS 서비스 비활성화 취약점을 점검합니다.
+check:
+  commands:
+  - cat /etc/snmp/snmpd.conf | grep com2sec
+validator: validators.linux.check_u31
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

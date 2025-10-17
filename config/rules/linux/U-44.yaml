@@ -1,0 +1,12 @@
+id: U-44
+name: RPC 서비스 확인
+category: 서비스 관리
+severity: high
+description: RPC 서비스 확인 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u44
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

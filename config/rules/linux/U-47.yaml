@@ -1,0 +1,12 @@
+id: U-47
+name: Sendmail 버전 점검
+category: 서비스 관리
+severity: high
+description: Sendmail 버전 점검 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u47
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

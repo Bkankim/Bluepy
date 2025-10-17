@@ -1,0 +1,13 @@
+id: U-35
+name: 숨겨진 파일 및 디렉터리 검색 및 제거
+category: 파일 및 디렉터리 관리
+severity: low
+description: 숨겨진 파일 및 디렉터리 검색 및 제거 취약점을 점검합니다.
+check:
+  commands:
+  - cat $APACHE_DIRECTORY/conf/httpd.conf | grep ServerTokens
+validator: validators.linux.check_u35
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

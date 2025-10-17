@@ -1,0 +1,13 @@
+id: U-26
+name: world writable 파일 점검
+category: 파일 및 디렉터리 관리
+severity: high
+description: world writable 파일 점검 취약점을 점검합니다.
+check:
+  commands:
+  - cat /etc/passwd | grep ftp
+validator: validators.linux.check_u26
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

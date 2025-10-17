@@ -1,0 +1,12 @@
+id: U-49
+name: 스팸 메일 릴레이 제한
+category: 서비스 관리
+severity: high
+description: 스팸 메일 릴레이 제한 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u49
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

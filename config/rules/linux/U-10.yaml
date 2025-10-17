@@ -1,0 +1,13 @@
+id: U-10
+name: 불필요한 계정 제거
+category: 계정관리
+severity: low
+description: 불필요한 계정 제거 취약점을 점검합니다.
+check:
+  commands:
+  - ps -ef | egrep "ypserv|ypbind|ypxfrd|rpc.yppasswdd|rpc.ypupdated"
+validator: validators.linux.check_u10
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

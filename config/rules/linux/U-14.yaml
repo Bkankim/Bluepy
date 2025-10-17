@@ -1,0 +1,13 @@
+id: U-14
+name: 사용자 shell 점검
+category: 계정관리
+severity: low
+description: 사용자 shell 점검 취약점을 점검합니다.
+check:
+  commands:
+  - ps -ef | grep sendmail | grep -v "grep"
+validator: validators.linux.check_u14
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

@@ -1,43 +1,13 @@
-# U-04: 패스워드 파일 보호
-# KISA 주요정보통신기반시설 기술적 취약점 분석평가 기준
-
-# 메타데이터
-id: "U-04"
-name: "패스워드 파일 보호"
-category: "계정관리"
-severity: "high"
-kisa_standard: "U-04"
-
-# 설명
-description: |
-  Shadow 패스워드를 사용하여 /etc/passwd 파일에
-  암호화된 패스워드가 저장되지 않도록 합니다.
-
-  취약점:
-  - /etc/passwd는 모든 사용자가 읽을 수 있는 파일
-  - 암호화된 패스워드가 노출되면 무차별 대입 공격 가능
-  - John the Ripper 등의 도구로 쉽게 크랙 가능
-
-  조치:
-  - Shadow 패스워드 활성화
-  - 암호화된 패스워드를 /etc/shadow에 저장 (root만 읽기 가능)
-
-# 점검 명령어
-commands:
-  - "grep '^root:' /etc/shadow"
-
-# Validator 함수
-validator: "validators.linux.check_u04_shadow_password"
-
-# 기대 결과
-expected_result: |
-  root 계정의 두 번째 필드가 'x'여야 함
-  (Shadow 패스워드 사용 중을 의미)
-
-# 자동 수정 정보
+id: U-04
+name: 패스워드 파일 보호
+category: 계정관리
+severity: high
+description: 패스워드 파일 보호 취약점을 점검합니다.
+check:
+  commands:
+  - ls -al /var/spool/cron/crontabs/*
+validator: validators.linux.check_u04
 remediation:
   auto: false
-  manual_steps:
-    - "pwconv 명령어를 실행하여 Shadow 패스워드 활성화"
-    - "시스템 재부팅 후 확인"
-    - "/etc/shadow 파일 권한이 400 또는 600인지 확인 (chmod 400 /etc/shadow)"
+  backup_files: []
+  commands: []

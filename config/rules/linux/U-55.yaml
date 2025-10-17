@@ -1,0 +1,12 @@
+id: U-55
+name: Apache 불필요한 파일 제거
+category: 서비스 관리
+severity: high
+description: Apache 불필요한 파일 제거 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u55
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

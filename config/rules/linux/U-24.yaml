@@ -1,0 +1,13 @@
+id: U-24
+name: SUID, SGID, Sticky bit 설정파일 점검
+category: 파일 및 디렉터리 관리
+severity: high
+description: SUID, SGID, Sticky bit 설정파일 점검 취약점을 점검합니다.
+check:
+  commands:
+  - ps -ax | grep sshd
+validator: validators.linux.check_u24
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

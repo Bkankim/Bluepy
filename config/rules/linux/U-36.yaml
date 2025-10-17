@@ -1,0 +1,12 @@
+id: U-36
+name: Finger 서비스 비활성화
+category: 서비스 관리
+severity: high
+description: Finger 서비스 비활성화 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u36
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

@@ -1,0 +1,12 @@
+id: U-37
+name: Anonymous FTP 비활성화
+category: 서비스 관리
+severity: high
+description: Anonymous FTP 비활성화 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u37
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

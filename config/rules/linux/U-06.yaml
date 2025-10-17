@@ -1,0 +1,13 @@
+id: U-06
+name: root 계정 su 제한
+category: 계정관리
+severity: low
+description: root 계정 su 제한 취약점을 점검합니다.
+check:
+  commands:
+  - ps -ef | grep nfsd
+validator: validators.linux.check_u06
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

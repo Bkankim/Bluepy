@@ -1,0 +1,13 @@
+id: U-21
+name: /etc/(x)inetd.conf 파일 소유자 및 권한 설정
+category: 파일 및 디렉터리 관리
+severity: high
+description: /etc/(x)inetd.conf 파일 소유자 및 권한 설정 취약점을 점검합니다.
+check:
+  commands:
+  - cat $APACHE_DIRECTORY/conf/httpd.conf | grep FollowSymLinks
+validator: validators.linux.check_u21
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

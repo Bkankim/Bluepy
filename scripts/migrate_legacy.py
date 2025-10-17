@@ -34,7 +34,8 @@ import ast
 import logging
 import re
 import sys
-from dataclasses import dataclass
+import yaml
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
@@ -47,6 +48,83 @@ from src.core.domain.models import Severity
 # 상수
 DEFAULT_LOG_FILE = 'migration.log'
 KISA_PATTERN = r'^U-\d{2}$'
+
+# KISA 코드별 규칙 이름 매핑 (73개)
+KISA_NAMES = {
+    "U-01": "root 계정 원격 접속 제한",
+    "U-02": "패스워드 복잡성 설정",
+    "U-03": "계정잠금 임계값 설정",
+    "U-04": "패스워드 파일 보호",
+    "U-05": "root 이외의 UID가 '0' 금지",
+    "U-06": "root 계정 su 제한",
+    "U-07": "패스워드 최소 길이 설정",
+    "U-08": "패스워드 최대 사용기간 설정",
+    "U-09": "패스워드 최소 사용기간 설정",
+    "U-10": "불필요한 계정 제거",
+    "U-11": "관리자 그룹에 최소한의 계정 포함",
+    "U-12": "계정이 존재하지 않는 GID 금지",
+    "U-13": "동일한 UID 금지",
+    "U-14": "사용자 shell 점검",
+    "U-15": "Session Timeout 설정",
+    "U-16": "root 홈, 패스 디렉터리 권한 및 패스 설정",
+    "U-17": "파일 및 디렉터리 소유자 설정",
+    "U-18": "/etc/passwd 파일 소유자 및 권한 설정",
+    "U-19": "/etc/shadow 파일 소유자 및 권한 설정",
+    "U-20": "/etc/hosts 파일 소유자 및 권한 설정",
+    "U-21": "/etc/(x)inetd.conf 파일 소유자 및 권한 설정",
+    "U-22": "/etc/syslog.conf 파일 소유자 및 권한 설정",
+    "U-23": "/etc/services 파일 소유자 및 권한 설정",
+    "U-24": "SUID, SGID, Sticky bit 설정파일 점검",
+    "U-25": "사용자, 시스템 시작파일 및 환경파일 소유자 및 권한 설정",
+    "U-26": "world writable 파일 점검",
+    "U-27": "/dev에 존재하지 않는 device 파일 점검",
+    "U-28": "$HOME/.rhosts, hosts.equiv 사용 금지",
+    "U-29": "접속 IP 및 포트 제한",
+    "U-30": "hosts.lpd 파일 소유자 및 권한 설정",
+    "U-31": "NIS 서비스 비활성화",
+    "U-32": "UMASK 설정 관리",
+    "U-33": "홈 디렉토리 소유자 및 권한 설정",
+    "U-34": "홈 디렉토리로 지정한 디렉터리의 존재 관리",
+    "U-35": "숨겨진 파일 및 디렉터리 검색 및 제거",
+    "U-36": "Finger 서비스 비활성화",
+    "U-37": "Anonymous FTP 비활성화",
+    "U-38": "r계열 서비스 비활성화",
+    "U-39": "cron 파일 소유자 및 권한 설정",
+    "U-40": "DOS 공격에 취약한 서비스 비활성화",
+    "U-41": "NFS 서비스 비활성화",
+    "U-42": "NFS 접근 통제",
+    "U-43": "automountd 제거",
+    "U-44": "RPC 서비스 확인",
+    "U-45": "NIS, NIS+ 점검",
+    "U-46": "tftp, talk 서비스 비활성화",
+    "U-47": "Sendmail 버전 점검",
+    "U-48": "스팸 메일 릴레이 제한",
+    "U-49": "스팸 메일 릴레이 제한",
+    "U-50": "DNS 보안 버전 패치",
+    "U-51": "DNS Zone Transfer 설정",
+    "U-52": "Apache 디렉터리 리스팅 제거",
+    "U-53": "Apache 웹 프로세스 권한 제한",
+    "U-54": "Apache 상위 디렉터리 접근 금지",
+    "U-55": "Apache 불필요한 파일 제거",
+    "U-56": "Apache 링크 사용금지",
+    "U-57": "Apache 파일 업로드 및 다운로드 제한",
+    "U-58": "Apache 웹 서비스 영역의 분리",
+    "U-59": "ssh 원격접속 허용",
+    "U-60": "ftp 서비스 확인",
+    "U-61": "ftp 계정 shell 제한",
+    "U-62": "ftpusers 파일 소유자 및 권한 설정",
+    "U-63": "ftpusers 파일 설정",
+    "U-64": "at 파일 소유자 및 권한 설정",
+    "U-65": "SNMP 서비스 구동 점검",
+    "U-66": "SNMP 서비스 Community String의 복잡성",
+    "U-67": "로그온 시 경고 메세지 제공",
+    "U-68": "NFS 설정파일 접근 권한",
+    "U-69": "expn, vrfy 명령어 제한",
+    "U-70": "Apache 웹서비스 정보 숨김",
+    "U-71": "최신 보안패치 및 벤더 권고사항 적용",
+    "U-72": "로그의 정기적 검토 및 보고",
+    "U-73": "로그 기록 정책 수립",
+}
 
 
 @dataclass
@@ -62,6 +140,7 @@ class FunctionInfo:
         source: 함수 소스 코드 (Python 3 변환 후)
         complexity: 복잡도 (AST 노드 수)
         severity: 심각도 (HIGH/MID/LOW)
+        commands: bash 명령어 리스트 (Linux_Check_1.txt에서 추출)
         ast_node: AST FunctionDef 노드 (Optional, 추가 분석용)
     """
     name: str
@@ -70,6 +149,7 @@ class FunctionInfo:
     source: str
     complexity: int
     severity: Severity
+    commands: List[str] = field(default_factory=list)
     ast_node: Optional[ast.FunctionDef] = None
 
 
@@ -416,6 +496,120 @@ def convert_to_python3(python2_code: str, logger: logging.Logger) -> str:
     return python3_code
 
 
+def parse_linux_bash_script(bash_file: str, logger: logging.Logger) -> Dict[str, List[str]]:
+    """Linux bash 스크립트에서 명령어 추출 (Linux 전용)
+
+    Linux_Check_1.txt 파일을 파싱하여 각 KISA 코드별 bash 명령어를 추출합니다.
+
+    Args:
+        bash_file: Linux_Check_1.txt 파일 경로
+        logger: Logger 인스턴스
+
+    Returns:
+        KISA 코드별 명령어 딕셔너리
+        예: {"U-01": ["cat /etc/pam.d/login", "cat /etc/securetty"], ...}
+
+    Note:
+        - Linux 전용 (macOS, Windows는 별도 구현 필요)
+        - 명령어 리다이렉션 (>>report.txt) 자동 제거
+        - 변수 ($APACHE_DIRECTORY 등)는 그대로 유지
+    """
+    logger.info(f"bash 스크립트 파싱 시작: {bash_file}")
+
+    # 파일 읽기
+    try:
+        with open(bash_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        logger.debug(f"bash 파일 읽기 완료: {len(lines):,} 줄")
+    except FileNotFoundError:
+        logger.warning(f"bash 파일 없음: {bash_file}, 빈 딕셔너리 반환")
+        return {}
+    except Exception as e:
+        logger.error(f"bash 파일 읽기 실패: {e}")
+        return {}
+
+    commands_by_kisa = {}
+    current_kisa = None
+    current_commands = []
+    in_for_loop = False
+
+    # KISA 번호 패턴: "1-1 root 계정 원격 접속 제한"
+    kisa_pattern = re.compile(r'^echo\s+"(\d+)-(\d+)\s')
+
+    # 명령어 시작 패턴
+    cmd_patterns = ['cat', 'ls', 'ps', 'grep', 'egrep', 'find', 'pwconv']
+
+    for line_num, line in enumerate(lines, 1):
+        line = line.strip()
+
+        # KISA 코드 인식
+        match = kisa_pattern.match(line)
+        if match:
+            # 이전 섹션 저장
+            if current_kisa and current_commands:
+                commands_by_kisa[current_kisa] = current_commands
+                logger.debug(f"{current_kisa}: {len(current_commands)}개 명령어 추출")
+
+            section, num = match.groups()
+            current_kisa = f"U-{int(num):02d}"
+            current_commands = []
+            in_for_loop = False
+            continue
+
+        # 섹션 종료 (tmp 또는 tmp_s)
+        if line.startswith('tmp'):
+            if current_kisa and current_commands:
+                commands_by_kisa[current_kisa] = current_commands
+                logger.debug(f"{current_kisa}: {len(current_commands)}개 명령어 추출")
+            current_kisa = None
+            current_commands = []
+            in_for_loop = False
+            continue
+
+        # for 루프 감지
+        if line.startswith('for '):
+            in_for_loop = True
+            continue
+        if line == 'done':
+            in_for_loop = False
+            continue
+        if line == 'do':
+            continue
+
+        # 명령어 수집 (현재 KISA 섹션 내에서만)
+        if current_kisa:
+            # 명령어 라인인지 확인
+            is_command = any(line.startswith(cmd) for cmd in cmd_patterns)
+
+            if is_command:
+                # 리다이렉션 제거
+                cmd = re.sub(r'\s*[12]?>>?report[_a-z]*\.txt', '', line)
+                cmd = re.sub(r'\s*[12]?>report[_a-z]*\.txt', '', cmd)
+                cmd = cmd.strip()
+
+                if cmd:
+                    current_commands.append(cmd)
+                    logger.debug(f"{current_kisa}: 명령어 추출: {cmd[:50]}...")
+
+    # 마지막 섹션 저장
+    if current_kisa and current_commands:
+        commands_by_kisa[current_kisa] = current_commands
+        logger.debug(f"{current_kisa}: {len(current_commands)}개 명령어 추출")
+
+    logger.info(f"bash 스크립트 파싱 완료: {len(commands_by_kisa)}개 KISA 코드 처리")
+
+    # 통계 정보
+    total_commands = sum(len(cmds) for cmds in commands_by_kisa.values())
+    logger.info(f"총 {total_commands}개 명령어 추출 (평균 {total_commands / len(commands_by_kisa):.1f}개/규칙)")
+
+    # 명령어 없는 KISA 코드 확인
+    empty_kisa = [k for k, v in commands_by_kisa.items() if not v]
+    if empty_kisa:
+        logger.warning(f"명령어 없는 KISA 코드: {empty_kisa}")
+
+    return commands_by_kisa
+
+
 def extract_severity(node: ast.FunctionDef, logger: logging.Logger) -> Severity:
     """함수 내에서 심각도 추출
 
@@ -457,6 +651,7 @@ def extract_severity(node: ast.FunctionDef, logger: logging.Logger) -> Severity:
 def extract_function_info(
     node: ast.FunctionDef,
     func_number_str: str,
+    commands_by_kisa: Dict[str, List[str]],
     logger: logging.Logger
 ) -> FunctionInfo:
     """단일 함수 정보 추출
@@ -464,6 +659,7 @@ def extract_function_info(
     Args:
         node: AST FunctionDef 노드
         func_number_str: 함수 번호 (문자열, 예: "4")
+        commands_by_kisa: KISA 코드별 bash 명령어 딕셔너리
         logger: Logger 인스턴스
 
     Returns:
@@ -487,9 +683,16 @@ def extract_function_info(
     # 4. 심각도 추출
     severity = extract_severity(node, logger)
 
+    # 5. bash 명령어 추출 (Task 3.1)
+    commands = commands_by_kisa.get(kisa_code, [])
+    if commands:
+        logger.debug(f"{node.name}: {len(commands)}개 명령어 연결")
+    else:
+        logger.debug(f"{node.name}: 명령어 없음 (정상, 일부 규칙은 수동 점검)")
+
     logger.debug(
         f"{node.name}: number={func_number}, kisa={kisa_code}, "
-        f"complexity={complexity}, severity={severity.value}"
+        f"complexity={complexity}, severity={severity.value}, commands={len(commands)}"
     )
 
     return FunctionInfo(
@@ -499,17 +702,23 @@ def extract_function_info(
         source=source,
         complexity=complexity,
         severity=severity,
+        commands=commands,
         ast_node=node
     )
 
 
-def extract_functions(python3_code: str, logger: logging.Logger) -> List[FunctionInfo]:
+def extract_functions(
+    python3_code: str,
+    commands_by_kisa: Dict[str, List[str]],
+    logger: logging.Logger
+) -> List[FunctionInfo]:
     """AST 기반 함수 추출
 
     Python 3 코드를 AST로 파싱하고, _XSCRIPT 패턴의 Legacy 함수를 추출합니다.
 
     Args:
         python3_code: Python 3 소스 코드
+        commands_by_kisa: KISA 코드별 bash 명령어 딕셔너리
         logger: Logger 인스턴스
 
     Returns:
@@ -538,7 +747,9 @@ def extract_functions(python3_code: str, logger: logging.Logger) -> List[Functio
             match = func_pattern.match(node.name)
             if match:
                 try:
-                    func_info = extract_function_info(node, match.group(1), logger)
+                    func_info = extract_function_info(
+                        node, match.group(1), commands_by_kisa, logger
+                    )
                     functions.append(func_info)
                 except Exception as e:
                     logger.error(f"{node.name}: 함수 정보 추출 실패: {e}")
@@ -553,6 +764,173 @@ def extract_functions(python3_code: str, logger: logging.Logger) -> List[Functio
         logger.warning("추출된 함수가 없습니다. _XSCRIPT 패턴 확인 필요")
 
     return functions
+
+
+def infer_category(kisa_code: str) -> str:
+    """KISA 코드로 카테고리 자동 추론
+
+    KISA 표준 번호 범위를 기반으로 카테고리를 결정합니다.
+
+    Args:
+        kisa_code: KISA 코드 (U-01, U-04, ...)
+
+    Returns:
+        카테고리 문자열
+
+    Examples:
+        >>> infer_category("U-01")
+        '계정관리'
+        >>> infer_category("U-18")
+        '파일 및 디렉터리 관리'
+        >>> infer_category("U-42")
+        '서비스 관리'
+    """
+    # U-XX에서 숫자 부분 추출
+    num = int(kisa_code.split('-')[1])
+
+    if 1 <= num <= 15:
+        return "계정관리"
+    elif 16 <= num <= 35:
+        return "파일 및 디렉터리 관리"
+    elif 36 <= num <= 70:
+        return "서비스 관리"
+    elif num == 71:
+        return "패치 관리"
+    else:  # 72, 73
+        return "로그 관리"
+
+
+def generate_validator_name(kisa_code: str) -> str:
+    """validator 함수명 생성
+
+    KISA 코드를 validator 모듈의 함수명으로 변환합니다.
+
+    Args:
+        kisa_code: KISA 코드 (U-01, U-04, ...)
+
+    Returns:
+        validator 함수 경로 문자열
+
+    Examples:
+        >>> generate_validator_name("U-01")
+        'validators.linux.check_u01'
+        >>> generate_validator_name("U-42")
+        'validators.linux.check_u42'
+    """
+    # U-01 → u01, U-42 → u42
+    code_lower = kisa_code.lower().replace('-', '')
+    return f"validators.linux.check_{code_lower}"
+
+
+def generate_yaml_template(func_info: FunctionInfo) -> Dict[str, Any]:
+    """FunctionInfo에서 YAML 템플릿 생성 (Task 3.2)
+
+    FunctionInfo 객체를 받아 YAML 규칙 파일 구조를 dict로 생성합니다.
+
+    Args:
+        func_info: 함수 정보 (FunctionInfo)
+
+    Returns:
+        YAML 템플릿 딕셔너리
+
+    Example:
+        >>> func_info = FunctionInfo(
+        ...     name="_1SCRIPT",
+        ...     number=1,
+        ...     kisa_code="U-01",
+        ...     source="...",
+        ...     complexity=82,
+        ...     severity=Severity.HIGH,
+        ...     commands=["cat /etc/pam.d/login", "cat /etc/securetty"]
+        ... )
+        >>> yaml_dict = generate_yaml_template(func_info)
+        >>> yaml_dict['id']
+        'U-01'
+        >>> yaml_dict['name']
+        'root 계정 원격 접속 제한'
+    """
+    # 규칙 이름 (KISA_NAMES에서 가져오기)
+    name = KISA_NAMES.get(func_info.kisa_code, f"규칙 {func_info.kisa_code}")
+
+    # 카테고리 자동 추론
+    category = infer_category(func_info.kisa_code)
+
+    # validator 함수명 생성
+    validator = generate_validator_name(func_info.kisa_code)
+
+    # YAML 구조 생성
+    yaml_dict = {
+        "id": func_info.kisa_code,
+        "name": name,
+        "category": category,
+        "severity": func_info.severity.value,
+        "description": f"{name} 취약점을 점검합니다.",
+        "check": {
+            "commands": func_info.commands
+        },
+        "validator": validator,
+        "remediation": {
+            "auto": False,
+            "backup_files": [],
+            "commands": []
+        }
+    }
+
+    return yaml_dict
+
+
+def save_yaml_file(
+    yaml_dict: Dict[str, Any],
+    kisa_code: str,
+    output_dir: Path,
+    logger: logging.Logger
+) -> None:
+    """YAML 딕셔너리를 파일로 저장 (Task 3.3)
+
+    YAML 템플릿 dict를 파일로 저장합니다. UTF-8 인코딩으로 한글을 보존합니다.
+
+    Args:
+        yaml_dict: YAML 템플릿 딕셔너리
+        kisa_code: KISA 코드 (U-01, U-04, ...)
+        output_dir: 출력 디렉토리 (Path 객체)
+        logger: Logger 인스턴스
+
+    Raises:
+        OSError: 디렉토리 생성 실패
+        IOError: 파일 쓰기 실패
+        yaml.YAMLError: YAML 변환 실패
+
+    Example:
+        >>> yaml_dict = {"id": "U-01", "name": "root 계정 원격 접속 제한", ...}
+        >>> save_yaml_file(yaml_dict, "U-01", Path("config/rules/linux"), logger)
+        # config/rules/linux/U-01.yaml 파일 생성됨
+    """
+    # 파일 경로 생성: output_dir/U-01.yaml
+    yaml_file = output_dir / f"{kisa_code}.yaml"
+
+    try:
+        # YAML 변환 (한글 보존)
+        yaml_content = yaml.dump(
+            yaml_dict,
+            allow_unicode=True,     # 한글 출력
+            sort_keys=False,        # 키 순서 유지
+            default_flow_style=False,  # 블록 스타일
+            indent=2                # 들여쓰기 2칸
+        )
+
+        # UTF-8로 파일 쓰기
+        with open(yaml_file, 'w', encoding='utf-8') as f:
+            f.write(yaml_content)
+
+        logger.info(f"{kisa_code}.yaml 저장 완료")
+        logger.debug(f"파일 경로: {yaml_file.absolute()}")
+
+    except yaml.YAMLError as e:
+        logger.error(f"{kisa_code}: YAML 변환 실패: {e}")
+        raise
+    except IOError as e:
+        logger.error(f"{kisa_code}: 파일 쓰기 실패: {e}")
+        raise
 
 
 def filter_functions(
@@ -627,9 +1005,15 @@ def main() -> int:
         python3_code = convert_to_python3(legacy_code, logger)
         logger.info("Python 3 변환 완료")
 
-        # 6. 함수 추출 (Task 2.4)
+        # 5.5. bash 명령어 추출 (Task 3.1)
+        logger.info("bash 명령어 추출 중...")
+        bash_script_path = PROJECT_ROOT / "legacy/infra/linux/자동점검 코드/점검자료조사/Linux_Check_1.txt"
+        commands_by_kisa = parse_linux_bash_script(str(bash_script_path), logger)
+        logger.info(f"bash 명령어 추출 완료: {len(commands_by_kisa)}개 규칙")
+
+        # 6. 함수 추출 (Task 2.4 + Task 3.1)
         logger.info("함수 추출 중...")
-        functions = extract_functions(python3_code, logger)
+        functions = extract_functions(python3_code, commands_by_kisa, logger)
         logger.info(f"함수 추출 완료: {len(functions)}개")
 
         # 7. 함수 필터링
@@ -644,23 +1028,47 @@ def main() -> int:
         for i, func in enumerate(selected_functions, 1):
             logger.info(f"[{i}/{len(selected_functions)}] 처리 중: {func.kisa_code}")
 
-            # TODO: Task 3.0, 4.0에서 구현
-            # - bash 명령어 추출
-            # - YAML 생성
+            # Task 3.2: YAML 템플릿 생성
+            yaml_dict = generate_yaml_template(func)
+            logger.debug(f"{func.kisa_code}: YAML 템플릿 생성 완료")
+
+            # TODO: Task 4.0에서 구현
             # - Validator 스켈레톤 생성
 
             results.append({
                 'function': func,
-                'yaml': None,  # TODO
-                'validator': None,  # TODO
-                'commands': []  # TODO
+                'yaml': yaml_dict,
+                'validator': None,  # TODO: Task 4.0
+                'commands': func.commands
             })
 
         # 9. 파일 저장 (--dry-run이 아닐 때만)
         if not args.dry_run:
-            logger.info("결과 저장 중...")
-            # TODO: Task 3.3, 4.4에서 구현
-            logger.info(f"결과 저장 완료: {args.output_dir}")
+            logger.info("=" * 60)
+            logger.info("YAML 파일 저장 중...")
+            logger.info("=" * 60)
+
+            # 출력 디렉토리 Path 객체 생성
+            output_dir = Path(args.output_dir)
+
+            # YAML 파일 저장
+            for i, result in enumerate(results, 1):
+                func = result['function']
+                yaml_dict = result['yaml']
+
+                try:
+                    save_yaml_file(yaml_dict, func.kisa_code, output_dir, logger)
+                except Exception as e:
+                    logger.error(f"{func.kisa_code}: 파일 저장 실패 - {e}")
+                    # 에러가 발생해도 계속 진행
+
+            logger.info("=" * 60)
+            logger.info(f"YAML 파일 저장 완료: {len(results)}개 파일")
+            logger.info(f"저장 위치: {output_dir.absolute()}")
+            logger.info("=" * 60)
+
+            # TODO: Task 4.4 - Validator 파일 저장
+
         else:
             logger.info("Dry-run 모드: 파일 저장 생략")
 

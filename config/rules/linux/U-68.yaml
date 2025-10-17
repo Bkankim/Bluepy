@@ -1,0 +1,12 @@
+id: U-68
+name: NFS 설정파일 접근 권한
+category: 서비스 관리
+severity: mid
+description: NFS 설정파일 접근 권한 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u68
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

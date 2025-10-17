@@ -195,7 +195,17 @@ Legend:
     * FunctionInfo → YAML dict 완전 자동 변환
     * 모든 필드 생성: id, name, category, severity, commands, validator, remediation
   - 결과: U-01 샘플 YAML 생성 성공 (완전한 구조)
-- [ ] YAML 파일 저장 및 검증 - 진행 예정 (Task 3.3)
+- [x] YAML 파일 저장 및 검증 (Task 3.3 완료)
+  - save_yaml_file() 함수 구현 (43줄)
+    * UTF-8 인코딩 (allow_unicode=True)
+    * 한글 보존 (ensure_ascii=False)
+    * YAML 블록 스타일 (default_flow_style=False)
+    * 키 순서 유지 (sort_keys=False)
+  - main() 함수 수정
+    * 출력 디렉토리 Path 객체 생성
+    * results 루프에서 save_yaml_file() 호출
+    * 에러 처리 및 로깅
+  - 결과: 73개 YAML 파일 전체 생성 성공
 - [ ] Validator 함수 스켈레톤 생성 - 진행 예정 (Task 4.0)
 - [ ] 10개 함수 시범 마이그레이션 완료 및 보고서 생성 - 진행 예정 (Task 5.0-6.0)
 
@@ -245,11 +255,21 @@ Legend:
 - ✅ YAML 템플릿 생성: U-01 샘플 성공 (완전한 YAML 구조)
 - ✅ validator 함수명: validators.linux.check_u01 형식 자동 생성
 
-**다음 단계 (Task 3.3)**:
-- YAML 파일 저장 (pyyaml 사용, UTF-8 인코딩)
-- config/rules/linux/ 디렉토리 구조 생성
-- pydantic 검증 (선택적)
-- 73개 YAML 파일 생성 완료
+**검증 완료** (Task 3.3):
+- ✅ YAML 파일 저장: 73개 파일 전체 생성 성공 (config/rules/linux/)
+- ✅ UTF-8 인코딩: 한글 정상 출력 (U-01: root 계정 원격 접속 제한)
+- ✅ YAML 구조 검증: U-01, U-18, U-72 샘플 확인
+  - U-01: commands 정상 (cat /etc/inetd.conf), category: 계정관리
+  - U-18: 변수 유지 ($APACHE_DIRECTORY), category: 파일 및 디렉터리 관리
+  - U-72: commands 빈 리스트 (수동 점검 규칙), category: 로그 관리
+- ✅ YAML 파싱 테스트: yaml.safe_load() 성공, 데이터 무결성 확인
+- ✅ 파일 개수 확인: ls config/rules/linux/*.yaml | wc -l = 73
+
+**다음 단계 (Task 4.0)**:
+- Validator 함수 스켈레톤 생성
+- 73개 함수에 대해 빈 함수 틀 자동 생성
+- src/core/analyzer/validators/linux/ 디렉토리 구조 생성
+- 각 함수에 docstring 및 파라미터 추가
 
 ---
 

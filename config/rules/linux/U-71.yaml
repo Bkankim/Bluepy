@@ -1,0 +1,12 @@
+id: U-71
+name: 최신 보안패치 및 벤더 권고사항 적용
+category: 패치 관리
+severity: high
+description: 최신 보안패치 및 벤더 권고사항 적용 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u71
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

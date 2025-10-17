@@ -1,0 +1,13 @@
+id: U-30
+name: hosts.lpd 파일 소유자 및 권한 설정
+category: 파일 및 디렉터리 관리
+severity: low
+description: hosts.lpd 파일 소유자 및 권한 설정 취약점을 점검합니다.
+check:
+  commands:
+  - ps -ef | grep snmp
+validator: validators.linux.check_u30
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

@@ -1,0 +1,13 @@
+id: U-07
+name: 패스워드 최소 길이 설정
+category: 계정관리
+severity: mid
+description: 패스워드 최소 길이 설정 취약점을 점검합니다.
+check:
+  commands:
+  - cat /etc/exports
+validator: validators.linux.check_u07
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

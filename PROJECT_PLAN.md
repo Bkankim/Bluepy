@@ -565,7 +565,7 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 **목표**: 기존 기능을 현대적으로 재구현
 
 **주요 작업**:
-- [x] Week 1: 프로젝트 구조 생성 + 마이그레이션 시스템 구축 (80% 완료)
+- [x] Week 1: 프로젝트 구조 생성 + 마이그레이션 시스템 구축 (90% 완료)
   - Git 초기화 및 프로젝트 구조 생성
   - Task 1.0 완료: Legacy 분석, 도메인 모델, YAML 스키마, 마이그레이션 전략
   - Task 2.0 완료: 마이그레이션 스크립트 핵심 엔진 개발
@@ -574,12 +574,14 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
     * 정규식 기반 Python 2→3 변환 (lib2to3 대체)
     * FunctionInfo 데이터 구조 및 AST 추출 엔진
     * 73개 함수 추출 성공 (통합 테스트 완료)
-  - Task 3.1-3.2 완료: bash 명령어 추출 및 YAML 템플릿 생성
+  - Task 3.1-3.3 완료: bash 명령어 추출, YAML 템플릿 생성, 파일 저장
     * parse_linux_bash_script() 함수 (113줄, State machine)
     * KISA_NAMES 딕셔너리 (73개 규칙 이름 전체 매핑)
     * 카테고리 자동 추론 함수 (5개 카테고리)
     * YAML 템플릿 자동 생성 함수
-  - 진행 중: Task 3.3 (YAML 파일 저장)
+    * save_yaml_file() 함수 (43줄, UTF-8 인코딩)
+    * 73개 YAML 파일 전체 생성 (config/rules/linux/)
+  - 진행 예정: Task 4.0 (Validator 스켈레톤 생성)
 
 - [ ] Week 2: Linux 스캐너 구현
   - BaseScanner 추상 클래스

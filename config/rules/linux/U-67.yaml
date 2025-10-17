@@ -1,0 +1,12 @@
+id: U-67
+name: 로그온 시 경고 메세지 제공
+category: 서비스 관리
+severity: low
+description: 로그온 시 경고 메세지 제공 취약점을 점검합니다.
+check:
+  commands: []
+validator: validators.linux.check_u67
+remediation:
+  auto: false
+  backup_files: []
+  commands: []

@@ -30,15 +30,47 @@ YAML 규칙 파일과 Validator 함수 스켈레톤을 자동 생성합니다.
 """
 
 import argparse
+import ast
 import logging
 import re
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+
+# 프로젝트 루트를 sys.path에 추가 (src 모듈 import를 위해)
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.core.domain.models import Severity
 
 # 상수
 DEFAULT_LOG_FILE = 'migration.log'
 KISA_PATTERN = r'^U-\d{2}$'
+
+
+@dataclass
+class FunctionInfo:
+    """Legacy 함수 정보
+
+    AST에서 추출한 Legacy 함수의 메타데이터를 저장합니다.
+
+    Attributes:
+        name: 함수명 (_1SCRIPT, _4SCRIPT 등)
+        number: 함수 번호 (1, 4, ...)
+        kisa_code: KISA 표준 코드 (U-01, U-04, ...)
+        source: 함수 소스 코드 (Python 3 변환 후)
+        complexity: 복잡도 (AST 노드 수)
+        severity: 심각도 (HIGH/MID/LOW)
+        ast_node: AST FunctionDef 노드 (Optional, 추가 분석용)
+    """
+    name: str
+    number: int
+    kisa_code: str
+    source: str
+    complexity: int
+    severity: Severity
+    ast_node: Optional[ast.FunctionDef] = None
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -384,38 +416,159 @@ def convert_to_python3(python2_code: str, logger: logging.Logger) -> str:
     return python3_code
 
 
-def extract_functions(python3_code: str, logger: logging.Logger) -> List[Dict[str, Any]]:
-    """AST 기반 함수 추출 (Task 2.4에서 구현)
+def extract_severity(node: ast.FunctionDef, logger: logging.Logger) -> Severity:
+    """함수 내에서 심각도 추출
+
+    Legacy 패턴:
+    - _SETHIGH() → Severity.HIGH
+    - _SETMID() → Severity.MID
+    - _SETLOW() → Severity.LOW
+
+    Args:
+        node: AST FunctionDef 노드
+        logger: Logger 인스턴스
+
+    Returns:
+        심각도 (기본값: HIGH)
+    """
+    # 함수 내 모든 노드 순회
+    for child in ast.walk(node):
+        # Call 노드 찾기
+        if isinstance(child, ast.Call):
+            # 함수 호출 이름 확인
+            if isinstance(child.func, ast.Name):
+                func_name = child.func.id
+
+                if func_name == '_SETHIGH':
+                    logger.debug(f"{node.name}: Severity.HIGH")
+                    return Severity.HIGH
+                elif func_name == '_SETMID':
+                    logger.debug(f"{node.name}: Severity.MID")
+                    return Severity.MID
+                elif func_name == '_SETLOW':
+                    logger.debug(f"{node.name}: Severity.LOW")
+                    return Severity.LOW
+
+    # 심각도 함수 호출을 찾지 못한 경우
+    logger.warning(f"{node.name}: 심각도 미발견, 기본값 HIGH 사용")
+    return Severity.HIGH
+
+
+def extract_function_info(
+    node: ast.FunctionDef,
+    func_number_str: str,
+    logger: logging.Logger
+) -> FunctionInfo:
+    """단일 함수 정보 추출
+
+    Args:
+        node: AST FunctionDef 노드
+        func_number_str: 함수 번호 (문자열, 예: "4")
+        logger: Logger 인스턴스
+
+    Returns:
+        FunctionInfo 객체
+    """
+    func_number = int(func_number_str)
+
+    # 1. KISA 코드 생성
+    kisa_code = f"U-{func_number:02d}"
+
+    # 2. 소스 코드 추출 (Python 3.9+)
+    try:
+        source = ast.unparse(node)
+    except Exception as e:
+        logger.warning(f"{node.name}: ast.unparse 실패, 빈 소스 사용: {e}")
+        source = f"# ast.unparse 실패: {node.name}"
+
+    # 3. 복잡도 계산 (AST 노드 수)
+    complexity = len(list(ast.walk(node)))
+
+    # 4. 심각도 추출
+    severity = extract_severity(node, logger)
+
+    logger.debug(
+        f"{node.name}: number={func_number}, kisa={kisa_code}, "
+        f"complexity={complexity}, severity={severity.value}"
+    )
+
+    return FunctionInfo(
+        name=node.name,
+        number=func_number,
+        kisa_code=kisa_code,
+        source=source,
+        complexity=complexity,
+        severity=severity,
+        ast_node=node
+    )
+
+
+def extract_functions(python3_code: str, logger: logging.Logger) -> List[FunctionInfo]:
+    """AST 기반 함수 추출
+
+    Python 3 코드를 AST로 파싱하고, _XSCRIPT 패턴의 Legacy 함수를 추출합니다.
 
     Args:
         python3_code: Python 3 소스 코드
         logger: Logger 인스턴스
 
     Returns:
-        추출된 함수 정보 목록
+        추출된 함수 정보 목록 (FunctionInfo)
+
+    Raises:
+        SyntaxError: Python 3 파싱 실패
     """
-    # TODO: Task 2.4에서 구현
-    # - ast.parse()
-    # - _1SCRIPT ~ _73SCRIPT 함수 찾기
-    # - 소스 코드, 복잡도, KISA 코드 추출
-    logger.warning("extract_functions() 구현 필요 (Task 2.4)")
-    raise NotImplementedError("Task 2.4에서 구현 예정")
+    logger.info("AST 기반 함수 추출 시작")
+
+    # 1. AST 파싱
+    try:
+        tree = ast.parse(python3_code)
+        logger.debug("AST 파싱 완료")
+    except SyntaxError as e:
+        logger.error(f"AST 파싱 실패: {e}")
+        raise
+
+    # 2. 함수 추출
+    functions = []
+    func_pattern = re.compile(r'^_(\d+)SCRIPT$')
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef):
+            # 3. 함수명 패턴 확인: _\d+SCRIPT
+            match = func_pattern.match(node.name)
+            if match:
+                try:
+                    func_info = extract_function_info(node, match.group(1), logger)
+                    functions.append(func_info)
+                except Exception as e:
+                    logger.error(f"{node.name}: 함수 정보 추출 실패: {e}")
+                    continue
+
+    # 4. 함수 번호 순 정렬
+    functions.sort(key=lambda f: f.number)
+
+    logger.info(f"함수 추출 완료: {len(functions)}개")
+
+    if not functions:
+        logger.warning("추출된 함수가 없습니다. _XSCRIPT 패턴 확인 필요")
+
+    return functions
 
 
 def filter_functions(
-    functions: List[Dict[str, Any]],
+    functions: List[FunctionInfo],
     args: argparse.Namespace,
     logger: logging.Logger
-) -> List[Dict[str, Any]]:
+) -> List[FunctionInfo]:
     """함수 필터링 (--functions 또는 --all)
 
     Args:
-        functions: 전체 함수 목록
+        functions: 전체 함수 목록 (FunctionInfo)
         args: CLI 인자
         logger: Logger 인스턴스
 
     Returns:
-        필터링된 함수 목록
+        필터링된 함수 목록 (FunctionInfo)
     """
     if args.all:
         logger.info(f"모든 함수 선택: {len(functions)}개")
@@ -425,13 +578,13 @@ def filter_functions(
     selected_kisa_codes = set(f.strip() for f in args.functions.split(','))
     filtered = [
         f for f in functions
-        if f.get('kisa_code') in selected_kisa_codes
+        if f.kisa_code in selected_kisa_codes
     ]
 
     logger.info(f"선택된 함수: {len(filtered)}개 / {len(functions)}개")
 
     # 누락된 함수 경고
-    found_codes = {f.get('kisa_code') for f in filtered}
+    found_codes = {f.kisa_code for f in filtered}
     missing = selected_kisa_codes - found_codes
     if missing:
         logger.warning(f"찾을 수 없는 함수: {missing}")
@@ -489,8 +642,7 @@ def main() -> int:
 
         results = []
         for i, func in enumerate(selected_functions, 1):
-            kisa_code = func.get('kisa_code', 'UNKNOWN')
-            logger.info(f"[{i}/{len(selected_functions)}] 처리 중: {kisa_code}")
+            logger.info(f"[{i}/{len(selected_functions)}] 처리 중: {func.kisa_code}")
 
             # TODO: Task 3.0, 4.0에서 구현
             # - bash 명령어 추출

@@ -42,13 +42,13 @@
   - [x] 1.5 YAML 스키마 설계 (필수/선택 필드 확정, 예시 YAML 작성)
   - [x] 1.6 마이그레이션 전략 문서 작성 (변환 순서, 자동화 범위, 검증 방법)
 
-- [ ] 2.0 마이그레이션 스크립트 핵심 엔진 개발 (Python 2→3 변환 + 함수 추출)
+- [x] 2.0 마이그레이션 스크립트 핵심 엔진 개발 (Python 2→3 변환 + 함수 추출)
   - [x] 2.1 스크립트 기본 구조 생성 (`scripts/migrate_legacy.py`, argparse CLI, logging 설정)
   - [x] 2.2 인코딩 변환 함수 구현 (BOM-UTF8 읽기, cp949→UTF-8 변환, 에러 로깅)
   - [x] 2.3 Python 2→3 구문 변환 함수 구현 (정규식 기반, print/except/unicode 변환)
-  - [ ] 2.4 AST 기반 함수 추출 구현 (`ast.parse()`, `_XSCRIPT` 패턴 매칭, 소스 코드 추출)
-  - [ ] 2.5 FunctionInfo 데이터 구조 정의 (name, kisa_code, source_code, commands, complexity 필드)
-  - [ ] 2.6 통합 테스트 (10개 함수 추출 확인, Python 3 실행 가능 검증)
+  - [x] 2.4 AST 기반 함수 추출 구현 (`ast.parse()`, `_XSCRIPT` 패턴 매칭, 소스 코드 추출)
+  - [x] 2.5 FunctionInfo 데이터 구조 정의 (name, kisa_code, source_code, commands, complexity 필드)
+  - [x] 2.6 통합 테스트 (73개 함수 추출 확인, Python 3 실행 가능 검증)
 
 - [ ] 3.0 YAML 규칙 생성 시스템 구현
   - [ ] 3.1 bash 명령어 추출 로직 구현 (AST에서 os.popen/subprocess 찾기, `_SPLIT()` 패턴 인식)

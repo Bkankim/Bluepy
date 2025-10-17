@@ -8,6 +8,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # 철칙
 - **반드시** 이모티콘 사용 금지 (📋 ❌ ✅ 🔴 📂 등)
 
+# AI Dev Tasks
+Use these files when I request structured feature development using PRDs:
+/ai-dev-tasks/create-prd.md
+/ai-dev-tasks/generate-tasks.md
+/ai-dev-tasks/process-task-list.md
+
+# agents 사용 지침
+- **반드시** 병렬 수행에 유리한 작업을 스스로 판단하고 적절한 agents를 배정해서 사용.
+
+## AI Dev Tasks 사용법
+1. **PRD 생성**: `Use @create-prd.md` + 기능 설명
+   - 결과: `tasks/prd-[feature-name].md`
+2. **Task List 생성**: `@prd-[feature-name].md와 @generate-tasks.md 사용`
+   - 결과: `tasks/tasks-prd-[feature-name].md`
+3. **구현 진행**: `@process-task-list.md 사용`
+   - Task 단위로 단계별 구현 및 검증
+
 ## BluePy 2.0 프로젝트
 
 ### 프로젝트 개요

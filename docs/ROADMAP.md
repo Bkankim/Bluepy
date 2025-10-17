@@ -392,6 +392,27 @@ Legend:
 
 **다음 Phase**: patch_management.py (U-71 - 1개 함수)
 
+**Phase 2 완료**: patch_management.py (U-71 - 1개 함수) (2025-10-17)
+
+**구현 내용**:
+1. check_u71: 최신 보안패치 및 벤더 권고사항 적용
+   - Legacy _71SCRIPT 로직 변환 (수동 점검 항목)
+   - 항상 Status.MANUAL 반환
+   - 한글 메시지: "패치 적용 정책을 수립하여 주기적으로 패치를 관리하고 있는지 확인"
+   - Severity: HIGH
+
+**검증 완료**:
+- py_compile 성공: 문법 오류 없음
+- import 테스트: check_u71 정상 import
+- 실행 테스트: Status.MANUAL 반환 확인 (빈 입력, 샘플 입력)
+- Git commit: 19fc939 (1 file, 8 insertions, 12 deletions)
+
+**진행 상황**: 13/73 함수 구현 완료 (17.8%)
+- 완료: U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10 (계정관리 8개), U-18, U-27 (파일관리 2개), U-71 (패치관리 1개), U-72, U-73 (로그관리 2개)
+- 미완료: 60개
+
+**다음 Phase**: account_management.py 나머지 (U-02, U-06, U-11~U-15 - 7개 함수)
+
 ---
 
 ### 3.3 Week 2: Core 모듈 구현

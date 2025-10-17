@@ -931,25 +931,46 @@ def check_u56(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _56SCRIPT 로직:
+    - httpd.conf에서 FollowSymLinks 검색
+    - 빈 출력이면 PASS
+    - "Options Indexes FollowSymLinks"가 있으면 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: httpd.conf에서 FollowSymLinks 검색 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _56SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Apache 설정 파일이 없거나 FollowSymLinks 설정이 없습니다"
+        )
+
+    # "Options ... FollowSymLinks" 체크
+    for line in lines:
+        if 'Options' in line and 'Indexes' in line and 'FollowSymLinks' in line:
+            return CheckResult(
+                status=Status.PASS,
+                message="안전: FollowSymLinks가 적절히 설정되어 있습니다"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-56 Apache 링크 사용금지"
+        status=Status.FAIL,
+        message="취약: FollowSymLinks 설정이 올바르지 않습니다"
     )
 
 
@@ -959,25 +980,59 @@ def check_u57(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _57SCRIPT 로직:
+    - httpd.conf에서 LimitRequestBody 검색
+    - 빈 출력이면 PASS
+    - LimitRequestBody 값이 5000000 미만이면 PASS
+    - 그 외는 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: httpd.conf에서 LimitRequestBody 검색 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _57SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Apache 설정 파일이 없거나 LimitRequestBody 설정이 없습니다"
+        )
+
+    # LimitRequestBody 값 파싱
+    for line in lines:
+        if 'LimitRequestBody' in line:
+            parts = line.split()
+            for part in parts:
+                try:
+                    limit = int(part)
+                    if limit < 5000000:
+                        return CheckResult(
+                            status=Status.PASS,
+                            message=f"안전: 파일 업로드 크기가 제한되어 있습니다 (LimitRequestBody {limit})"
+                        )
+                    else:
+                        return CheckResult(
+                            status=Status.FAIL,
+                            message=f"취약: 파일 업로드 크기 제한이 너무 큽니다 (LimitRequestBody {limit}, 권장 5MB 미만)"
+                        )
+                except ValueError:
+                    pass
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-57 Apache 파일 업로드 및 다운로드 제한"
+        status=Status.PASS,
+        message="안전: LimitRequestBody 설정이 없습니다"
     )
 
 
@@ -987,26 +1042,39 @@ def check_u58(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _58SCRIPT 로직:
+    - DocumentRoot 확인
+    - 출력이 없으면 PASS (Apache 없음)
+    - 출력이 있으면 FAIL (수동 점검 필요)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: DocumentRoot 설정 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _58SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: high
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-58 Apache 웹 서비스 영역의 분리"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Apache 설정 파일이 없습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: Apache DocumentRoot가 기본 위치에 있습니다 (웹 서비스 영역 분리 필요)"
+        )
 
 
 
@@ -1015,25 +1083,40 @@ def check_u59(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _59SCRIPT 로직:
+    - /etc/xinetd.d/telnet, /etc/services에서 telnet/ftp 검색
+    - telnet 또는 ftp가 있으면 FAIL
+    - 없으면 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/services에서 telnet/ftp 검색 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _59SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = output.split('\n')
+
+    for line in lines:
+        if line.strip():
+            if 'telnet' in line or 'ftp' in line:
+                return CheckResult(
+                    status=Status.FAIL,
+                    message="취약: telnet 또는 ftp 서비스가 활성화되어 있습니다 (SSH 사용 권장)"
+                )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-59 ssh 원격접속 허용"
+        status=Status.PASS,
+        message="안전: telnet 및 ftp 서비스가 비활성화되어 있습니다"
     )
 
 
@@ -1043,25 +1126,63 @@ def check_u60(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _60SCRIPT 로직:
+    - 2개 명령어: /etc/xinetd.d/ftp, ps -ef | grep ftp
+    - 모두 빈 출력이면 PASS
+    - 첫번째에 출력이 있으면 PASS (xinetd 설정 있음)
+    - 두번째에 ftp가 있지만 grep이 아니면 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/xinetd.d/ftp 파일 조회 결과
+            - [1]: ps -ef | grep ftp 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _60SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
+    if not command_outputs or len(command_outputs) < 2:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 부족합니다"
+        )
+
+    xinetd_output = command_outputs[0].strip()
+    ps_output = command_outputs[1].strip()
+
+    xinetd_lines = [line for line in xinetd_output.split('\n') if line.strip()]
+    ps_lines = [line for line in ps_output.split('\n') if line.strip()]
+
+    # 모두 빈 출력이면 PASS
+    if not xinetd_lines and not ps_lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: FTP 서비스가 비활성화되어 있습니다"
+        )
+
+    # xinetd 설정이 있으면 PASS
+    if xinetd_lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: FTP 서비스가 xinetd로 관리되고 있습니다"
+        )
+
+    # ps 출력 확인 (grep 라인 제외)
+    if ps_lines:
+        for line in ps_lines:
+            if 'ftp' in line:
+                if 'grep' in line:
+                    pass  # grep 라인은 무시
+                else:
+                    return CheckResult(
+                        status=Status.FAIL,
+                        message="취약: FTP 서비스가 실행 중입니다"
+                    )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-60 ftp 서비스 확인"
+        status=Status.PASS,
+        message="안전: FTP 서비스가 비활성화되어 있습니다"
     )
 
 
@@ -1071,25 +1192,52 @@ def check_u61(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _61SCRIPT 로직:
+    - /etc/passwd에서 ftp 계정 확인
+    - ftp 계정의 shell이 /sbin/nologin 또는 /sbin/false이면 PASS
+    - 그 외는 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/passwd에서 ftp 계정 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _61SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: ftp 계정이 존재하지 않습니다"
+        )
+
+    # ftp 계정의 shell 확인
+    for line in lines:
+        if 'ftp' in line:
+            parts = line.split(':')
+            if len(parts) >= 7:
+                shell = parts[-1].strip()
+                if shell == '/sbin/nologin' or shell == '/sbin/false':
+                    pass  # 정상
+                else:
+                    return CheckResult(
+                        status=Status.FAIL,
+                        message=f"취약: ftp 계정의 shell이 {shell}입니다 (/sbin/nologin 또는 /sbin/false 권장)"
+                    )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-61 ftp 계정 shell 제한"
+        status=Status.PASS,
+        message="안전: ftp 계정의 shell이 적절히 설정되어 있습니다"
     )
 
 
@@ -1099,25 +1247,58 @@ def check_u62(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _62SCRIPT 로직:
+    - 2개 명령어: /etc/ftpusers, /etc/ftpd/ftpusers 파일 권한 확인
+    - 모두 빈 출력이면 PASS (파일 없음)
+    - 권한이 rw-r----- root이면 PASS
+    - 그 외는 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/ftpusers ls -l 결과
+            - [1]: /etc/ftpd/ftpusers ls -l 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _62SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    # 모든 출력 확인
+    all_empty = True
+    for output in command_outputs:
+        lines = [line for line in output.strip().split('\n') if line.strip()]
+        if lines:
+            all_empty = False
+            # ls -l 출력 파싱
+            parts = lines[0].split()
+            if len(parts) >= 3:
+                permissions = parts[0]
+                owner = parts[2]
+                # 권한 체크: rw-r----- root
+                if len(permissions) >= 10:
+                    if permissions[1:10] == 'rw-r-----' and owner == 'root':
+                        pass  # 정상
+                    else:
+                        return CheckResult(
+                            status=Status.FAIL,
+                            message=f"취약: ftpusers 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다"
+                        )
+
+    if all_empty:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: ftpusers 파일이 존재하지 않습니다"
+        )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-62 ftpusers 파일 소유자 및 권한 설정"
+        status=Status.PASS,
+        message="안전: ftpusers 파일 권한이 적절히 설정되어 있습니다"
     )
 
 
@@ -1127,26 +1308,46 @@ def check_u63(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _63SCRIPT 로직:
+    - 3개 명령어: /etc/ftpusers, /etc/ftpd/ftpusers, proftpd.conf 확인
+    - 모두 빈 출력이면 PASS
+    - 출력이 있으면 MANUAL (수동 점검 필요)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/ftpusers 파일 내용
+            - [1]: /etc/ftpd/ftpusers 파일 내용
+            - [2]: proftpd.conf 파일 내용
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _63SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-63 ftpusers 파일 설정"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    # 모든 출력 확인
+    all_empty = True
+    for output in command_outputs:
+        lines = [line for line in output.strip().split('\n') if line.strip()]
+        if lines:
+            all_empty = False
+            break
+
+    if all_empty:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: FTP 설정 파일이 존재하지 않습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="수동 점검: FTP root 계정 접속 차단 확인이 필요합니다"
+        )
 
 
 
@@ -1155,25 +1356,58 @@ def check_u64(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _64SCRIPT 로직:
+    - 2개 명령어: /etc/at.allow, /etc/at.deny 파일 권한 확인
+    - 모두 빈 출력이면 PASS
+    - 권한이 rw-r----- root이면 PASS
+    - 그 외는 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/at.allow ls -l 결과
+            - [1]: /etc/at.deny ls -l 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _64SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    # 모든 출력 확인
+    all_empty = True
+    for output in command_outputs:
+        lines = [line for line in output.strip().split('\n') if line.strip()]
+        if lines:
+            all_empty = False
+            # ls -l 출력 파싱
+            parts = lines[0].split()
+            if len(parts) >= 3:
+                permissions = parts[0]
+                owner = parts[2]
+                # 권한 체크: rw-r----- root
+                if len(permissions) >= 10:
+                    if permissions[1:10] == 'rw-r-----' and owner == 'root':
+                        pass  # 정상
+                    else:
+                        return CheckResult(
+                            status=Status.FAIL,
+                            message=f"취약: at 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다"
+                        )
+
+    if all_empty:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: at 파일이 존재하지 않습니다"
+        )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-64 at 파일 소유자 및 권한 설정"
+        status=Status.PASS,
+        message="안전: at 파일 권한이 적절히 설정되어 있습니다"
     )
 
 
@@ -1183,25 +1417,41 @@ def check_u65(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _65SCRIPT 로직:
+    - ps -ef | grep snmp 출력 확인
+    - grep이 포함된 라인 제외
+    - snmp가 있으면 FAIL
+    - 없으면 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: snmp 프로세스 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _65SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    # grep이 포함된 라인 제외
+    for line in lines:
+        if 'snmp' in line and 'grep' not in line:
+            return CheckResult(
+                status=Status.FAIL,
+                message="취약: SNMP 서비스가 실행 중입니다"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-65 SNMP 서비스 구동 점검"
+        status=Status.PASS,
+        message="안전: SNMP 서비스가 비활성화되어 있습니다"
     )
 
 
@@ -1211,25 +1461,47 @@ def check_u66(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _66SCRIPT 로직:
+    - /etc/snmp/snmpd.conf 파일 확인
+    - 빈 출력이면 PASS (SNMP 설정 없음)
+    - "public" 또는 "private"가 있으면 FAIL
+    - 그 외는 PASS
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: snmpd.conf 파일 내용
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _66SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: SNMP 설정 파일이 없습니다"
+        )
+
+    # "public" 또는 "private" 체크
+    for line in lines:
+        if 'public' in line or 'private' in line:
+            return CheckResult(
+                status=Status.FAIL,
+                message="취약: SNMP Community String이 기본값(public/private)입니다"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-66 SNMP 서비스 Community String의 복잡성"
+        status=Status.PASS,
+        message="안전: SNMP Community String이 복잡하게 설정되어 있습니다"
     )
 
 
@@ -1239,26 +1511,39 @@ def check_u67(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _67SCRIPT 로직:
+    - /etc/motd 파일 확인
+    - 빈 출력이면 FAIL (경고 메시지 없음)
+    - 출력이 있으면 PASS (경고 메시지 존재)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/motd 파일 내용
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _67SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: low
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-67 로그온 시 경고 메세지 제공"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.FAIL,
+            message="취약: 로그온 시 경고 메시지가 설정되어 있지 않습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: 로그온 시 경고 메시지가 설정되어 있습니다"
+        )
 
 
 
@@ -1267,25 +1552,57 @@ def check_u68(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _68SCRIPT 로직:
+    - /etc/exports 파일 권한 확인
+    - 빈 출력이면 PASS (파일 없음)
+    - 권한이 rw-r--r-- root이면 PASS
+    - 그 외는 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: /etc/exports ls -l 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _68SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: NFS 설정 파일이 존재하지 않습니다"
+        )
+
+    # ls -l 출력 파싱
+    parts = lines[0].split()
+    if len(parts) >= 3:
+        permissions = parts[0]
+        owner = parts[2]
+        # 권한 체크: rw-r--r-- root
+        if len(permissions) >= 10:
+            if permissions[1:10] == 'rw-r--r--' and owner == 'root':
+                return CheckResult(
+                    status=Status.PASS,
+                    message=f"안전: NFS 설정 파일 권한이 {permissions}이고 소유자가 root입니다"
+                )
+            else:
+                return CheckResult(
+                    status=Status.FAIL,
+                    message=f"취약: NFS 설정 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다"
+                )
+
     return CheckResult(
         status=Status.MANUAL,
-        message="구현 예정 - U-68 NFS 설정파일 접근 권한"
+        message="ls 출력 형식이 올바르지 않습니다"
     )
 
 
@@ -1295,26 +1612,39 @@ def check_u69(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _69SCRIPT 로직:
+    - sendmail.cf에서 expn, vrfy 설정 확인
+    - 빈 출력이면 PASS (sendmail 없음)
+    - 출력이 있으면 MANUAL (수동 점검 필요)
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: sendmail.cf에서 expn/vrfy 설정 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _69SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
-    return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-69 expn, vrfy 명령어 제한"
-    )
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Sendmail 설정 파일이 없습니다"
+        )
+    else:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="수동 점검: Sendmail expn/vrfy 명령어 제한 설정을 확인하세요"
+        )
 
 
 
@@ -1323,25 +1653,47 @@ def check_u70(command_outputs: List[str]) -> CheckResult:
 
     점검 항목을 자동으로 검증합니다.
 
+    Legacy _70SCRIPT 로직:
+    - httpd.conf에서 ServerTokens 설정 확인
+    - 빈 출력이면 PASS (Apache 없음)
+    - "ServerTokens Prod"가 있으면 PASS
+    - 그 외는 FAIL
+
     Args:
         command_outputs: 점검 명령어 실행 결과 리스트
-            - 각 문자열은 하나의 명령어 실행 결과
-            - 빈 리스트는 명령어가 없거나 수동 점검 항목
+            - [0]: httpd.conf에서 ServerTokens 설정 조회 결과
 
     Returns:
         CheckResult: 점검 결과
             - status: PASS (안전) / FAIL (취약) / MANUAL (수동 점검 필요)
             - message: 결과 설명 메시지
-
-    TODO: 구현 필요
-        - Legacy 코드 _70SCRIPT의 로직 참고
-        - command_outputs 파싱 및 검증 로직 추가
-        - 심각도: mid
     """
-    # TODO: 구현 필요
+    if not command_outputs:
+        return CheckResult(
+            status=Status.MANUAL,
+            message="명령어 출력이 없습니다"
+        )
+
+    output = command_outputs[0].strip()
+    lines = [line for line in output.split('\n') if line.strip()]
+
+    if not lines:
+        return CheckResult(
+            status=Status.PASS,
+            message="안전: Apache 설정 파일이 없습니다"
+        )
+
+    # "ServerTokens Prod" 체크
+    for line in lines:
+        if 'ServerTokens' in line and 'Prod' in line:
+            return CheckResult(
+                status=Status.PASS,
+                message="안전: Apache 서버 정보가 숨겨져 있습니다 (ServerTokens Prod)"
+            )
+
     return CheckResult(
-        status=Status.MANUAL,
-        message="구현 예정 - U-70 Apache 웹서비스 정보 숨김"
+        status=Status.FAIL,
+        message="취약: Apache 서버 정보가 노출됩니다 (ServerTokens Prod 설정 권장)"
     )
 
 

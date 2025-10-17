@@ -1,48 +1,195 @@
-# Project Template
+# BluePy 2.0
 
-이 템플릿은 머신러닝/데이터 사이언스 포트폴리오 프로젝트를 빠르게 시작하기 위한 기본 구조를 제공합니다. 각 디렉터리는 명확한 책임을 가지며, README 파일에 작성 규칙과 사용 방법을 명시합니다.
+> 비전공자도 쉽게 사용하는 멀티플랫폼 인프라 보안 점검 및 자동 수정 도구
 
-## 폴더 구조
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Development-yellow.svg)]()
+
+---
+
+## 📖 프로젝트 개요
+
+**BluePy 2.0**은 Linux, macOS, Windows 서버의 보안 취약점을 자동으로 점검하고 원클릭으로 수정할 수 있는 GUI 기반 보안 관리 플랫폼입니다.
+
+2017년 Legacy 시스템(CLI 전문가용)을 현대화하여, **중소기업과 스타트업**도 전문 보안 인력 없이 인프라 보안을 관리할 수 있도록 재구성했습니다.
+
+### 한 문장 요약
+*"버튼 클릭만으로 리눅스/맥OS/윈도우 서버의 보안을 진단하고 자동으로 수정하는 도구"*
+
+---
+
+## ✨ 주요 기능
+
+### 🌐 멀티플랫폼 지원
+- **Linux** (73개 점검 항목) - KISA 기준 완전 준수
+- **macOS** (50개 점검 항목) - SIP, Gatekeeper, FileVault 등
+- **Windows** (예정, 50개 항목) - 레지스트리, 방화벽, 그룹 정책
+
+### ⚡ 원클릭 자동 수정
+- 취약점 자동 수정 (안전한 백업 + 롤백)
+- Dry-run 모드 (시뮬레이션)
+- 미리보기 (변경 사항 확인)
+- 배치 수정 (여러 항목 동시)
+
+### 🖥️ 비전공자 친화 GUI
+- PySide6 기반 네이티브 GUI
+- 직관적인 대시보드 (점수, 차트)
+- 색상 코드 (🔴 위험, 🟡 경고, 🟢 안전)
+- 내장 교육 콘텐츠 (왜 위험한지, 어떻게 고치는지)
+
+### 📊 이력 관리 및 분석
+- 과거 점검 결과 저장
+- 트렌드 분석 (개선/악화 추세)
+- 규정 준수 추적 (KISA, PCI-DSS)
+- PDF/Excel/HTML 보고서 생성
+
+---
+
+## 🚀 빠른 시작
+
+### 요구사항
+- Python 3.12 이상
+- Linux, macOS, 또는 Windows 10+
+- SSH 접근 권한 (점검 대상 서버)
+
+### 설치
+
+```bash
+# 저장소 클론
+git clone https://github.com/yourusername/bluepy.git
+cd bluepy
+
+# 가상환경 생성
+python3.12 -m venv venv
+source venv/bin/activate  # Linux/macOS
+# 또는
+venv\Scripts\activate     # Windows
+
+# 의존성 설치
+pip install -r requirements.txt
 ```
-Project/
-├── README.md                # 전체 프로젝트 가이드
-├── requirements.txt         # 실행/개발 의존성 템플릿
-├── docs/                    # 문서 허브 (개요, 파이프라인, 분석, 실험, 운영)
-├── data/                    # 데이터 저장소 (Git 추적 제외 권장)
-│   ├── raw/
-│   └── processed/
-├── notebooks/               # EDA 및 실험 노트북
-├── scripts/                 # CLI 전처리·특징 스크립트
-├── src/                     # 패키지형 파이프라인 코드
-│   ├── data/
-│   ├── features/
-│   ├── training/
-│   └── eda/
-├── logs/                    # 실험 로그 요약 (Git에는 요약만)
-│   └── metrics/
-├── models/                  # 모델 아티팩트 (외부 보관 권장)
-├── submission/              # 제출 파일 및 메타정보
-└── tests/                   # 단위/통합 테스트 코드
+
+### 기본 사용법
+
+```bash
+# GUI 실행
+python -m src.gui.app
+
+# CLI 실행 (고급 사용자)
+python -m src.cli.commands scan --server myserver.com
 ```
 
-## 사용 가이드
-- **문서화 우선**: `docs/README.md`를 시작으로 모든 주요 변경 사항을 문서화합니다.
-- **데이터 관리**: `data/` 하위 폴더는 용량이 큰 파일이므로 Git 추적에서 제외하는 `.gitignore` 구성을 권장합니다. 필요한 경우 샘플/스키마만 커밋하세요.
-- **아티팩트 정책**: `logs/`, `models/`, `submission/`은 요약 파일과 README만 Git에 남기고 실제 대용량 파일은 외부 스토리지에 보관합니다.
-- **재현성**: `requirements.txt`를 통해 의존성을 명시하고, 가능한 한 `python -m src.training...` 형태의 CLI로 파이프라인을 실행하도록 설계합니다.
+---
 
-## 빠른 시작 체크리스트
-1. `requirements.txt`를 팀/환경에 맞게 수정하고 가상환경을 구성합니다.
-2. `docs/overview.md`에 프로젝트 배경과 목표를 작성합니다.
-3. 전처리/학습 스크립트를 `scripts/`와 `src/`에 배치하고, 실행 커맨드는 `docs/pipeline.md`에 기록합니다.
-4. 실험을 진행할 때마다 `logs/metrics/`에 CSV 요약을 추가하고, `docs/experiments.md`에 러닝 노트를 남깁니다.
-5. 프로젝트 완료 시 `README.md`의 "개인 회고" 섹션을 업데이트하여 경험한 인사이트를 기록합니다.
+## 📁 프로젝트 구조
 
-## 개인 회고 템플릿
-프로젝트를 마칠 때 아래 질문에 답하며 회고를 작성합니다.
-- 어떤 전략이 성능 향상에 가장 크게 기여했는가?
-- 실패하거나 보류한 실험은 무엇이며, 원인은 무엇이었는가?
-- 협업 또는 일정 측면에서 어떤 제약을 겪었고, 어떻게 대응했는가?
-- 다음 번 유사 프로젝트에서 우선 개선하고 싶은 부분은 무엇인가?
+```
+bluepy/
+├── src/                     # 소스 코드
+│   ├── core/               # 핵심 비즈니스 로직
+│   │   ├── scanner/        # 스캔 엔진 (Linux/macOS/Windows)
+│   │   ├── analyzer/       # 분석 엔진
+│   │   └── remediation/    # 자동 수정 엔진
+│   ├── gui/                # PySide6 GUI
+│   ├── infrastructure/     # DB, 네트워크, 보고서
+│   └── utils/              # 공통 유틸리티
+│
+├── config/                  # 설정 파일
+│   └── rules/              # 점검 규칙 (YAML)
+│       ├── linux/          # Linux 73개 규칙
+│       ├── macos/          # macOS 50개 규칙
+│       └── windows/        # Windows 규칙 (예정)
+│
+├── data/                    # 데이터 저장소
+│   ├── databases/          # SQLite
+│   ├── reports/            # 생성된 보고서
+│   └── backups/            # 백업 파일
+│
+├── tests/                   # 테스트 코드
+├── docs/                    # 문서
+│   ├── PROJECT_PLAN.md     # 프로젝트 계획서
+│   ├── ARCHITECTURE.md     # 아키텍처 상세
+│   └── ROADMAP.md          # 개발 로드맵
+│
+└── legacy/                  # 2017년 Legacy 코드 (참고용)
+```
 
-필요 시 이 템플릿을 복사하여 새로운 프로젝트를 시작하세요.
+---
+
+## 🗓️ 개발 로드맵
+
+| Phase | 기간 | 주요 기능 | 상태 |
+|-------|------|----------|------|
+| **Phase 1** | 4주 | Linux MVP | 🔄 진행 예정 |
+| **Phase 2** | 1.5주 | macOS 지원 | ⏳ 대기 |
+| **Phase 3** | 2주 | 자동 수정 | ⏳ 대기 |
+| **Phase 4** | 3주 | Windows 지원 | ⏳ 대기 |
+| **Phase 5** | 2주 | 고급 기능 | ⏳ 대기 |
+
+**총 개발 기간**: 12.5주 (약 3개월)
+
+자세한 내용은 [docs/ROADMAP.md](docs/ROADMAP.md) 참조
+
+---
+
+## 📚 문서
+
+| 문서 | 설명 |
+|------|------|
+| [PROJECT_PLAN.md](PROJECT_PLAN.md) | 프로젝트 전체 계획서 (비전, 목표, 기술 스택) |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | 시스템 아키텍처 상세 (Clean Architecture) |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | 개발 로드맵 (Phase별 상세 일정) |
+| [docs/LEGACY_ANALYSIS.md](docs/LEGACY_ANALYSIS.md) | 2017년 시스템 분석 및 마이그레이션 전략 |
+
+---
+
+## 🏗️ 기술 스택
+
+### 핵심 기술
+- **언어**: Python 3.12+
+- **GUI**: PySide6 (Qt)
+- **데이터베이스**: SQLite
+- **통신**: AsyncSSH, PyWinRM
+- **보고서**: openpyxl, ReportLab, Jinja2
+
+### 아키텍처
+- **패턴**: Clean Architecture (Hexagonal)
+- **원칙**: SOLID, DRY, KISS
+- **테스트**: pytest (커버리지 60%+)
+
+---
+
+## 🤝 기여 방법
+
+현재 프로젝트는 **개발 초기 단계**입니다.
+
+기여를 원하시면:
+1. 이슈를 생성하여 논의
+2. Fork & Pull Request
+3. 테스트 커버리지 유지 (60%+)
+4. 코드 스타일 준수 (black, ruff)
+
+---
+
+## 📄 라이선스
+
+MIT License - 자유롭게 사용, 수정, 배포 가능
+
+---
+
+## 🔗 관련 링크
+
+- **2017년 Legacy 프로젝트**: `legacy/infra/`
+- **KISA 취약점 가이드**: https://www.kisa.or.kr
+- **CIS Benchmarks**: https://www.cisecurity.org/cis-benchmarks/
+
+---
+
+## 📞 문의
+
+프로젝트 관련 문의는 Issues에 남겨주세요.
+
+---
+
+**BluePy 2.0** - Making infrastructure security accessible to everyone.

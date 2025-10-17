@@ -11,6 +11,9 @@ Use these files when I request structured feature development using PRDs:
 # agents 사용 지침
 - **반드시** 병렬 수행에 유리한 작업을 스스로 판단하고 적절한 agents를 배정해서 사용.
 
+# 철칙
+- **반드시** 📋 ❌ ✅ 🔴 📂 와 같거나 유사한 이모티콘은 **절대적으로** 작성 금지.
+
 ## AI Dev Tasks 사용법
 1. **PRD 생성**: `Use @create-prd.md` + 기능 설명
    - 결과: `tasks/prd-[feature-name].md`

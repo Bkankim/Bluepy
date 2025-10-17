@@ -172,7 +172,30 @@ Legend:
   - AST 기반 함수 추출 (extract_severity, extract_function_info, extract_functions)
   - 73개 함수 추출 성공 (U-01 ~ U-73)
   - 결과: `scripts/migrate_legacy.py` (700+ 줄)
-- [ ] YAML 규칙 생성 시스템 구현 - 진행 예정 (Task 3.0)
+- [x] bash 명령어 추출 로직 구현 (Task 3.1 완료)
+  - parse_linux_bash_script() 함수 (113줄, State machine 방식)
+    * KISA 코드 인식: echo "X-X ..." 패턴
+    * 명령어 수집: cat, ls, ps, grep, egrep, find, pwconv
+    * 리다이렉션 자동 제거 (>>report.txt)
+    * 변수 유지 ($APACHE_DIRECTORY)
+  - FunctionInfo에 commands 필드 추가 (List[str])
+  - extract_function_info() 수정: commands_by_kisa 연결
+  - 결과: 35개 KISA 코드에서 35개 명령어 추출 성공
+- [x] YAML 템플릿 생성 함수 구현 (Task 3.2 완료)
+  - KISA_NAMES 딕셔너리 (73개 규칙 이름 전체 매핑)
+  - infer_category(kisa_code) 함수
+    * U-01~15: 계정관리
+    * U-16~35: 파일 및 디렉터리 관리
+    * U-36~70: 서비스 관리
+    * U-71: 패치 관리
+    * U-72~73: 로그 관리
+  - generate_validator_name(kisa_code) 함수
+    * U-01 → validators.linux.check_u01 형식 자동 생성
+  - generate_yaml_template(func_info) 함수
+    * FunctionInfo → YAML dict 완전 자동 변환
+    * 모든 필드 생성: id, name, category, severity, commands, validator, remediation
+  - 결과: U-01 샘플 YAML 생성 성공 (완전한 구조)
+- [ ] YAML 파일 저장 및 검증 - 진행 예정 (Task 3.3)
 - [ ] Validator 함수 스켈레톤 생성 - 진행 예정 (Task 4.0)
 - [ ] 10개 함수 시범 마이그레이션 완료 및 보고서 생성 - 진행 예정 (Task 5.0-6.0)
 
@@ -212,11 +235,21 @@ Legend:
 - ✅ 복잡도 측정: 21 ~ 128 AST 노드
 - ✅ 심각도 분류: 44 HIGH, 17 MID, 12 LOW (1개 경고: _42SCRIPT)
 
-**다음 단계 (Task 3.0)**:
-- YAML 규칙 생성 시스템 구현
-- bash 명령어 추출 (os.popen/subprocess 찾기)
-- YAML 템플릿 생성 (KISA 코드 매핑, 자동 추론)
-- YAML 파일 저장 및 검증
+**검증 완료** (Task 3.1-3.2):
+- ✅ bash 스크립트 파싱: Linux_Check_1.txt (684줄) 파싱 성공
+- ✅ 명령어 추출: 35개 KISA 코드에서 총 35개 명령어 추출 (평균 1.0개/규칙)
+- ✅ KISA_NAMES 매핑: 73개 전체 규칙 이름 매핑 완료
+- ✅ 카테고리 자동 추론: 5개 카테고리 정확 분류
+  - 계정관리 (U-01~15), 파일 및 디렉터리 관리 (U-16~35)
+  - 서비스 관리 (U-36~70), 패치 관리 (U-71), 로그 관리 (U-72~73)
+- ✅ YAML 템플릿 생성: U-01 샘플 성공 (완전한 YAML 구조)
+- ✅ validator 함수명: validators.linux.check_u01 형식 자동 생성
+
+**다음 단계 (Task 3.3)**:
+- YAML 파일 저장 (pyyaml 사용, UTF-8 인코딩)
+- config/rules/linux/ 디렉토리 구조 생성
+- pydantic 검증 (선택적)
+- 73개 YAML 파일 생성 완료
 
 ---
 

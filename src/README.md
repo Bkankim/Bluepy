@@ -1,10 +1,45 @@
-# src 패키지 가이드
+# Source Code Directory
 
-- `src/`는 재사용 가능한 파이프라인 코드를 모아 패키지 형태로 관리합니다.
-- 각 서브모듈은 DOCSTRING과 타입 힌트를 통해 역할을 명확히 하며, CLI 엔트리포인트는 `python -m` 형태로 실행할 수 있도록 구성합니다.
-- 핵심 구조 예시:
-  - `src/data/`: 데이터 로딩, 전처리, 샘플링 유틸
-  - `src/features/`: 특징 엔지니어링, 인코딩 로직
-  - `src/training/`: 학습 루프, 튜너, 추론 스크립트
-  - `src/eda/`: 자동 리포트 생성, 분석 유틸
-- 모듈 추가 시 `docs/pipeline.md`에 관련 사용법을 업데이트하세요.
+BluePy 2.0 소스 코드
+
+## 구조
+
+```
+src/
+├── core/               # 핵심 비즈니스 로직
+│   ├── domain/        # 도메인 모델 (CheckItem, ScanResult 등)
+│   ├── scanner/       # 스캔 엔진 (Linux, macOS, Windows)
+│   ├── analyzer/      # 분석 엔진 (파싱, 위험도 계산)
+│   └── remediation/   # 자동 수정 엔진
+│
+├── application/        # Use Cases (비즈니스 로직 조율)
+│   ├── scan_service.py
+│   ├── remediation_service.py
+│   └── report_service.py
+│
+├── gui/                # PySide6 GUI
+│   ├── views/         # 화면 (Dashboard, Scan, Result 등)
+│   ├── widgets/       # 재사용 위젯
+│   ├── dialogs/       # 대화상자
+│   └── resources/     # 아이콘, 스타일시트
+│
+├── infrastructure/     # 인프라 계층
+│   ├── database/      # SQLite ORM
+│   ├── network/       # SSH, WinRM 클라이언트
+│   └── reporting/     # PDF, Excel, HTML 생성
+│
+└── utils/              # 공통 유틸리티
+    ├── logger.py
+    ├── config.py
+    └── crypto.py
+```
+
+## 설계 원칙
+
+- **Clean Architecture**: 계층 분리, 의존성 역전
+- **SOLID 원칙**: 단일 책임, 개방-폐쇄 등
+- **테스트 가능성**: 모든 모듈은 독립적으로 테스트 가능
+
+## 개발 가이드
+
+자세한 내용은 [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) 참조

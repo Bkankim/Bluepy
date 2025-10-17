@@ -1,6 +1,29 @@
-# 데이터 관리 가이드
+# Data Directory
 
-- `raw/`에는 원본 데이터를 저장합니다. 용량이 크거나 민감한 파일은 Git 추적에서 제외하세요.
-- `processed/`에는 전처리·파생 데이터셋을 저장합니다. 재생성 가능한 경우 스크립트와 메타데이터만 커밋합니다.
-- 데이터 변경 시 `docs/pipeline.md`와 `docs/analysis.md`에 업데이트 내역을 반영하세요.
-- 샘플 파일 또는 스키마(`schema.json` 등)를 추가해 협업자가 구조를 빠르게 파악할 수 있도록 합니다.
+BluePy 2.0 데이터 저장소
+
+## 구조
+
+```
+data/
+├── databases/      # SQLite 데이터베이스 파일
+│   └── bluepy.db  # 메인 DB (서버, 스캔 이력 등)
+│
+├── reports/        # 생성된 보고서 파일
+│   ├── *.xlsx     # Excel 보고서
+│   ├── *.pdf      # PDF 보고서
+│   └── *.html     # HTML 보고서
+│
+└── backups/        # 자동 수정 시 백업 파일
+    └── backup_YYYYMMDD_HHMMSS/
+```
+
+## 주의사항
+
+- 이 디렉토리의 모든 내용은 Git에 추적되지 않음 (.gitignore)
+- 데이터베이스는 자동으로 생성됨
+- 백업 파일은 30일 후 자동 삭제 (설정 가능)
+
+## 데이터베이스 스키마
+
+자세한 내용은 [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md#9-데이터베이스-설계) 참조

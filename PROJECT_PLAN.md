@@ -602,7 +602,29 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
     * 모든 함수 Status.PASS/FAIL/MANUAL 판단 로직 추가
     * 검증 완료: py_compile, import, 실행 테스트 통과
     * Git commit: 634d85a (3 files, 399 insertions, 118 deletions)
-  - 진행 예정: Task 6.0 (나머지 63개 함수 마이그레이션)
+  - **Task 6.0 진행 중: 나머지 63개 함수 마이그레이션 (28개 완료, 35개 남음)**
+    * **Phase 1 완료** (2025-10-17): log_management.py (U-72, U-73 - 2개)
+      - check_u72: 로그의 정기적 검토 및 보고 (MANUAL)
+      - check_u73: 로그 기록 정책 수립 (MANUAL)
+      - Git commit: 922555d
+    * **Phase 2 완료** (2025-10-17): patch_management.py (U-71 - 1개)
+      - check_u71: 최신 보안패치 및 벤더 권고사항 적용 (MANUAL)
+      - Git commit: 19fc939
+    * **Phase 3 완료** (2025-10-17): account_management.py 나머지 (U-02, U-06, U-11~U-15 - 7개)
+      - Batch 1: check_u02 (패스워드 복잡성), check_u06 (su 제한), check_u11 (관리자 그룹)
+      - Batch 2: check_u12 (GID 점검), check_u13 (UID 중복), check_u14 (shell 점검)
+      - Batch 3: check_u15 (Session Timeout)
+      - 총 15개 테스트 케이스 통과
+      - Git commit: b90b9ca
+    * **Phase 4 완료** (2025-10-18): file_management.py 나머지 (U-16, U-17, U-19~U-26, U-28~U-35 - 18개)
+      - Batch 1: check_u16~u22 (PATH 점검, 파일 권한 r--------/rw-------/rw-r--r--)
+      - Batch 2: check_u23~u29 (서비스 파일, SUID/SGID, .rhosts, ALL:ALL)
+      - Batch 3: check_u30~u35 (hosts.lpd, NIS, umask, 홈 디렉터리)
+      - 총 32개 테스트 케이스 통과
+      - Git commit: 4a098bf
+    * **진행 상황**: 38/73 함수 구현 완료 (52.1%)
+      - 완료 카테고리: account_management (15/15), file_management (20/20), log_management (2/2), patch_management (1/1)
+      - 진행 예정: service_management.py (U-36~U-70 - 35개)
 
 - [ ] Week 2: Linux 스캐너 구현
   - BaseScanner 추상 클래스

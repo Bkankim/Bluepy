@@ -6,6 +6,25 @@
 
 ---
 
+## 진행 상황 (2025-10-17 업데이트)
+
+**중요**: 이 Task List는 초기 PRD 기준으로 작성되었습니다. 실제 구현 과정에서 일부 조정이 있었습니다.
+
+**실제 완료 내용** (상세 내용은 `docs/ROADMAP.md` 참조):
+- Task 1.0-2.0: 완료 (Legacy 분석, 도메인 모델, 마이그레이션 엔진)
+- Task 3.0: 완료 (73개 YAML 규칙 파일 생성, 10개가 아닌 전체 73개 생성)
+- Task 4.0: 완료 (73개 Validator 스켈레톤 생성, linux/ 디렉토리 구조로 변경)
+- Task 5.0 (ROADMAP 버전): 완료 (10개 함수 시범 구현 - U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10, U-18, U-27)
+- Task 5.0 (PRD 버전): 미완료 (테스트 자동화는 향후 진행 예정)
+- Task 6.0: 진행 예정 (나머지 63개 함수 마이그레이션)
+
+**Git Commits**:
+- 634d85a: feat: Complete Task 5.0 - 10 functions implementation
+- 6a1e166: feat: Complete Task 4.0 - Validator skeleton generation
+- f624874: docs: Update documentation with Task 3.3 verification results
+
+---
+
 ## Relevant Files
 
 ### 생성할 파일
@@ -50,21 +69,21 @@
   - [x] 2.5 FunctionInfo 데이터 구조 정의 (name, kisa_code, source_code, commands, complexity 필드)
   - [x] 2.6 통합 테스트 (73개 함수 추출 확인, Python 3 실행 가능 검증)
 
-- [ ] 3.0 YAML 규칙 생성 시스템 구현
-  - [ ] 3.1 bash 명령어 추출 로직 구현 (AST에서 os.popen/subprocess 찾기, `_SPLIT()` 패턴 인식)
-  - [ ] 3.2 YAML 템플릿 생성 함수 구현 (KISA 코드 매핑, name/category/severity 자동 추론)
-  - [ ] 3.3 YAML 파일 저장 (pyyaml, UTF-8 인코딩, `config/rules/linux/U-{번호:02d}.yaml` 형식)
-  - [ ] 3.4 YAML 검증 함수 구현 (필수 필드 체크, validator 함수명 형식 검증)
-  - [ ] 3.5 10개 YAML 파일 생성 (선정된 10개 함수에 대해 생성 및 검증)
-  - [ ] 3.6 YAML 규칙 매뉴얼 작성 (`docs/YAML_RULES_GUIDE.md`, 필드 설명, 예시, 추가 방법)
+- [x] 3.0 YAML 규칙 생성 시스템 구현
+  - [x] 3.1 bash 명령어 추출 로직 구현 (AST에서 os.popen/subprocess 찾기, `_SPLIT()` 패턴 인식)
+  - [x] 3.2 YAML 템플릿 생성 함수 구현 (KISA 코드 매핑, name/category/severity 자동 추론)
+  - [x] 3.3 YAML 파일 저장 (pyyaml, UTF-8 인코딩, `config/rules/linux/U-{번호:02d}.yaml` 형식)
+  - [x] 3.4 YAML 검증 함수 구현 (필수 필드 체크, validator 함수명 형식 검증)
+  - [x] 3.5 10개 YAML 파일 생성 (선정된 10개 함수에 대해 생성 및 검증) - 실제로는 73개 모두 생성
+  - [x] 3.6 YAML 규칙 매뉴얼 작성 (`docs/YAML_RULES_GUIDE.md`, 필드 설명, 예시, 추가 방법)
 
-- [ ] 4.0 Validator 함수 생성 시스템 구현
-  - [ ] 4.1 validator 함수 템플릿 설계 (함수 시그니처, docstring 구조, TODO 주석)
-  - [ ] 4.2 함수명 자동 생성 로직 (KISA 코드→snake_case 변환, `check_u{번호:02d}_{이름}` 형식)
-  - [ ] 4.3 Legacy 로직 주석 삽입 (주요 로직을 주석으로 변환, 구현 힌트 제공)
-  - [ ] 4.4 `src/core/analyzer/validators/linux.py` 생성 (모듈 docstring, CheckResult import, 10개 함수, `__all__`)
-  - [ ] 4.5 `src/core/analyzer/validators/__init__.py` 생성 (linux 모듈 import, 향후 macos/windows 대비)
-  - [ ] 4.6 validator 함수 테스트 스켈레톤 생성 (`tests/unit/test_validators.py`, 존재/반환타입 테스트)
+- [x] 4.0 Validator 함수 생성 시스템 구현
+  - [x] 4.1 validator 함수 템플릿 설계 (함수 시그니처, docstring 구조, TODO 주석)
+  - [x] 4.2 함수명 자동 생성 로직 (KISA 코드→snake_case 변환, `check_u{번호:02d}_{이름}` 형식)
+  - [x] 4.3 Legacy 로직 주석 삽입 (주요 로직을 주석으로 변환, 구현 힌트 제공)
+  - [x] 4.4 `src/core/analyzer/validators/linux.py` 생성 (모듈 docstring, CheckResult import, 10개 함수, `__all__`) - 실제로는 linux/ 디렉토리 생성 후 category별 분리
+  - [x] 4.5 `src/core/analyzer/validators/__init__.py` 생성 (linux 모듈 import, 향후 macos/windows 대비)
+  - [x] 4.6 validator 함수 테스트 스켈레톤 생성 (`tests/unit/test_validators.py`, 존재/반환타입 테스트)
 
 - [ ] 5.0 테스트 자동화 구현
   - [ ] 5.1 `tests/unit/test_migration.py` 생성 (마이그레이션 스크립트 기능 테스트, Python 2→3 변환, 함수 추출, 인코딩)

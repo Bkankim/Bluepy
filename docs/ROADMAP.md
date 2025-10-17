@@ -365,6 +365,33 @@ Legend:
 
 **다음 단계**: 나머지 63개 함수 마이그레이션
 
+**Phase 1 완료**: log_management.py (U-72, U-73 - 2개 함수) (2025-10-17)
+
+**구현 내용**:
+1. check_u72: 로그의 정기적 검토 및 보고
+   - Legacy _72SCRIPT 로직 변환 (수동 점검 항목)
+   - 항상 Status.MANUAL 반환
+   - 한글 메시지: "로그 기록의 검토, 분석, 리포트 작성 및 보고 등이 정기적으로 이루어지는지 확인"
+   - Severity: HIGH
+
+2. check_u73: 로그 기록 정책 수립
+   - Legacy _73SCRIPT 로직 변환 (수동 점검 항목)
+   - 항상 Status.MANUAL 반환
+   - 한글 메시지: "로그 기록 정책이 정책에 따라 설정되어 수립되어 있는지 확인"
+   - Severity: LOW
+
+**검증 완료**:
+- py_compile 성공: 문법 오류 없음
+- import 테스트: check_u72, check_u73 정상 import
+- 실행 테스트: Status.MANUAL 반환 확인 (빈 입력, 샘플 입력)
+- Git commit: 379e73f (1 file, 16 insertions, 24 deletions)
+
+**진행 상황**: 12/73 함수 구현 완료 (16.4%)
+- 완료: U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10 (계정관리 8개), U-18, U-27 (파일관리 2개), U-72, U-73 (로그관리 2개)
+- 미완료: 61개
+
+**다음 Phase**: patch_management.py (U-71 - 1개 함수)
+
 ---
 
 ### 3.3 Week 2: Core 모듈 구현

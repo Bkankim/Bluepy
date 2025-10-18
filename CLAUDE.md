@@ -148,12 +148,35 @@ python3.12 scripts/migrate_legacy.py \
 ```
 
 **완료 상태** (2025-10-18 업데이트):
-- Task 1.0-4.0 완료: 73개 YAML 파일 생성, Validator 스켈레톤 생성
-- Task 5.0 완료: 10개 함수 시범 마이그레이션 (U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10, U-18, U-27)
-- **Task 6.0 완료**: 나머지 63개 함수 마이그레이션 (73/73 완료, 100%)
-  * Phase 1-5 완료: 63개 함수 구현
+- **Week 1 완료**: 73개 Validator 함수 마이그레이션 (100%)
+  * Task 1.0-4.0 완료: 73개 YAML 파일 생성, Validator 스켈레톤 생성
+  * Task 5.0 완료: 10개 함수 시범 마이그레이션 (U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10, U-18, U-27)
+  * Task 6.0 완료: 나머지 63개 함수 마이그레이션 (73/73 완료)
   * 완료 카테고리: account_management (15/15), file_management (20/20), service_management (35/35), log_management (2/2), patch_management (1/1)
-  * 모든 Validator 함수 마이그레이션 완료!
+
+- **Week 2 완료**: Scanner/Analyzer 엔진 (1,050 lines, commit a97b9f3)
+  * base_scanner.py (210 lines) - BaseScanner, ScanResult
+  * rule_loader.py (209 lines) - YAML 규칙 로딩
+  * ssh_client.py (190 lines) - AsyncSSH 클라이언트
+  * linux_scanner.py (234 lines) - Linux 스캐너 구현
+  * risk_calculator.py (207 lines) - 리스크 통계 계산
+
+- **Week 3 완료**: GUI + Database (1,490 lines, commit 947261b)
+  * main_window.py (188 lines) - QMainWindow 구조
+  * server_view.py (188 lines) - 서버 목록 관리
+  * scan_view.py (253 lines) - 스캔 실행 UI
+  * result_view.py (277 lines) - 결과 트리뷰
+  * server_dialog.py (198 lines) - 서버 추가/편집
+  * models.py (137 lines) - SQLAlchemy ORM
+  * server_repository.py (178 lines) - CRUD 기능
+  * app.py (52 lines) - Entry point
+
+- **Week 4 완료**: Integration + Reporting (784 lines, commit b2cd6cc)
+  * excel_reporter.py (242 lines) - Excel 보고서 (3 sheets)
+  * scan_worker.py (186 lines) - QThread + asyncio
+  * main_window.py 통합 업데이트 (+168 lines) - Scanner 연동
+
+- **Linux MVP 완성!** (총 3,324 lines)
 
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기

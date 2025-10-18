@@ -198,10 +198,38 @@ class RuleMetadata(BaseModel):
     remediation: Optional[RemediationInfo] = None
 
 
+@dataclass
+class RemediationResult:
+    """자동 수정 실행 결과
+
+    자동 수정 시도 후 성공/실패 여부와 상세 정보를 담습니다.
+
+    Attributes:
+        success: 수정 성공 여부
+        message: 결과 메시지
+        backup_id: 백업 세션 ID (롤백 시 사용)
+        executed_commands: 실행한 명령어 목록
+        dry_run: Dry-run 모드 여부 (실제 실행 안 함)
+        timestamp: 실행 시각
+        rollback_performed: 롤백 수행 여부 (실패 시 자동 롤백)
+        error: 에러 정보 (실패 시)
+    """
+
+    success: bool
+    message: str
+    backup_id: Optional[str] = None
+    executed_commands: List[str] = field(default_factory=list)
+    dry_run: bool = False
+    timestamp: datetime = field(default_factory=datetime.now)
+    rollback_performed: bool = False
+    error: Optional[str] = None
+
+
 __all__ = [
     "Status",
     "Severity",
     "CheckResult",
     "RemediationInfo",
     "RuleMetadata",
+    "RemediationResult",
 ]

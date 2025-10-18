@@ -11,3 +11,6 @@ remediation:
   auto: false
   backup_files: []
   commands: []
+platforms:
+- linux
+- macos

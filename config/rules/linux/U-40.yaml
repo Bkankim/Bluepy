@@ -5,10 +5,13 @@ severity: high
 description: DOS 공격에 취약한 서비스 비활성화 취약점을 점검합니다.
 check:
   commands:
-    - cat /etc/inetd.conf
-    - cat /etc/xinetd.conf
+  - cat /etc/inetd.conf
+  - cat /etc/xinetd.conf
 validator: validators.linux.check_u40
 remediation:
   auto: false
   backup_files: []
   commands: []
+platforms:
+- linux
+- macos

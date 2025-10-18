@@ -5,10 +5,13 @@ severity: high
 description: Finger 서비스 비활성화 취약점을 점검합니다.
 check:
   commands:
-    - cat /etc/inetd.conf
-    - cat /etc/xinetd.d/finger
+  - cat /etc/inetd.conf
+  - cat /etc/xinetd.d/finger
 validator: validators.linux.check_u36
 remediation:
   auto: false
   backup_files: []
   commands: []
+platforms:
+- linux
+- macos

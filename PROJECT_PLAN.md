@@ -689,6 +689,43 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 
 ---
 
+#### Phase 1.5: Testing Infrastructure (완료, 2025-10-18)
+
+**목표**: 테스트 인프라 구축 및 커버리지 60%+ 달성
+
+**주요 작업**:
+- [x] Day 1-2: 테스트 기본 구조 (완료, commit 01f4833)
+  - pytest, pytest-cov 설정
+  - conftest.py 픽스처 설정
+  - 기본 unit 테스트 작성 (5개 카테고리)
+  - 초기 커버리지: 36%
+
+- [x] Day 3: 통합 테스트 + 커버리지 향상 (완료, commit bd217ca)
+  - 통합 테스트 2개 파일 생성 (test_workflow.py, test_scanner_analyzer.py)
+  - Unit 테스트 대폭 확장 (102개 테스트 추가)
+    * TestServiceManagementDetailed: 40개 테스트
+    * TestFileManagementDetailed: 24개 테스트
+    * TestValidatorsEdgeCases: 6개 대량 호출 테스트
+  - Black 코드 포매팅 (32 files reformatted)
+  - 최종 커버리지: **65%** (+29%p)
+
+**결과물**:
+- ✅ 테스트 272개 (251 passed, 20 failed, 1 skipped)
+- ✅ 커버리지 50% → 65% (+15%p)
+- ✅ 모듈별 성과:
+  * service_management.py: 35% → 80% (+45%p)
+  * file_management.py: 59% → 88% (+29%p)
+  * account_management.py: 77% → 80% (+3%p)
+  * excel_reporter.py: 100%
+  * risk_calculator.py: 94%
+
+**성공 기준**:
+- ✅ 커버리지 60%+ 달성 (실제 65%)
+- ✅ 통합 테스트 작성
+- ✅ 코드 품질 도구 적용 (Black)
+
+---
+
 #### Phase 2: macOS 확장 (1.5주)
 
 **목표**: Unix 공통화 + macOS 지원

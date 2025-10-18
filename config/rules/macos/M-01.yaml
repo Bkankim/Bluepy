@@ -1,0 +1,35 @@
+id: M-01
+name: System Integrity Protection (SIP) 활성화
+category: system_protection
+severity: high
+platforms:
+  - macos
+
+description: |
+  System Integrity Protection (SIP)은 macOS의 핵심 보안 기능으로,
+  시스템 파일과 프로세스를 악성코드로부터 보호합니다.
+  SIP가 비활성화되면 시스템이 루트킷 공격에 취약해집니다.
+
+check:
+  commands:
+    - csrutil status
+  validator: validators.macos.check_m01
+
+remediation:
+  auto: false
+  description: |
+    SIP는 Recovery Mode에서만 활성화/비활성화할 수 있습니다.
+    자동 수정이 불가능하므로 수동으로 설정해야 합니다.
+  manual_steps:
+    - Recovery Mode로 재부팅 (Command+R)
+    - Terminal 실행
+    - csrutil enable 명령 실행
+    - 재부팅
+
+education:
+  risk_level: 높음
+  attack_scenario: |
+    SIP가 비활성화되면 공격자가 시스템 파일을 수정하고
+    루트킷을 설치할 수 있습니다.
+  references:
+    - https://support.apple.com/en-us/HT204899

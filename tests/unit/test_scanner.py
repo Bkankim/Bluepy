@@ -406,15 +406,15 @@ class TestBaseScannerAdditional:
 
     def test_base_scanner_rules_property(self):
         """규칙 리스트 확인"""
-        scanner = LinuxScanner(server_id="test", platform="linux")
+        scanner = LinuxScanner(server_id="test", host="localhost", username="test")
 
-        assert hasattr(scanner, "rules")
-        assert isinstance(scanner.rules, list)
-        assert len(scanner.rules) == 0  # 초기에는 비어있음
+        assert hasattr(scanner, "_rules")
+        assert isinstance(scanner._rules, list)
+        assert len(scanner._rules) == 0  # 초기에는 비어있음
 
     def test_base_scanner_connection_state(self):
         """연결 상태 확인"""
-        scanner = LinuxScanner(server_id="test", platform="linux")
+        scanner = LinuxScanner(server_id="test", host="localhost", username="test")
 
         assert hasattr(scanner, "is_connected")
         # 초기에는 연결되지 않음

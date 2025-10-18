@@ -1,0 +1,32 @@
+id: M-09
+name: Time Machine 암호화
+category: data_protection
+severity: medium
+platforms:
+  - macos
+
+description: |
+  Time Machine 백업을 암호화하여 백업 데이터를 보호합니다.
+  백업 디스크 도난 시 데이터 유출을 방지합니다.
+
+check:
+  commands:
+    - tmutil destinationinfo | grep -i encryption
+  validator: validators.macos.check_m09
+
+remediation:
+  auto: false
+  description: |
+    Time Machine 암호화는 백업 디스크 재설정이 필요하므로 자동 수정이 불가능합니다.
+  manual_steps:
+    - System Preferences > Time Machine
+    - Select Disk 선택
+    - Encrypt Backup Disk 체크
+    - 패스워드 설정
+
+education:
+  risk_level: 중간
+  attack_scenario: |
+    암호화되지 않은 백업 디스크가 도난되면 모든 데이터가 노출됩니다.
+  references:
+    - https://support.apple.com/guide/mac-help/mh21241

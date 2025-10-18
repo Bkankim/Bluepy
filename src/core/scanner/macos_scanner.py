@@ -1,7 +1,7 @@
-"""Linux 스캐너
+"""macOS 스캐너
 
-Linux 서버에 SSH로 연결하여 보안 점검을 수행합니다.
-UnixScanner를 상속하여 Linux 전용 설정을 제공합니다.
+macOS 서버에 SSH로 연결하여 보안 점검을 수행합니다.
+UnixScanner를 상속하여 macOS 전용 설정을 제공합니다.
 """
 
 from typing import Optional
@@ -9,14 +9,14 @@ from typing import Optional
 from .unix_scanner import UnixScanner
 
 
-class LinuxScanner(UnixScanner):
-    """Linux 서버 스캐너
+class MacOSScanner(UnixScanner):
+    """macOS 서버 스캐너
 
-    UnixScanner를 상속하여 Linux 서버 점검을 수행합니다.
+    UnixScanner를 상속하여 macOS 서버 점검을 수행합니다.
     모든 공통 로직은 UnixScanner에 구현되어 있습니다.
 
     사용 예시:
-        >>> scanner = LinuxScanner(
+        >>> scanner = MacOSScanner(
         ...     server_id="server-001",
         ...     host="192.168.1.100",
         ...     username="admin",
@@ -48,10 +48,10 @@ class LinuxScanner(UnixScanner):
             key_filename: SSH 키 파일 경로 (선택)
             port: SSH 포트 (기본: 22)
         """
-        # UnixScanner 초기화 (platform="linux" 고정)
+        # UnixScanner 초기화 (platform="macos" 고정)
         super().__init__(
             server_id=server_id,
-            platform="linux",
+            platform="macos",
             host=host,
             username=username,
             password=password,
@@ -61,5 +61,5 @@ class LinuxScanner(UnixScanner):
 
 
 __all__ = [
-    "LinuxScanner",
+    "MacOSScanner",
 ]

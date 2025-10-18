@@ -1,0 +1,30 @@
+id: M-05
+name: Automatic Updates 활성화
+category: patch_management
+severity: medium
+platforms:
+  - macos
+
+description: |
+  자동 업데이트를 활성화하여 최신 보안 패치를 적용합니다.
+  취약점이 발견되면 즉시 패치되어야 합니다.
+
+check:
+  commands:
+    - defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled
+    - defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload
+  validator: validators.macos.check_m05
+
+remediation:
+  auto: true
+  description: 자동 업데이트를 활성화합니다.
+  commands:
+    - sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
+    - sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool true
+
+education:
+  risk_level: 중간
+  attack_scenario: |
+    자동 업데이트가 비활성화되면 알려진 취약점이 패치되지 않아 공격받을 수 있습니다.
+  references:
+    - https://support.apple.com/en-us/HT202180

@@ -1,0 +1,29 @@
+id: M-07
+name: Guest Account 비활성화
+category: access_control
+severity: medium
+platforms:
+  - macos
+
+description: |
+  Guest 계정은 비밀번호 없이 시스템에 접근할 수 있습니다.
+  보안을 위해 Guest 계정을 비활성화해야 합니다.
+
+check:
+  commands:
+    - sudo dscl . -read /Users/Guest
+    - defaults read /Library/Preferences/com.apple.loginwindow GuestEnabled
+  validator: validators.macos.check_m07
+
+remediation:
+  auto: true
+  description: Guest 계정을 비활성화합니다.
+  commands:
+    - sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false
+
+education:
+  risk_level: 중간
+  attack_scenario: |
+    Guest 계정이 활성화되면 누구나 시스템에 로그인할 수 있습니다.
+  references:
+    - https://support.apple.com/guide/mac-help/mh11772

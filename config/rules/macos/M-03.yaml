@@ -1,0 +1,29 @@
+id: M-03
+name: Gatekeeper 설정
+category: application_security
+severity: medium
+platforms:
+  - macos
+
+description: |
+  Gatekeeper는 신뢰할 수 없는 앱의 실행을 차단합니다.
+  App Store 및 인증된 개발자의 앱만 실행을 허용해야 합니다.
+
+check:
+  commands:
+    - spctl --status
+    - spctl --assess --type execute --verbose /Applications/Safari.app
+  validator: validators.macos.check_m03
+
+remediation:
+  auto: true
+  description: Gatekeeper를 활성화합니다.
+  commands:
+    - sudo spctl --master-enable
+
+education:
+  risk_level: 중간
+  attack_scenario: |
+    Gatekeeper가 비활성화되면 서명되지 않은 악성 앱이 실행될 수 있습니다.
+  references:
+    - https://support.apple.com/en-us/HT202491

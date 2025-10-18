@@ -1,0 +1,30 @@
+id: M-06
+name: Screen Saver Password 설정
+category: access_control
+severity: medium
+platforms:
+  - macos
+
+description: |
+  화면 보호기 활성화 시 패스워드를 요구하여 무단 접근을 방지합니다.
+  자리를 비울 때 시스템을 보호합니다.
+
+check:
+  commands:
+    - defaults read com.apple.screensaver askForPassword
+    - defaults read com.apple.screensaver askForPasswordDelay
+  validator: validators.macos.check_m06
+
+remediation:
+  auto: true
+  description: 화면 보호기 패스워드를 활성화합니다.
+  commands:
+    - defaults write com.apple.screensaver askForPassword -int 1
+    - defaults write com.apple.screensaver askForPasswordDelay -int 5
+
+education:
+  risk_level: 중간
+  attack_scenario: |
+    화면 보호기 패스워드가 없으면 자리를 비운 사이 타인이 시스템에 접근할 수 있습니다.
+  references:
+    - https://support.apple.com/guide/mac-help/mh11785

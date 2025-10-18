@@ -1,0 +1,30 @@
+id: M-08
+name: Remote Login 및 Remote Management 제한
+category: network_security
+severity: high
+platforms:
+  - macos
+
+description: |
+  SSH (Remote Login)와 ARD (Remote Management)는 원격 접근을 허용합니다.
+  필요하지 않으면 비활성화하여 공격 표면을 줄여야 합니다.
+
+check:
+  commands:
+    - sudo systemsetup -getremotelogin
+    - sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -query -verbose
+  validator: validators.macos.check_m08
+
+remediation:
+  auto: true
+  description: Remote Login과 Remote Management를 비활성화합니다.
+  commands:
+    - sudo systemsetup -setremotelogin off
+    - sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -deactivate -stop
+
+education:
+  risk_level: 높음
+  attack_scenario: |
+    Remote Login이 활성화되면 공격자가 SSH를 통해 원격으로 접근할 수 있습니다.
+  references:
+    - https://support.apple.com/guide/mac-help/mh11883

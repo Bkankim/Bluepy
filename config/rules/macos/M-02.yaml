@@ -1,0 +1,32 @@
+id: M-02
+name: FileVault 전체 디스크 암호화
+category: data_protection
+severity: high
+platforms:
+  - macos
+
+description: |
+  FileVault는 macOS의 전체 디스크 암호화 기능입니다.
+  물리적 도난 시 데이터 유출을 방지합니다.
+
+check:
+  commands:
+    - fdesetup status
+  validator: validators.macos.check_m02
+
+remediation:
+  auto: false
+  description: |
+    FileVault 암호화는 사용자 승인이 필요하므로 자동 수정이 불가능합니다.
+  manual_steps:
+    - System Preferences > Security & Privacy
+    - FileVault 탭 선택
+    - Turn On FileVault 클릭
+    - Recovery Key 백업
+
+education:
+  risk_level: 높음
+  attack_scenario: |
+    디스크 암호화가 없으면 노트북 도난 시 모든 데이터가 노출됩니다.
+  references:
+    - https://support.apple.com/en-us/HT204837

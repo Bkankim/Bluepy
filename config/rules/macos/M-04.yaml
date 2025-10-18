@@ -1,0 +1,28 @@
+id: M-04
+name: Firewall 활성화
+category: network_security
+severity: high
+platforms:
+  - macos
+
+description: |
+  Application Firewall은 들어오는 네트워크 연결을 제어합니다.
+  불필요한 네트워크 접근을 차단하여 공격 표면을 줄입니다.
+
+check:
+  commands:
+    - /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
+  validator: validators.macos.check_m04
+
+remediation:
+  auto: true
+  description: Firewall을 활성화합니다.
+  commands:
+    - sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+
+education:
+  risk_level: 높음
+  attack_scenario: |
+    방화벽이 비활성화되면 공격자가 원격으로 시스템에 접근할 수 있습니다.
+  references:
+    - https://support.apple.com/en-us/HT201642

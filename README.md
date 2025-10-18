@@ -22,15 +22,15 @@
 ## ✨ 주요 기능
 
 ### 🌐 멀티플랫폼 지원
-- **Linux** (73개 점검 항목) - KISA 기준 완전 준수
-- **macOS** (50개 점검 항목) - SIP, Gatekeeper, FileVault 등
+- **Linux** (73개 점검 항목) ✅ - KISA 기준 완전 준수
+- **macOS** (50개 점검 항목) ✅ - SIP, Gatekeeper, FileVault 등 (Phase 2 완료)
 - **Windows** (예정, 50개 항목) - 레지스트리, 방화벽, 그룹 정책
 
-### ⚡ 원클릭 자동 수정
-- 취약점 자동 수정 (안전한 백업 + 롤백)
-- Dry-run 모드 (시뮬레이션)
-- 미리보기 (변경 사항 확인)
-- 배치 수정 (여러 항목 동시)
+### ⚡ 원클릭 자동 수정 (Phase 3 부분 완료)
+- 취약점 자동 수정 ✅ - macOS 5개 규칙 지원 (M-03~M-08)
+- 안전한 백업 + 롤백 ✅ - SHA256 체크섬, 원자성 보장
+- Dry-run 모드 ✅ - 실제 실행 전 시뮬레이션
+- GUI 통합 - 향후 작업 (미리보기, 배치 수정)
 
 ### 🖥️ 비전공자 친화 GUI
 - PySide6 기반 네이티브 GUI
@@ -97,8 +97,8 @@ bluepy/
 │
 ├── config/                  # 설정 파일
 │   └── rules/              # 점검 규칙 (YAML)
-│       ├── linux/          # Linux 73개 규칙
-│       ├── macos/          # macOS 50개 규칙
+│       ├── linux/          # Linux 73개 규칙 ✅
+│       ├── macos/          # macOS 10개 전용 + 40개 공유 ✅
 │       └── windows/        # Windows 규칙 (예정)
 │
 ├── data/                    # 데이터 저장소
@@ -121,16 +121,15 @@ bluepy/
 
 | Phase | 기간 | 주요 기능 | 상태 |
 |-------|------|----------|------|
-| **Week 1** | 완료 | Validator 73개 함수 마이그레이션 | ✅ 완료 |
-| **Week 2** | 완료 | Scanner/Analyzer 엔진 | ✅ 완료 |
-| **Week 3** | 완료 | GUI 기본 구조 + DB | ✅ 완료 |
-| **Week 4** | 완료 | 통합 + Excel 보고서 | ✅ 완료 |
-| **Phase 2** | 1.5주 | macOS 지원 | ⏳ 대기 |
-| **Phase 3** | 2주 | 자동 수정 | ⏳ 대기 |
+| **Phase 1** | Week 1-4 | Linux MVP (Scanner, Analyzer, GUI, Excel) | ✅ 완료 |
+| **Phase 1.5** | Day 1-3 | Testing Infrastructure (커버리지 65%) | ✅ 완료 |
+| **Phase 2** | Day 1-5 | macOS 지원 (50개 규칙, UnixScanner 추상화) | ✅ 완료 |
+| **Phase 3** | Week 7 | Remediation 엔진 (백업/롤백, macOS 5개 규칙) | ✅ 완료 |
+| **Phase 3** | Week 8 | GUI 통합 (자동 수정 버튼, 미리보기) | ⏳ 보류 |
 | **Phase 4** | 3주 | Windows 지원 | ⏳ 대기 |
 | **Phase 5** | 2주 | 고급 기능 | ⏳ 대기 |
 
-**총 개발 기간**: 12.5주 (약 3개월)
+**진행률**: **Phase 1~2 완료, Phase 3 부분 완료 (4/7주, 57%)**
 
 자세한 내용은 [docs/ROADMAP.md](docs/ROADMAP.md) 참조
 

@@ -1,9 +1,19 @@
 # BluePy 2.0 - 개발 로드맵
 
-**작성일**: 2025-10-17
+**작성일**: 2025-10-17 (최종 업데이트: 2025-10-19)
 **총 기간**: 12.5주 (약 3개월)
-**시작일**: TBD
-**상태**: Planning
+**시작일**: 2025-10-17
+**상태**: **In Progress (57% 완료 - Phase 1~2 완료, Phase 3 부분 완료)**
+
+**진행 현황**:
+- Phase 1 (Linux MVP): 완료 (Week 1-4)
+- Phase 1.5 (Testing): 완료 (Day 1-3, 커버리지 65%)
+- Phase 2 (macOS): 완료 (Day 1-5, 50개 규칙)
+- Phase 3 Week 7 (Remediation 엔진): 완료
+- Phase 3 Week 8 (GUI 통합): 보류
+- 총 8개 Git 커밋, 69 files 변경
+
+**다음 단계**: Phase 4 (Windows 지원) 또는 Phase 1 기술 부채 해결
 
 ---
 

@@ -178,6 +178,25 @@ python3.12 scripts/migrate_legacy.py \
 
 - **Linux MVP 완성!** (총 3,324 lines)
 
+- **Phase 1.5 완료**: Testing Infrastructure (커버리지 65%, commits 01f4833, bd217ca, 6210cd7)
+  * Day 1-2: pytest 설정, 기본 unit 테스트 (36%)
+  * Day 3: 통합 테스트 + 커버리지 향상 (65%, +102개 테스트)
+  * 테스트 272개 (251 passed, 20 failed, 1 skipped)
+  * Black 코드 포매팅 (32 files reformatted)
+
+- **Phase 2 완료**: macOS 확장 (commits 4b8e0bf, 8ae7670, f21d18b)
+  * Day 1-2: UnixScanner 추상화 + macOS 규칙 10개 (15 files, +634/-181)
+  * Day 3-5: macOS validator 10개 + Linux 규칙 40개 공유 (48 files, +782/-8)
+  * macOS 50개 규칙 지원 (전용 10 + 공유 40)
+  * LinuxScanner 리팩토링 (227줄 → 65줄)
+
+- **Phase 3 Week 7 완료**: Remediation 엔진 (commits 0614cb3, 758f76d)
+  * RemediationResult 모델 추가
+  * BackupManager 클래스 (백업/롤백, SHA256 체크섬, ~150줄)
+  * BaseRemediator 추상 클래스 (dry-run 지원, ~150줄)
+  * MacOSRemediator 구현 (5개 auto: true 규칙, ~50줄)
+  * 총 ~400줄 추가
+
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기
 

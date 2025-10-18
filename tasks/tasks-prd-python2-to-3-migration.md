@@ -1,33 +1,35 @@
-# Task List: Python 2→3 마이그레이션 자동화 시스템
+# Task List: Phase 1 - Linux MVP (Week 1-4)
 
 **생성일**: 2025-10-17
 **PRD**: `prd-python2-to-3-migration.md`
-**기간**: 3일 (Day 3-5)
+**기간**: 4주 (Week 1-4)
+**상태**: Linux MVP 완성!
 
 ---
 
-## 진행 상황 (2025-10-18 업데이트)
+## 전체 진행 상황 (2025-10-18 업데이트)
 
-**중요**: 이 Task List는 초기 PRD 기준으로 작성되었습니다. 실제 구현 과정에서 일부 조정이 있었습니다.
+### Phase 1 완료 요약
+- **Week 1**: 73개 Validator 함수 마이그레이션 (100%)
+- **Week 2**: Scanner/Analyzer 엔진 구현 (1,050 lines)
+- **Week 3**: GUI + Database 구현 (1,490 lines)
+- **Week 4**: Integration + Reporting (784 lines)
+- **총 구현**: 3,324 lines
+- **Linux MVP**: 완성!
 
-**실제 완료 내용** (상세 내용은 `docs/ROADMAP.md` 참조):
+### 완료된 작업
 - Task 1.0-2.0: 완료 (Legacy 분석, 도메인 모델, 마이그레이션 엔진)
-- Task 3.0: 완료 (73개 YAML 규칙 파일 생성, 10개가 아닌 전체 73개 생성)
-- Task 4.0: 완료 (73개 Validator 스켈레톤 생성, linux/ 디렉토리 구조로 변경)
-- Task 5.0 (ROADMAP 버전): 완료 (10개 함수 시범 구현 - U-01, U-03, U-04, U-05, U-07, U-08, U-09, U-10, U-18, U-27)
-- Task 5.0 (PRD 버전): 미완료 (테스트 자동화는 향후 진행 예정)
-- **Task 6.0: 완료 (73/73 함수 완료, 100%)**
-  * Phase 1 완료: log_management.py (U-72, U-73) - 2개
-  * Phase 2 완료: patch_management.py (U-71) - 1개
-  * Phase 3 완료: account_management.py 나머지 (U-02, U-06, U-11~U-15) - 7개
-  * Phase 4 완료: file_management.py 나머지 (U-16, U-17, U-19~U-26, U-28~U-35) - 18개
-  * Phase 5 완료: service_management.py (U-36~U-70) - 35개
-    - Batch 1: U-36~U-45 (10개, Finger/FTP/r계열/cron/DOS/NFS/RPC/NIS)
-    - Batch 2: U-46~U-55 (10개, tftp/Sendmail/DNS/Apache)
-    - Batch 3+4: U-56~U-70 (15개, Apache/ssh/FTP/SNMP/NFS)
+- Task 3.0: 완료 (73개 YAML 규칙 파일 생성)
+- Task 4.0: 완료 (73개 Validator 스켈레톤 생성)
+- **Week 1 Validator 구현**: 완료 (73/73 함수, 100%)
+  * Phase 1: log_management.py (U-72, U-73) - 2개
+  * Phase 2: patch_management.py (U-71) - 1개
+  * Phase 3: account_management.py 나머지 (U-02, U-06, U-11~U-15) - 7개
+  * Phase 4: file_management.py 나머지 (U-16, U-17, U-19~U-26, U-28~U-35) - 18개
+  * Phase 5: service_management.py (U-36~U-70) - 35개
   * 완료 카테고리: account_management (15/15), file_management (20/20), service_management (35/35), patch_management (1/1), log_management (2/2)
 
-**Git Commits**:
+**Git Commits (Week 1)**:
 - 8a23c3d: feat: Complete Phase 5 Batch 3+4 - Implement 15 service_management functions (U-56~70)
 - 1b6c59b: feat: Complete Phase 5 Batch 2 - Implement 10 service_management functions (U-46~55)
 - 76075b6: feat: Complete Phase 5 Batch 1 - Implement 10 service_management functions (U-36~45)
@@ -37,7 +39,69 @@
 - 922555d: feat: Complete Phase 1 - Implement check_u72 and check_u73
 - 634d85a: feat: Complete Task 5.0 - 10 functions implementation
 - 6a1e166: feat: Complete Task 4.0 - Validator skeleton generation
-- f624874: docs: Update documentation with Task 3.3 verification results
+
+### Week 2-4 구현 내용
+
+**Week 2: Scanner/Analyzer 엔진 (commit a97b9f3)**
+- base_scanner.py (210 lines) - BaseScanner 추상 클래스, ScanResult dataclass
+- rule_loader.py (209 lines) - YAML 규칙 로딩, RuleMetadata 변환
+- ssh_client.py (190 lines) - AsyncSSH 클라이언트 구현
+- linux_scanner.py (234 lines) - Linux 스캐너 구현, Validator 호출
+- risk_calculator.py (207 lines) - 리스크 통계 계산, RiskStatistics
+- 총 1,050 lines
+
+**Week 3: GUI + Database (commit 947261b)**
+- main_window.py (188 lines) - QMainWindow 구조, 메뉴바, 탭
+- server_view.py (188 lines) - 서버 목록 관리, QListWidget
+- scan_view.py (253 lines) - 스캔 실행 UI, 진행률 표시
+- result_view.py (277 lines) - 결과 트리뷰, 색상 코딩
+- server_dialog.py (198 lines) - 서버 추가/편집 폼
+- models.py (137 lines) - SQLAlchemy ORM (Server, ScanHistory)
+- server_repository.py (178 lines) - CRUD 기능
+- app.py (52 lines) - Entry point
+- 총 1,490 lines
+
+**Week 4: Integration + Reporting (commit b2cd6cc)**
+- excel_reporter.py (242 lines) - Excel 보고서 (요약/상세/통계 3개 시트)
+- scan_worker.py (186 lines) - QThread + asyncio 통합
+- main_window.py 업데이트 (+168 lines) - Scanner 연동, Excel 저장
+- 총 784 lines
+
+**Git Commits (Week 2-4)**:
+- b2cd6cc: feat: Implement Week 4 - Integration and Excel Reporting
+- 947261b: feat: Implement Week 3 - GUI Basic Structure and Database
+- a97b9f3: feat: Implement Week 2 - Core Scanner and Analyzer modules
+
+---
+
+## 미진한 부분 (중요!)
+
+### Critical (즉시 필요)
+**Task 5.0: 테스트 자동화 (0% 완료)**
+- [ ] 5.1: test_migration.py 생성 - 마이그레이션 스크립트 테스트
+- [ ] 5.2: test_yaml_rules.py 생성 - YAML 파일 검증
+- [ ] 5.3: test_validators.py 완성 - 73개 Validator 함수 테스트
+- [ ] 5.4: test_domain_models.py 생성 - 도메인 모델 테스트
+- [ ] 5.5: pytest 설정 및 fixture - conftest.py
+- [ ] 5.6: 커버리지 측정 - 목표 60%+ (현재 0%)
+
+**리스크**: 테스트 없이 코드가 3,324 lines 작성됨. 버그 발견 및 수정 비용 증가, 리팩토링 불가, 회귀 버그 위험
+
+### Important (곧 필요)
+**Task 6.0: 문서화 및 검증 (50% 완료)**
+- [ ] 6.1-6.2: MIGRATION_REPORT.md 자동 생성 - 통계, 함수 목록
+- [ ] 6.4: 코드 품질 검사 (black/ruff/mypy) - 포맷팅, 린팅, 타입 체킹
+- [ ] 6.5: 최종 통합 테스트 - 전체 워크플로우 검증
+- [x] 6.3: README.md 업데이트 - 완료
+- [x] 6.6: Git 커밋 및 문서 정리 - 완료 (commit 27d87f1)
+
+**리스크**: 코드 품질 미검증, 잠재적 버그 존재 가능성
+
+### Nice to Have (선택사항)
+- [ ] 사용자 매뉴얼 작성 (docs/USER_MANUAL.md)
+- [ ] PyInstaller 빌드 스크립트 (scripts/build.py)
+- [ ] 배포 패키지 생성 (.exe, .app, .deb)
+- [ ] 실제 서버 테스트 (Docker 환경)
 
 ---
 
@@ -119,4 +183,67 @@
 
 ---
 
-**총 36개 Sub-task | 예상 소요 시간: 3일 (Day 3-5)**
+## 다음 단계 옵션
+
+Linux MVP가 완성되었습니다! 다음으로 진행할 수 있는 옵션:
+
+### 옵션 1: 테스트 코드 작성 (권장)
+**기간**: 2-3일
+**내용**:
+- Task 5.0 완료 (단위 테스트, 통합 테스트)
+- Task 6.0 완료 (코드 품질 검사, MIGRATION_REPORT.md)
+- 커버리지 60% 달성
+
+**장점**:
+- 버그 조기 발견 및 수정
+- 안전한 리팩토링 가능
+- 향후 Phase에서 회귀 버그 방지
+
+**단점**:
+- 추가 시간 소요
+- 기능 개발 지연
+
+### 옵션 2: macOS 지원 추가 (Phase 2)
+**기간**: 1.5주
+**내용**:
+- UnixScanner 추상화
+- macOS 전용 규칙 10개 + Linux 재사용 40개
+- MacOSScanner 구현
+- GUI에서 플랫폼 선택
+
+**장점**:
+- 멀티플랫폼 지원 확대
+- Unix 공통 로직 재사용
+
+### 옵션 3: Windows 지원 추가 (Phase 4)
+**기간**: 3주
+**내용**:
+- WinRM 연결 모듈
+- Windows 규칙 50개 (CIS Benchmark)
+- WindowsScanner 구현
+- 3-OS 통합
+
+**장점**:
+- 완전한 3-OS 지원
+- 차별화 포인트
+
+### 옵션 4: 고급 기능 강화 (Phase 3 또는 5)
+**기간**: 2주
+**내용**:
+- Remediation 엔진 (자동 수정)
+- 백업/롤백 시스템
+- 이력 관리 및 트렌드 분석
+- 대시보드 (그래프, 차트)
+
+**장점**:
+- 핵심 차별화 기능
+- 사용자 편의성 향상
+
+### 권장 순서
+1. **옵션 1 (테스트)** - 안정성 확보
+2. **옵션 2 (macOS)** 또는 **옵션 4 (고급 기능)** - 기능 확장
+3. **옵션 3 (Windows)** - 완전성
+
+---
+
+**총 36개 Sub-task | Week 1-4 완료: 3,324 lines | 다음: 테스트 또는 Phase 2**

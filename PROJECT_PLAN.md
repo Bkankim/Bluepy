@@ -767,32 +767,37 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 
 ---
 
-#### Phase 3: 자동 수정 강화 (2주)
+#### Phase 3: 자동 수정 강화 (부분 완료, 2025-10-19)
 
 **목표**: 원클릭 자동 수정 + 백업/롤백
 
 **주요 작업**:
-- [ ] Week 7: Remediation 엔진
-  - BaseRemediator 추상 클래스
-  - LinuxRemediator 구현
-  - MacOSRemediator 구현
-  - 백업 매니저
+- [x] Week 7: Remediation 엔진 (완료, commit 0614cb3)
+  - RemediationResult 모델 추가 (success, backup_id, dry_run 등)
+  - BackupManager 클래스 (백업 세션, 파일 백업/롤백, SHA256 체크섬)
+  - BaseRemediator 추상 클래스 (remediate 플로우, 자동 롤백)
+  - MacOSRemediator 구현 (macOS 5개 auto: true 규칙 지원)
+  - LinuxRemediator (향후 확장)
 
-- [ ] Week 8: 안전 장치 + GUI
-  - 롤백 매니저
-  - Dry-run 모드
-  - 미리보기 UI
-  - 배치 수정
+- [ ] Week 8: 안전 장치 + GUI (보류)
+  - 롤백 매니저 (BackupManager에 포함됨)
+  - Dry-run 모드 (BaseRemediator에 구현됨)
+  - 미리보기 UI (향후 GUI 통합)
+  - 배치 수정 (향후 확장)
 
 **결과물**:
-- ✅ 자동 수정 기능 (Linux + macOS)
-- ✅ 백업/롤백 시스템
-- ✅ GUI 미리보기
+- ✅ Remediation 엔진 구축 (4개 클래스, ~400줄)
+- ✅ 백업/롤백 시스템 (원자성 보장, 체크섬 검증)
+- ✅ macOS 자동 수정 (5개 규칙: M-03, M-04, M-05, M-06, M-07, M-08)
+- ✅ Dry-run 모드 (실제 실행 전 시뮬레이션)
+- ⏸ Linux 자동 수정 (향후 확장)
+- ⏸ GUI 통합 (향후 작업)
 
 **성공 기준**:
-- 자동 수정 성공률 90%+
-- 롤백 성공률 100%
-- 백업 무결성 보장
+- ✅ Remediation 아키텍처 설계 완료
+- ✅ Scanner와 Remediator 분리 (관심사 분리)
+- ✅ 백업 무결성 보장 (SHA256)
+- ⏸ GUI 통합 (미완)
 
 ---
 

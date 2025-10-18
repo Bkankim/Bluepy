@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 class RuleLoaderError(Exception):
     """규칙 로더 예외"""
+
     pass
 
 
@@ -40,7 +41,7 @@ def load_yaml_file(file_path: Path) -> Dict[str, Any]:
         RuleLoaderError: 파일 읽기 또는 파싱 실패
     """
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
         if not isinstance(data, dict):
@@ -84,16 +85,22 @@ def convert_yaml_to_metadata(yaml_data: Dict[str, Any], file_path: Path) -> Rule
     """
     try:
         # 필수 필드 확인
-        required_fields = ['id', 'name', 'category', 'severity', 'description', 'check', 'validator']
+        required_fields = [
+            "id",
+            "name",
+            "category",
+            "severity",
+            "description",
+            "check",
+            "validator",
+        ]
         missing_fields = [f for f in required_fields if f not in yaml_data]
         if missing_fields:
-            raise RuleLoaderError(
-                f"필수 필드 누락: {', '.join(missing_fields)} ({file_path})"
-            )
+            raise RuleLoaderError(f"필수 필드 누락: {', '.join(missing_fields)} ({file_path})")
 
         # check.commands 추출
-        check_data = yaml_data.get('check', {})
-        commands = check_data.get('commands', [])
+        check_data = yaml_data.get("check", {})
+        commands = check_data.get("commands", [])
 
         if not commands:
             # 명령어가 없는 경우 경고 (수동 점검 규칙일 수 있음)
@@ -102,7 +109,7 @@ def convert_yaml_to_metadata(yaml_data: Dict[str, Any], file_path: Path) -> Rule
 
         # remediation 정보 변환
         remediation = None
-        remediation_data = yaml_data.get('remediation')
+        remediation_data = yaml_data.get("remediation")
         if remediation_data:
             try:
                 remediation = RemediationInfo(**remediation_data)
@@ -111,38 +118,34 @@ def convert_yaml_to_metadata(yaml_data: Dict[str, Any], file_path: Path) -> Rule
                 # Remediation은 선택사항이므로 None으로 설정
 
         # Severity 변환
-        severity_str = yaml_data.get('severity', '').lower()
+        severity_str = yaml_data.get("severity", "").lower()
         try:
             severity = Severity(severity_str)
         except ValueError:
-            raise RuleLoaderError(
-                f"올바르지 않은 severity 값: {severity_str} ({file_path})"
-            )
+            raise RuleLoaderError(f"올바르지 않은 severity 값: {severity_str} ({file_path})")
 
         # RuleMetadata 생성
         metadata = RuleMetadata(
-            id=yaml_data['id'],
-            name=yaml_data['name'],
-            category=yaml_data['category'],
+            id=yaml_data["id"],
+            name=yaml_data["name"],
+            category=yaml_data["category"],
             severity=severity,
-            kisa_standard=yaml_data['id'],  # id를 kisa_standard로 사용
-            description=yaml_data['description'],
-            commands=commands if commands else ["echo 'No commands (manual check)'"],  # 최소 1개 필요
-            validator=yaml_data['validator'],
-            expected_result=yaml_data.get('expected_result'),
-            remediation=remediation
+            kisa_standard=yaml_data["id"],  # id를 kisa_standard로 사용
+            description=yaml_data["description"],
+            commands=(
+                commands if commands else ["echo 'No commands (manual check)'"]
+            ),  # 최소 1개 필요
+            validator=yaml_data["validator"],
+            expected_result=yaml_data.get("expected_result"),
+            remediation=remediation,
         )
 
         return metadata
 
     except ValidationError as e:
-        raise RuleLoaderError(
-            f"RuleMetadata validation 실패: {file_path}\n{e}"
-        )
+        raise RuleLoaderError(f"RuleMetadata validation 실패: {file_path}\n{e}")
     except KeyError as e:
-        raise RuleLoaderError(
-            f"필수 필드 누락: {e} ({file_path})"
-        )
+        raise RuleLoaderError(f"필수 필드 누락: {e} ({file_path})")
 
 
 def load_rules(rules_dir: str, platform: str = "linux") -> List[RuleMetadata]:
@@ -191,9 +194,7 @@ def load_rules(rules_dir: str, platform: str = "linux") -> List[RuleMetadata]:
         # 오류가 있어도 성공한 규칙은 반환 (일부만 로드)
 
     if not rules:
-        raise RuleLoaderError(
-            f"규칙을 하나도 로드하지 못했습니다.\n오류:\n" + "\n".join(errors)
-        )
+        raise RuleLoaderError(f"규칙을 하나도 로드하지 못했습니다.\n오류:\n" + "\n".join(errors))
 
     # id 순서로 정렬 (U-01, U-02, ...)
     rules.sort(key=lambda r: r.id)

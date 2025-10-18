@@ -31,15 +31,11 @@ from src.core.domain.models import (
 # pytest 설정
 def pytest_configure(config):
     """pytest 실행 전 설정"""
-    config.addinivalue_line(
-        "markers", "unit: 단위 테스트 (fast, no external dependencies)"
-    )
+    config.addinivalue_line("markers", "unit: 단위 테스트 (fast, no external dependencies)")
     config.addinivalue_line(
         "markers", "integration: 통합 테스트 (slower, may use external dependencies)"
     )
-    config.addinivalue_line(
-        "markers", "slow: 느린 테스트 (skip with -m 'not slow')"
-    )
+    config.addinivalue_line("markers", "slow: 느린 테스트 (skip with -m 'not slow')")
 
 
 # ==================== Domain Model Fixtures ====================
@@ -252,8 +248,67 @@ def validator_categories() -> Dict[str, list[int]]:
     """
     return {
         "account_management": [1, 2, 3, 4, 5, 44, 45, 46, 47, 48, 49, 50, 51, 52, 73],
-        "file_management": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-        "service_management": [26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71],
+        "file_management": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+        ],
+        "service_management": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+        ],
         "log_management": [72],
         "patch_management": [72],
     }

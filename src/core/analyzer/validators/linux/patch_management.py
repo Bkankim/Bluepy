@@ -31,7 +31,5 @@ def check_u71(command_outputs: List[str]) -> CheckResult:
     """
     return CheckResult(
         status=Status.MANUAL,
-        message="수동 점검: 패치 적용 정책을 수립하여 주기적으로 패치를 관리하고 있는지 확인하세요"
+        message="수동 점검: 패치 적용 정책을 수립하여 주기적으로 패치를 관리하고 있는지 확인하세요",
     )
-
-

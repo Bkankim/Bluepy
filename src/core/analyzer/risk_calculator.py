@@ -51,7 +51,9 @@ class RiskStatistics:
     risk_level: str
 
 
-def calculate_risk_statistics(scan_result: ScanResult, rules_metadata: List = None) -> RiskStatistics:
+def calculate_risk_statistics(
+    scan_result: ScanResult, rules_metadata: List = None
+) -> RiskStatistics:
     """위험도 통계 계산
 
     Args:
@@ -102,7 +104,7 @@ def calculate_risk_statistics(scan_result: ScanResult, rules_metadata: List = No
         low_risk=low_risk,
         pass_rate=pass_rate,
         fail_rate=fail_rate,
-        risk_level=risk_level
+        risk_level=risk_level,
     )
 
 
@@ -135,7 +137,9 @@ def evaluate_risk_level(score: float, high_risk_count: int) -> str:
         return "safe"
 
 
-def get_category_distribution(scan_result: ScanResult, rules_metadata: List = None) -> Dict[str, Dict[str, int]]:
+def get_category_distribution(
+    scan_result: ScanResult, rules_metadata: List = None
+) -> Dict[str, Dict[str, int]]:
     """카테고리별 분포 계산
 
     각 카테고리별로 양호/취약/수동 점검 항목 수를 집계합니다.
@@ -158,22 +162,24 @@ def get_category_distribution(scan_result: ScanResult, rules_metadata: List = No
         "계정관리": {
             "passed": scan_result.passed // 3,
             "failed": scan_result.failed // 3,
-            "manual": scan_result.manual // 3
+            "manual": scan_result.manual // 3,
         },
         "파일 및 디렉터리 관리": {
             "passed": scan_result.passed // 3,
             "failed": scan_result.failed // 3,
-            "manual": scan_result.manual // 3
+            "manual": scan_result.manual // 3,
         },
         "서비스 관리": {
             "passed": scan_result.passed - (scan_result.passed // 3) * 2,
             "failed": scan_result.failed - (scan_result.failed // 3) * 2,
-            "manual": scan_result.manual - (scan_result.manual // 3) * 2
-        }
+            "manual": scan_result.manual - (scan_result.manual // 3) * 2,
+        },
     }
 
 
-def get_severity_distribution(scan_result: ScanResult, rules_metadata: List = None) -> Dict[str, int]:
+def get_severity_distribution(
+    scan_result: ScanResult, rules_metadata: List = None
+) -> Dict[str, int]:
     """심각도별 분포 계산
 
     실패한 항목들을 심각도별로 집계합니다.
@@ -192,11 +198,7 @@ def get_severity_distribution(scan_result: ScanResult, rules_metadata: List = No
     """
     stats = calculate_risk_statistics(scan_result, rules_metadata)
 
-    return {
-        "high": stats.high_risk,
-        "mid": stats.mid_risk,
-        "low": stats.low_risk
-    }
+    return {"high": stats.high_risk, "mid": stats.mid_risk, "low": stats.low_risk}
 
 
 __all__ = [

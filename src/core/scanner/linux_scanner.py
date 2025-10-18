@@ -47,7 +47,7 @@ class LinuxScanner(BaseScanner):
         username: str,
         password: Optional[str] = None,
         key_filename: Optional[str] = None,
-        port: int = 22
+        port: int = 22,
     ):
         """초기화
 
@@ -63,11 +63,7 @@ class LinuxScanner(BaseScanner):
 
         # SSH 클라이언트 초기화
         self._ssh_client = SSHClient(
-            host=host,
-            username=username,
-            password=password,
-            key_filename=key_filename,
-            port=port
+            host=host, username=username, password=password, key_filename=key_filename, port=port
         )
 
     async def connect(self) -> None:
@@ -174,10 +170,7 @@ class LinuxScanner(BaseScanner):
 
         except Exception as e:
             logger.error(f"{rule.id} 점검 중 오류: {e}")
-            return CheckResult(
-                status=Status.MANUAL,
-                message=f"점검 중 오류 발생: {str(e)[:200]}"
-            )
+            return CheckResult(status=Status.MANUAL, message=f"점검 중 오류 발생: {str(e)[:200]}")
 
     def _call_validator(self, rule: RuleMetadata, outputs: List[str]) -> CheckResult:
         """Validator 함수 동적 호출
@@ -194,7 +187,7 @@ class LinuxScanner(BaseScanner):
         """
         try:
             # validator 경로 파싱: validators.linux.check_u01
-            parts = rule.validator.split('.')
+            parts = rule.validator.split(".")
             if len(parts) < 3:
                 raise ValueError(f"올바르지 않은 validator 경로: {rule.validator}")
 
@@ -219,9 +212,7 @@ class LinuxScanner(BaseScanner):
 
             # CheckResult 타입 확인
             if not isinstance(result, CheckResult):
-                raise RuntimeError(
-                    f"Validator가 CheckResult를 반환하지 않았습니다: {type(result)}"
-                )
+                raise RuntimeError(f"Validator가 CheckResult를 반환하지 않았습니다: {type(result)}")
 
             return result
 

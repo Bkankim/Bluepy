@@ -72,7 +72,8 @@ class ScanView(QWidget):
         # 스캔 버튼
         self.scan_button = QPushButton("스캔 시작")
         self.scan_button.setMinimumHeight(40)
-        self.scan_button.setStyleSheet("""
+        self.scan_button.setStyleSheet(
+            """
             QPushButton {
                 background-color: #4CAF50;
                 color: white;
@@ -89,7 +90,8 @@ class ScanView(QWidget):
             QPushButton:disabled {
                 background-color: #cccccc;
             }
-        """)
+        """
+        )
         control_layout.addWidget(self.scan_button)
 
         # 진행률 표시
@@ -140,7 +142,8 @@ class ScanView(QWidget):
 
         # UI 업데이트
         self.scan_button.setText("스캔 중지")
-        self.scan_button.setStyleSheet("""
+        self.scan_button.setStyleSheet(
+            """
             QPushButton {
                 background-color: #f44336;
                 color: white;
@@ -151,7 +154,8 @@ class ScanView(QWidget):
             QPushButton:hover {
                 background-color: #da190b;
             }
-        """)
+        """
+        )
 
         self.log_text.clear()
         self.append_log("스캔을 시작합니다...")
@@ -169,7 +173,8 @@ class ScanView(QWidget):
 
         # UI 업데이트
         self.scan_button.setText("스캔 시작")
-        self.scan_button.setStyleSheet("""
+        self.scan_button.setStyleSheet(
+            """
             QPushButton {
                 background-color: #4CAF50;
                 color: white;
@@ -180,7 +185,8 @@ class ScanView(QWidget):
             QPushButton:hover {
                 background-color: #45a049;
             }
-        """)
+        """
+        )
 
         self.append_log("스캔이 중지되었습니다.")
 

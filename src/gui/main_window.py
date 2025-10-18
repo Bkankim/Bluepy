@@ -145,9 +145,9 @@ class MainWindow(QMainWindow):
             # TODO: DB에 저장
             # 현재는 ServerView에 직접 추가
             self.server_view.add_server(
-                server_id=data['name'],  # 임시로 이름을 ID로 사용
-                server_name=data['name'],
-                host=data['host']
+                server_id=data["name"],  # 임시로 이름을 ID로 사용
+                server_name=data["name"],
+                host=data["host"],
             )
             self.statusBar().showMessage(f"서버 추가됨: {data['name']}")
 
@@ -161,50 +161,38 @@ class MainWindow(QMainWindow):
 
         # 서버 정보 저장 (실제로는 DB에서 조회)
         self.current_server = {
-            'server_id': server_id,
-            'name': server_id,  # 임시
-            'host': '192.168.1.100',  # 임시
-            'username': 'root',  # 임시
-            'password': 'password',  # 임시 (실제로는 keyring 사용)
-            'platform': 'linux'
+            "server_id": server_id,
+            "name": server_id,  # 임시
+            "host": "192.168.1.100",  # 임시
+            "username": "root",  # 임시
+            "password": "password",  # 임시 (실제로는 keyring 사용)
+            "platform": "linux",
         }
 
         # ScanView에 서버 정보 설정
-        self.scan_view.set_server(
-            server_id=server_id,
-            server_name=server_id,
-            platform='linux'
-        )
+        self.scan_view.set_server(server_id=server_id, server_name=server_id, platform="linux")
 
         self.server_selected.emit(server_id)
 
     def _on_start_scan(self):
         """스캔 시작 핸들러"""
         if not self.current_server:
-            QMessageBox.warning(
-                self,
-                "서버 선택 필요",
-                "먼저 스캔할 서버를 선택하세요."
-            )
+            QMessageBox.warning(self, "서버 선택 필요", "먼저 스캔할 서버를 선택하세요.")
             return
 
         # 이미 스캔 중이면 무시
         if self.scan_worker and self.scan_worker.isRunning():
-            QMessageBox.warning(
-                self,
-                "스캔 진행 중",
-                "이미 스캔이 진행 중입니다."
-            )
+            QMessageBox.warning(self, "스캔 진행 중", "이미 스캔이 진행 중입니다.")
             return
 
         # ScanWorker 생성
         self.scan_worker = ScanWorker(
-            server_id=self.current_server['server_id'],
-            host=self.current_server['host'],
-            username=self.current_server['username'],
-            password=self.current_server.get('password'),
-            key_filename=self.current_server.get('key_path'),
-            port=self.current_server.get('port', 22)
+            server_id=self.current_server["server_id"],
+            host=self.current_server["host"],
+            username=self.current_server["username"],
+            password=self.current_server.get("password"),
+            key_filename=self.current_server.get("key_path"),
+            port=self.current_server.get("port", 22),
         )
 
         # 시그널 연결
@@ -261,7 +249,7 @@ class MainWindow(QMainWindow):
             "보고서 저장",
             "Excel 보고서를 저장하시겠습니까?",
             QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.Yes
+            QMessageBox.Yes,
         )
 
         if reply == QMessageBox.Yes:
@@ -274,11 +262,7 @@ class MainWindow(QMainWindow):
             error_message: 오류 메시지
         """
         self.statusBar().showMessage(f"스캔 실패: {error_message}")
-        QMessageBox.critical(
-            self,
-            "스캔 오류",
-            f"스캔 중 오류가 발생했습니다:\n\n{error_message}"
-        )
+        QMessageBox.critical(self, "스캔 오류", f"스캔 중 오류가 발생했습니다:\n\n{error_message}")
 
     def _save_report(self, result):
         """Excel 보고서 저장
@@ -295,30 +279,24 @@ class MainWindow(QMainWindow):
             self,
             "보고서 저장",
             str(Path("data/reports") / default_filename),
-            "Excel Files (*.xlsx)"
+            "Excel Files (*.xlsx)",
         )
 
         if filename:
             try:
                 reporter = ExcelReporter()
                 output_path = reporter.generate(
-                    result,
-                    filename,
-                    server_name=self.current_server.get('name')
+                    result, filename, server_name=self.current_server.get("name")
                 )
 
                 QMessageBox.information(
-                    self,
-                    "저장 완료",
-                    f"보고서가 저장되었습니다:\n{output_path}"
+                    self, "저장 완료", f"보고서가 저장되었습니다:\n{output_path}"
                 )
                 self.statusBar().showMessage(f"보고서 저장됨: {output_path}")
 
             except Exception as e:
                 QMessageBox.critical(
-                    self,
-                    "저장 실패",
-                    f"보고서 저장 중 오류가 발생했습니다:\n\n{str(e)}"
+                    self, "저장 실패", f"보고서 저장 중 오류가 발생했습니다:\n\n{str(e)}"
                 )
 
     def _show_about(self):
@@ -329,7 +307,7 @@ class MainWindow(QMainWindow):
             "<h3>BluePy 2.0</h3>"
             "<p>멀티플랫폼 인프라 보안 점검 및 자동 수정 도구</p>"
             "<p>버전: 2.0.0</p>"
-            "<p>Copyright 2025</p>"
+            "<p>Copyright 2025</p>",
         )
 
     def update_status(self, message: str):

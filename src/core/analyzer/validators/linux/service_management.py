@@ -32,25 +32,17 @@ def check_u36(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: Finger 서비스가 비활성화되어 있습니다"
+            status=Status.PASS, message="안전: Finger 서비스가 비활성화되어 있습니다"
         )
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: Finger 서비스가 활성화되어 있습니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: Finger 서비스가 활성화되어 있습니다")
 
 
 def check_u37(command_outputs: List[str]) -> CheckResult:
@@ -73,25 +65,17 @@ def check_u37(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: Anonymous FTP 계정이 존재하지 않습니다"
+            status=Status.PASS, message="안전: Anonymous FTP 계정이 존재하지 않습니다"
         )
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: Anonymous FTP 계정이 존재합니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: Anonymous FTP 계정이 존재합니다")
 
 
 def check_u38(command_outputs: List[str]) -> CheckResult:
@@ -114,25 +98,18 @@ def check_u38(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
             status=Status.PASS,
-            message="안전: r계열 서비스(rsh, rlogin, rexec)가 비활성화되어 있습니다"
+            message="안전: r계열 서비스(rsh, rlogin, rexec)가 비활성화되어 있습니다",
         )
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: r계열 서비스가 활성화되어 있습니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: r계열 서비스가 활성화되어 있습니다")
 
 
 def check_u39(command_outputs: List[str]) -> CheckResult:
@@ -155,49 +132,36 @@ def check_u39(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: cron 파일이 없습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: cron 파일이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: cron 파일이 없습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: cron 파일이 없습니다")
 
     # ls -l 출력 형식: -rw-r----- 1 root root 1234 Jan 1 12:00 filename
     parts = lines[0].split()
     if len(parts) < 3:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="ls 출력 형식이 올바르지 않습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="ls 출력 형식이 올바르지 않습니다")
 
     permissions = parts[0]
     owner = parts[2]
 
     # 권한 체크: rw-r----- (1:10 = rw-r-----)
     if len(permissions) >= 10:
-        if permissions[1:10] == 'rw-r-----' and owner == 'root':
+        if permissions[1:10] == "rw-r-----" and owner == "root":
             return CheckResult(
                 status=Status.PASS,
-                message=f"안전: cron 파일 권한이 {permissions}이고 소유자가 root입니다"
+                message=f"안전: cron 파일 권한이 {permissions}이고 소유자가 root입니다",
             )
         else:
             return CheckResult(
                 status=Status.FAIL,
-                message=f"취약: cron 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다 (rw-r----- root 권장)"
+                message=f"취약: cron 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다 (rw-r----- root 권장)",
             )
     else:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="권한 문자열 형식이 올바르지 않습니다"
-        )
-
+        return CheckResult(status=Status.MANUAL, message="권한 문자열 형식이 올바르지 않습니다")
 
 
 def check_u40(command_outputs: List[str]) -> CheckResult:
@@ -220,29 +184,25 @@ def check_u40(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     # 모든 명령어 결과 확인
     for idx, output in enumerate(command_outputs):
-        lines = [line for line in output.strip().split('\n') if line.strip()]
+        lines = [line for line in output.strip().split("\n") if line.strip()]
         if lines:
             # 하나라도 서비스가 활성화되어 있음
             service_names = ["echo", "discard", "daytime", "chargen"]
             service_name = service_names[idx] if idx < len(service_names) else f"서비스 {idx+1}"
             return CheckResult(
                 status=Status.FAIL,
-                message=f"취약: DOS 취약 서비스({service_name})가 활성화되어 있습니다"
+                message=f"취약: DOS 취약 서비스({service_name})가 활성화되어 있습니다",
             )
 
     # 모든 서비스가 비활성화
     return CheckResult(
         status=Status.PASS,
-        message="안전: DOS 취약 서비스(echo, discard, daytime, chargen)가 모두 비활성화되어 있습니다"
+        message="안전: DOS 취약 서비스(echo, discard, daytime, chargen)가 모두 비활성화되어 있습니다",
     )
-
 
 
 def check_u41(command_outputs: List[str]) -> CheckResult:
@@ -265,25 +225,15 @@ def check_u41(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: NFS 서비스가 비활성화되어 있습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: NFS 서비스가 비활성화되어 있습니다")
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: NFS 서비스가 활성화되어 있습니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: NFS 서비스가 활성화되어 있습니다")
 
 
 def check_u42(command_outputs: List[str]) -> CheckResult:
@@ -306,26 +256,16 @@ def check_u42(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
     # grep이 포함된 라인 제외 (_DELGREP)
-    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+    lines = [line for line in output.split("\n") if line.strip() and "grep" not in line]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: NFS export 설정이 없습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: NFS export 설정이 없습니다")
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: NFS export 설정이 존재합니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: NFS export 설정이 존재합니다")
 
 
 def check_u43(command_outputs: List[str]) -> CheckResult:
@@ -348,25 +288,15 @@ def check_u43(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: automountd가 제거되었습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: automountd가 제거되었습니다")
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: automountd가 실행 중입니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: automountd가 실행 중입니다")
 
 
 def check_u44(command_outputs: List[str]) -> CheckResult:
@@ -389,26 +319,16 @@ def check_u44(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
     # grep이 포함된 라인 제외
-    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+    lines = [line for line in output.split("\n") if line.strip() and "grep" not in line]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: RPC 관련 서비스가 실행되지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: RPC 관련 서비스가 실행되지 않습니다")
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: RPC 관련 서비스가 실행 중입니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: RPC 관련 서비스가 실행 중입니다")
 
 
 def check_u45(command_outputs: List[str]) -> CheckResult:
@@ -431,26 +351,16 @@ def check_u45(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
     # grep이 포함된 라인 제외
-    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+    lines = [line for line in output.split("\n") if line.strip() and "grep" not in line]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: NIS/NIS+ 서비스가 실행되지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: NIS/NIS+ 서비스가 실행되지 않습니다")
     else:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: NIS/NIS+ 서비스가 실행 중입니다"
-        )
-
+        return CheckResult(status=Status.FAIL, message="취약: NIS/NIS+ 서비스가 실행 중입니다")
 
 
 def check_u46(command_outputs: List[str]) -> CheckResult:
@@ -473,26 +383,20 @@ def check_u46(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
     # grep이 포함된 라인 제외
-    lines = [line for line in output.split('\n') if line.strip() and 'grep' not in line]
+    lines = [line for line in output.split("\n") if line.strip() and "grep" not in line]
 
     if not lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: tftp, talk 서비스가 비활성화되어 있습니다"
+            status=Status.PASS, message="안전: tftp, talk 서비스가 비활성화되어 있습니다"
         )
     else:
         return CheckResult(
-            status=Status.FAIL,
-            message="취약: tftp 또는 talk 서비스가 실행 중입니다"
+            status=Status.FAIL, message="취약: tftp 또는 talk 서비스가 실행 중입니다"
         )
-
 
 
 def check_u47(command_outputs: List[str]) -> CheckResult:
@@ -515,25 +419,15 @@ def check_u47(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: Sendmail이 실행되지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: Sendmail이 실행되지 않습니다")
     else:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="수동 점검: Sendmail 버전을 확인하세요"
-        )
-
+        return CheckResult(status=Status.MANUAL, message="수동 점검: Sendmail 버전을 확인하세요")
 
 
 def check_u48(command_outputs: List[str]) -> CheckResult:
@@ -558,44 +452,32 @@ def check_u48(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs or len(command_outputs) < 2:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 부족합니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 부족합니다")
 
     sendmail_output = command_outputs[0].strip()
-    lines = [line for line in sendmail_output.split('\n') if line.strip()]
+    lines = [line for line in sendmail_output.split("\n") if line.strip()]
 
     # sendmail이 실행되지 않으면 PASS
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: Sendmail이 실행되지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: Sendmail이 실행되지 않습니다")
 
     # 설정 파일 확인
     config_output = command_outputs[1].strip()
-    config_lines = [line for line in config_output.split('\n') if line.strip()]
+    config_lines = [line for line in config_output.split("\n") if line.strip()]
 
     if not config_lines:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: Relaying denied 설정이 없습니다"
-        )
+        return CheckResult(status=Status.FAIL, message="취약: Relaying denied 설정이 없습니다")
 
     # 주석이 아닌 라인 확인
     for line in config_lines:
-        if line.strip() and line.strip()[0] != '#':
+        if line.strip() and line.strip()[0] != "#":
             return CheckResult(
-                status=Status.PASS,
-                message="안전: Relaying denied 설정이 활성화되어 있습니다"
+                status=Status.PASS, message="안전: Relaying denied 설정이 활성화되어 있습니다"
             )
 
     return CheckResult(
-        status=Status.FAIL,
-        message="취약: Relaying denied 설정이 주석 처리되어 있습니다"
+        status=Status.FAIL, message="취약: Relaying denied 설정이 주석 처리되어 있습니다"
     )
-
 
 
 def check_u49(command_outputs: List[str]) -> CheckResult:
@@ -619,36 +501,23 @@ def check_u49(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs or len(command_outputs) < 2:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 부족합니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 부족합니다")
 
     sendmail_output = command_outputs[0].strip()
-    lines = [line for line in sendmail_output.split('\n') if line.strip()]
+    lines = [line for line in sendmail_output.split("\n") if line.strip()]
 
     # sendmail이 실행되지 않으면 PASS
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: Sendmail이 실행되지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: Sendmail이 실행되지 않습니다")
 
     # 설정 파일 확인 (PrivacyOptions)
     config_output = command_outputs[1].strip()
-    config_lines = [line for line in config_output.split('\n') if line.strip()]
+    config_lines = [line for line in config_output.split("\n") if line.strip()]
 
     if not config_lines:
-        return CheckResult(
-            status=Status.FAIL,
-            message="취약: PrivacyOptions 설정이 없습니다"
-        )
+        return CheckResult(status=Status.FAIL, message="취약: PrivacyOptions 설정이 없습니다")
 
-    return CheckResult(
-        status=Status.PASS,
-        message="안전: PrivacyOptions 설정이 존재합니다"
-    )
-
+    return CheckResult(status=Status.PASS, message="안전: PrivacyOptions 설정이 존재합니다")
 
 
 def check_u50(command_outputs: List[str]) -> CheckResult:
@@ -671,25 +540,20 @@ def check_u50(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: DNS(named) 서비스가 실행되지 않습니다"
+            status=Status.PASS, message="안전: DNS(named) 서비스가 실행되지 않습니다"
         )
     else:
         return CheckResult(
             status=Status.MANUAL,
-            message="수동 점검: DNS 버전을 확인하고 최신 보안 패치를 적용하세요"
+            message="수동 점검: DNS 버전을 확인하고 최신 보안 패치를 적용하세요",
         )
-
 
 
 def check_u51(command_outputs: List[str]) -> CheckResult:
@@ -714,27 +578,22 @@ def check_u51(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     named_output = command_outputs[0].strip()
-    lines = [line for line in named_output.split('\n') if line.strip()]
+    lines = [line for line in named_output.split("\n") if line.strip()]
 
     # named가 실행되지 않으면 PASS
     if not lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: DNS(named) 서비스가 실행되지 않습니다"
+            status=Status.PASS, message="안전: DNS(named) 서비스가 실행되지 않습니다"
         )
 
     # named가 실행 중이면 MANUAL (설정 확인 필요)
     return CheckResult(
         status=Status.MANUAL,
-        message="수동 점검: DNS Zone Transfer 설정을 확인하세요 (allow-transfer, xfrnets)"
+        message="수동 점검: DNS Zone Transfer 설정을 확인하세요 (allow-transfer, xfrnets)",
     )
-
 
 
 def check_u52(command_outputs: List[str]) -> CheckResult:
@@ -757,33 +616,27 @@ def check_u52(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: Apache 디렉터리 리스팅이 비활성화되어 있습니다"
+            status=Status.PASS, message="안전: Apache 디렉터리 리스팅이 비활성화되어 있습니다"
         )
 
     # "Indexes"가 있으면 FAIL
     for line in lines:
-        if 'Indexes' in line:
+        if "Indexes" in line:
             return CheckResult(
                 status=Status.FAIL,
-                message="취약: Apache 디렉터리 리스팅이 활성화되어 있습니다 (Indexes 옵션)"
+                message="취약: Apache 디렉터리 리스팅이 활성화되어 있습니다 (Indexes 옵션)",
             )
 
     return CheckResult(
-        status=Status.PASS,
-        message="안전: Apache 디렉터리 리스팅이 비활성화되어 있습니다"
+        status=Status.PASS, message="안전: Apache 디렉터리 리스팅이 비활성화되어 있습니다"
     )
-
 
 
 def check_u53(command_outputs: List[str]) -> CheckResult:
@@ -806,33 +659,24 @@ def check_u53(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: Apache 설정 파일이 없거나 User/Group 설정이 없습니다"
+            status=Status.PASS, message="안전: Apache 설정 파일이 없거나 User/Group 설정이 없습니다"
         )
 
     # "User root" 또는 "Group root" 체크
     for line in lines:
-        if ('User' in line and 'root' in line) or ('Group' in line and 'root' in line):
+        if ("User" in line and "root" in line) or ("Group" in line and "root" in line):
             return CheckResult(
-                status=Status.FAIL,
-                message="취약: Apache가 root 권한으로 실행되고 있습니다"
+                status=Status.FAIL, message="취약: Apache가 root 권한으로 실행되고 있습니다"
             )
 
-    return CheckResult(
-        status=Status.PASS,
-        message="안전: Apache가 root 권한으로 실행되지 않습니다"
-    )
-
+    return CheckResult(status=Status.PASS, message="안전: Apache가 root 권한으로 실행되지 않습니다")
 
 
 def check_u54(command_outputs: List[str]) -> CheckResult:
@@ -855,33 +699,25 @@ def check_u54(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
             status=Status.PASS,
-            message="안전: Apache 설정 파일이 없거나 AllowOverride 설정이 없습니다"
+            message="안전: Apache 설정 파일이 없거나 AllowOverride 설정이 없습니다",
         )
 
     # "AllowOverride None" 체크
     for line in lines:
-        if 'AllowOverride' in line and 'None' in line:
+        if "AllowOverride" in line and "None" in line:
             return CheckResult(
-                status=Status.PASS,
-                message="안전: AllowOverride가 None으로 설정되어 있습니다"
+                status=Status.PASS, message="안전: AllowOverride가 None으로 설정되어 있습니다"
             )
 
-    return CheckResult(
-        status=Status.FAIL,
-        message="취약: AllowOverride가 None이 아닙니다"
-    )
-
+    return CheckResult(status=Status.FAIL, message="취약: AllowOverride가 None이 아닙니다")
 
 
 def check_u55(command_outputs: List[str]) -> CheckResult:
@@ -905,25 +741,18 @@ def check_u55(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     # 모든 명령어 결과 확인
     for output in command_outputs:
-        lines = [line for line in output.strip().split('\n') if line.strip()]
+        lines = [line for line in output.strip().split("\n") if line.strip()]
         if lines:
             return CheckResult(
                 status=Status.FAIL,
-                message="취약: Apache 불필요한 파일(manual 디렉터리)이 존재합니다"
+                message="취약: Apache 불필요한 파일(manual 디렉터리)이 존재합니다",
             )
 
-    return CheckResult(
-        status=Status.PASS,
-        message="안전: Apache 불필요한 파일이 제거되었습니다"
-    )
-
+    return CheckResult(status=Status.PASS, message="안전: Apache 불필요한 파일이 제거되었습니다")
 
 
 def check_u56(command_outputs: List[str]) -> CheckResult:
@@ -946,33 +775,25 @@ def check_u56(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
             status=Status.PASS,
-            message="안전: Apache 설정 파일이 없거나 FollowSymLinks 설정이 없습니다"
+            message="안전: Apache 설정 파일이 없거나 FollowSymLinks 설정이 없습니다",
         )
 
     # "Options ... FollowSymLinks" 체크
     for line in lines:
-        if 'Options' in line and 'Indexes' in line and 'FollowSymLinks' in line:
+        if "Options" in line and "Indexes" in line and "FollowSymLinks" in line:
             return CheckResult(
-                status=Status.PASS,
-                message="안전: FollowSymLinks가 적절히 설정되어 있습니다"
+                status=Status.PASS, message="안전: FollowSymLinks가 적절히 설정되어 있습니다"
             )
 
-    return CheckResult(
-        status=Status.FAIL,
-        message="취약: FollowSymLinks 설정이 올바르지 않습니다"
-    )
-
+    return CheckResult(status=Status.FAIL, message="취약: FollowSymLinks 설정이 올바르지 않습니다")
 
 
 def check_u57(command_outputs: List[str]) -> CheckResult:
@@ -996,23 +817,20 @@ def check_u57(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
             status=Status.PASS,
-            message="안전: Apache 설정 파일이 없거나 LimitRequestBody 설정이 없습니다"
+            message="안전: Apache 설정 파일이 없거나 LimitRequestBody 설정이 없습니다",
         )
 
     # LimitRequestBody 값 파싱
     for line in lines:
-        if 'LimitRequestBody' in line:
+        if "LimitRequestBody" in line:
             parts = line.split()
             for part in parts:
                 try:
@@ -1020,21 +838,17 @@ def check_u57(command_outputs: List[str]) -> CheckResult:
                     if limit < 5000000:
                         return CheckResult(
                             status=Status.PASS,
-                            message=f"안전: 파일 업로드 크기가 제한되어 있습니다 (LimitRequestBody {limit})"
+                            message=f"안전: 파일 업로드 크기가 제한되어 있습니다 (LimitRequestBody {limit})",
                         )
                     else:
                         return CheckResult(
                             status=Status.FAIL,
-                            message=f"취약: 파일 업로드 크기 제한이 너무 큽니다 (LimitRequestBody {limit}, 권장 5MB 미만)"
+                            message=f"취약: 파일 업로드 크기 제한이 너무 큽니다 (LimitRequestBody {limit}, 권장 5MB 미만)",
                         )
                 except ValueError:
                     pass
 
-    return CheckResult(
-        status=Status.PASS,
-        message="안전: LimitRequestBody 설정이 없습니다"
-    )
-
+    return CheckResult(status=Status.PASS, message="안전: LimitRequestBody 설정이 없습니다")
 
 
 def check_u58(command_outputs: List[str]) -> CheckResult:
@@ -1057,25 +871,18 @@ def check_u58(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: Apache 설정 파일이 없습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: Apache 설정 파일이 없습니다")
     else:
         return CheckResult(
             status=Status.FAIL,
-            message="취약: Apache DocumentRoot가 기본 위치에 있습니다 (웹 서비스 영역 분리 필요)"
+            message="취약: Apache DocumentRoot가 기본 위치에 있습니다 (웹 서비스 영역 분리 필요)",
         )
-
 
 
 def check_u59(command_outputs: List[str]) -> CheckResult:
@@ -1098,27 +905,22 @@ def check_u59(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = output.split('\n')
+    lines = output.split("\n")
 
     for line in lines:
         if line.strip():
-            if 'telnet' in line or 'ftp' in line:
+            if "telnet" in line or "ftp" in line:
                 return CheckResult(
                     status=Status.FAIL,
-                    message="취약: telnet 또는 ftp 서비스가 활성화되어 있습니다 (SSH 사용 권장)"
+                    message="취약: telnet 또는 ftp 서비스가 활성화되어 있습니다 (SSH 사용 권장)",
                 )
 
     return CheckResult(
-        status=Status.PASS,
-        message="안전: telnet 및 ftp 서비스가 비활성화되어 있습니다"
+        status=Status.PASS, message="안전: telnet 및 ftp 서비스가 비활성화되어 있습니다"
     )
-
 
 
 def check_u60(command_outputs: List[str]) -> CheckResult:
@@ -1143,48 +945,36 @@ def check_u60(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs or len(command_outputs) < 2:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 부족합니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 부족합니다")
 
     xinetd_output = command_outputs[0].strip()
     ps_output = command_outputs[1].strip()
 
-    xinetd_lines = [line for line in xinetd_output.split('\n') if line.strip()]
-    ps_lines = [line for line in ps_output.split('\n') if line.strip()]
+    xinetd_lines = [line for line in xinetd_output.split("\n") if line.strip()]
+    ps_lines = [line for line in ps_output.split("\n") if line.strip()]
 
     # 모두 빈 출력이면 PASS
     if not xinetd_lines and not ps_lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: FTP 서비스가 비활성화되어 있습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: FTP 서비스가 비활성화되어 있습니다")
 
     # xinetd 설정이 있으면 PASS
     if xinetd_lines:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: FTP 서비스가 xinetd로 관리되고 있습니다"
+            status=Status.PASS, message="안전: FTP 서비스가 xinetd로 관리되고 있습니다"
         )
 
     # ps 출력 확인 (grep 라인 제외)
     if ps_lines:
         for line in ps_lines:
-            if 'ftp' in line:
-                if 'grep' in line:
+            if "ftp" in line:
+                if "grep" in line:
                     pass  # grep 라인은 무시
                 else:
                     return CheckResult(
-                        status=Status.FAIL,
-                        message="취약: FTP 서비스가 실행 중입니다"
+                        status=Status.FAIL, message="취약: FTP 서비스가 실행 중입니다"
                     )
 
-    return CheckResult(
-        status=Status.PASS,
-        message="안전: FTP 서비스가 비활성화되어 있습니다"
-    )
-
+    return CheckResult(status=Status.PASS, message="안전: FTP 서비스가 비활성화되어 있습니다")
 
 
 def check_u61(command_outputs: List[str]) -> CheckResult:
@@ -1207,39 +997,31 @@ def check_u61(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: ftp 계정이 존재하지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: ftp 계정이 존재하지 않습니다")
 
     # ftp 계정의 shell 확인
     for line in lines:
-        if 'ftp' in line:
-            parts = line.split(':')
+        if "ftp" in line:
+            parts = line.split(":")
             if len(parts) >= 7:
                 shell = parts[-1].strip()
-                if shell == '/sbin/nologin' or shell == '/sbin/false':
+                if shell == "/sbin/nologin" or shell == "/sbin/false":
                     pass  # 정상
                 else:
                     return CheckResult(
                         status=Status.FAIL,
-                        message=f"취약: ftp 계정의 shell이 {shell}입니다 (/sbin/nologin 또는 /sbin/false 권장)"
+                        message=f"취약: ftp 계정의 shell이 {shell}입니다 (/sbin/nologin 또는 /sbin/false 권장)",
                     )
 
     return CheckResult(
-        status=Status.PASS,
-        message="안전: ftp 계정의 shell이 적절히 설정되어 있습니다"
+        status=Status.PASS, message="안전: ftp 계정의 shell이 적절히 설정되어 있습니다"
     )
-
 
 
 def check_u62(command_outputs: List[str]) -> CheckResult:
@@ -1264,15 +1046,12 @@ def check_u62(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     # 모든 출력 확인
     all_empty = True
     for output in command_outputs:
-        lines = [line for line in output.strip().split('\n') if line.strip()]
+        lines = [line for line in output.strip().split("\n") if line.strip()]
         if lines:
             all_empty = False
             # ls -l 출력 파싱
@@ -1282,25 +1061,20 @@ def check_u62(command_outputs: List[str]) -> CheckResult:
                 owner = parts[2]
                 # 권한 체크: rw-r----- root
                 if len(permissions) >= 10:
-                    if permissions[1:10] == 'rw-r-----' and owner == 'root':
+                    if permissions[1:10] == "rw-r-----" and owner == "root":
                         pass  # 정상
                     else:
                         return CheckResult(
                             status=Status.FAIL,
-                            message=f"취약: ftpusers 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다"
+                            message=f"취약: ftpusers 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다",
                         )
 
     if all_empty:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: ftpusers 파일이 존재하지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: ftpusers 파일이 존재하지 않습니다")
 
     return CheckResult(
-        status=Status.PASS,
-        message="안전: ftpusers 파일 권한이 적절히 설정되어 있습니다"
+        status=Status.PASS, message="안전: ftpusers 파일 권한이 적절히 설정되어 있습니다"
     )
-
 
 
 def check_u63(command_outputs: List[str]) -> CheckResult:
@@ -1325,30 +1099,22 @@ def check_u63(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     # 모든 출력 확인
     all_empty = True
     for output in command_outputs:
-        lines = [line for line in output.strip().split('\n') if line.strip()]
+        lines = [line for line in output.strip().split("\n") if line.strip()]
         if lines:
             all_empty = False
             break
 
     if all_empty:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: FTP 설정 파일이 존재하지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: FTP 설정 파일이 존재하지 않습니다")
     else:
         return CheckResult(
-            status=Status.MANUAL,
-            message="수동 점검: FTP root 계정 접속 차단 확인이 필요합니다"
+            status=Status.MANUAL, message="수동 점검: FTP root 계정 접속 차단 확인이 필요합니다"
         )
-
 
 
 def check_u64(command_outputs: List[str]) -> CheckResult:
@@ -1373,15 +1139,12 @@ def check_u64(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     # 모든 출력 확인
     all_empty = True
     for output in command_outputs:
-        lines = [line for line in output.strip().split('\n') if line.strip()]
+        lines = [line for line in output.strip().split("\n") if line.strip()]
         if lines:
             all_empty = False
             # ls -l 출력 파싱
@@ -1391,25 +1154,18 @@ def check_u64(command_outputs: List[str]) -> CheckResult:
                 owner = parts[2]
                 # 권한 체크: rw-r----- root
                 if len(permissions) >= 10:
-                    if permissions[1:10] == 'rw-r-----' and owner == 'root':
+                    if permissions[1:10] == "rw-r-----" and owner == "root":
                         pass  # 정상
                     else:
                         return CheckResult(
                             status=Status.FAIL,
-                            message=f"취약: at 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다"
+                            message=f"취약: at 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다",
                         )
 
     if all_empty:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: at 파일이 존재하지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: at 파일이 존재하지 않습니다")
 
-    return CheckResult(
-        status=Status.PASS,
-        message="안전: at 파일 권한이 적절히 설정되어 있습니다"
-    )
-
+    return CheckResult(status=Status.PASS, message="안전: at 파일 권한이 적절히 설정되어 있습니다")
 
 
 def check_u65(command_outputs: List[str]) -> CheckResult:
@@ -1433,27 +1189,17 @@ def check_u65(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     # grep이 포함된 라인 제외
     for line in lines:
-        if 'snmp' in line and 'grep' not in line:
-            return CheckResult(
-                status=Status.FAIL,
-                message="취약: SNMP 서비스가 실행 중입니다"
-            )
+        if "snmp" in line and "grep" not in line:
+            return CheckResult(status=Status.FAIL, message="취약: SNMP 서비스가 실행 중입니다")
 
-    return CheckResult(
-        status=Status.PASS,
-        message="안전: SNMP 서비스가 비활성화되어 있습니다"
-    )
-
+    return CheckResult(status=Status.PASS, message="안전: SNMP 서비스가 비활성화되어 있습니다")
 
 
 def check_u66(command_outputs: List[str]) -> CheckResult:
@@ -1477,33 +1223,25 @@ def check_u66(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: SNMP 설정 파일이 없습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: SNMP 설정 파일이 없습니다")
 
     # "public" 또는 "private" 체크
     for line in lines:
-        if 'public' in line or 'private' in line:
+        if "public" in line or "private" in line:
             return CheckResult(
                 status=Status.FAIL,
-                message="취약: SNMP Community String이 기본값(public/private)입니다"
+                message="취약: SNMP Community String이 기본값(public/private)입니다",
             )
 
     return CheckResult(
-        status=Status.PASS,
-        message="안전: SNMP Community String이 복잡하게 설정되어 있습니다"
+        status=Status.PASS, message="안전: SNMP Community String이 복잡하게 설정되어 있습니다"
     )
-
 
 
 def check_u67(command_outputs: List[str]) -> CheckResult:
@@ -1526,25 +1264,19 @@ def check_u67(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
         return CheckResult(
-            status=Status.FAIL,
-            message="취약: 로그온 시 경고 메시지가 설정되어 있지 않습니다"
+            status=Status.FAIL, message="취약: 로그온 시 경고 메시지가 설정되어 있지 않습니다"
         )
     else:
         return CheckResult(
-            status=Status.PASS,
-            message="안전: 로그온 시 경고 메시지가 설정되어 있습니다"
+            status=Status.PASS, message="안전: 로그온 시 경고 메시지가 설정되어 있습니다"
         )
-
 
 
 def check_u68(command_outputs: List[str]) -> CheckResult:
@@ -1568,19 +1300,13 @@ def check_u68(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: NFS 설정 파일이 존재하지 않습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: NFS 설정 파일이 존재하지 않습니다")
 
     # ls -l 출력 파싱
     parts = lines[0].split()
@@ -1589,22 +1315,18 @@ def check_u68(command_outputs: List[str]) -> CheckResult:
         owner = parts[2]
         # 권한 체크: rw-r--r-- root
         if len(permissions) >= 10:
-            if permissions[1:10] == 'rw-r--r--' and owner == 'root':
+            if permissions[1:10] == "rw-r--r--" and owner == "root":
                 return CheckResult(
                     status=Status.PASS,
-                    message=f"안전: NFS 설정 파일 권한이 {permissions}이고 소유자가 root입니다"
+                    message=f"안전: NFS 설정 파일 권한이 {permissions}이고 소유자가 root입니다",
                 )
             else:
                 return CheckResult(
                     status=Status.FAIL,
-                    message=f"취약: NFS 설정 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다"
+                    message=f"취약: NFS 설정 파일 권한({permissions}) 또는 소유자({owner})가 올바르지 않습니다",
                 )
 
-    return CheckResult(
-        status=Status.MANUAL,
-        message="ls 출력 형식이 올바르지 않습니다"
-    )
-
+    return CheckResult(status=Status.MANUAL, message="ls 출력 형식이 올바르지 않습니다")
 
 
 def check_u69(command_outputs: List[str]) -> CheckResult:
@@ -1627,25 +1349,18 @@ def check_u69(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: Sendmail 설정 파일이 없습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: Sendmail 설정 파일이 없습니다")
     else:
         return CheckResult(
             status=Status.MANUAL,
-            message="수동 점검: Sendmail expn/vrfy 명령어 제한 설정을 확인하세요"
+            message="수동 점검: Sendmail expn/vrfy 명령어 제한 설정을 확인하세요",
         )
-
 
 
 def check_u70(command_outputs: List[str]) -> CheckResult:
@@ -1669,31 +1384,23 @@ def check_u70(command_outputs: List[str]) -> CheckResult:
             - message: 결과 설명 메시지
     """
     if not command_outputs:
-        return CheckResult(
-            status=Status.MANUAL,
-            message="명령어 출력이 없습니다"
-        )
+        return CheckResult(status=Status.MANUAL, message="명령어 출력이 없습니다")
 
     output = command_outputs[0].strip()
-    lines = [line for line in output.split('\n') if line.strip()]
+    lines = [line for line in output.split("\n") if line.strip()]
 
     if not lines:
-        return CheckResult(
-            status=Status.PASS,
-            message="안전: Apache 설정 파일이 없습니다"
-        )
+        return CheckResult(status=Status.PASS, message="안전: Apache 설정 파일이 없습니다")
 
     # "ServerTokens Prod" 체크
     for line in lines:
-        if 'ServerTokens' in line and 'Prod' in line:
+        if "ServerTokens" in line and "Prod" in line:
             return CheckResult(
                 status=Status.PASS,
-                message="안전: Apache 서버 정보가 숨겨져 있습니다 (ServerTokens Prod)"
+                message="안전: Apache 서버 정보가 숨겨져 있습니다 (ServerTokens Prod)",
             )
 
     return CheckResult(
         status=Status.FAIL,
-        message="취약: Apache 서버 정보가 노출됩니다 (ServerTokens Prod 설정 권장)"
+        message="취약: Apache 서버 정보가 노출됩니다 (ServerTokens Prod 설정 권장)",
     )
-
-

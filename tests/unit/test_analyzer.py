@@ -147,9 +147,7 @@ class TestCalculateRiskStatistics:
         scan_result = ScanResult(server_id="server-001", platform="linux")
         # 9개 실패 항목
         for i in range(1, 10):
-            scan_result.results[f"U-{i:02d}"] = CheckResult(
-                status=Status.FAIL, message="Test"
-            )
+            scan_result.results[f"U-{i:02d}"] = CheckResult(status=Status.FAIL, message="Test")
 
         stats = calculate_risk_statistics(scan_result)
 
@@ -304,9 +302,7 @@ class TestGetSeverityDistribution:
         scan_result = ScanResult(server_id="server-001", platform="linux")
         # 9개 실패 항목
         for i in range(1, 10):
-            scan_result.results[f"U-{i:02d}"] = CheckResult(
-                status=Status.FAIL, message="Test"
-            )
+            scan_result.results[f"U-{i:02d}"] = CheckResult(status=Status.FAIL, message="Test")
 
         distribution = get_severity_distribution(scan_result)
 
@@ -371,3 +367,80 @@ class TestRiskCalculatorIntegration:
         # 카테고리 분포
         category_dist = get_category_distribution(scan_result)
         assert isinstance(category_dist, dict)
+
+
+@pytest.mark.unit
+class TestRiskCalculatorAdditional:
+    """RiskCalculator 추가 테스트 (커버리지 증가)"""
+
+    def test_calculate_with_only_manual(self):
+        """MANUAL만 있는 경우"""
+        results = [
+            CheckResult(status=Status.MANUAL, message=f"수동 {i}", timestamp=datetime.now())
+            for i in range(10)
+        ]
+
+        stats = calculate_risk_statistics(results)
+
+        assert stats.total_checks == 10
+        assert stats.passed == 0
+        assert stats.failed == 0
+        assert stats.manual == 10
+        assert stats.pass_rate == 0.0
+
+    def test_evaluate_risk_level_edge_cases(self):
+        """위험도 평가 경계값 테스트"""
+        # 정확히 80%
+        assert evaluate_risk_level(80.0, 0, 0) == "안전"
+
+        # 정확히 60%
+        level_60 = evaluate_risk_level(60.0, 0, 0)
+        assert level_60 in ["낮음", "안전"]
+
+        # 정확히 40%
+        level_40 = evaluate_risk_level(40.0, 0, 0)
+        assert level_40 in ["중간", "높음"]
+
+        # 정확히 20%
+        level_20 = evaluate_risk_level(20.0, 0, 0)
+        assert level_20 in ["높음", "위험"]
+
+    def test_category_distribution_coverage(self):
+        """카테고리 분포 커버리지 테스트"""
+        results = [
+            CheckResult(status=Status.PASS, message="test", timestamp=datetime.now())
+            for _ in range(5)
+        ]
+
+        dist = get_category_distribution(results)
+
+        assert isinstance(dist, dict)
+        # 빈 카테고리도 0으로 표시되어야 함
+
+    def test_severity_distribution_all_types(self):
+        """모든 심각도 타입 테스트"""
+        results = [
+            CheckResult(status=Status.PASS, message="test", timestamp=datetime.now())
+            for _ in range(3)
+        ]
+
+        dist = get_severity_distribution(results)
+
+        assert "high" in dist
+        assert "medium" in dist
+        assert "low" in dist
+        assert "info" in dist
+        assert all(isinstance(v, int) for v in dist.values())
+
+    def test_risk_statistics_with_high_risk_counts(self):
+        """고위험 항목 수 테스트"""
+        results = [
+            CheckResult(status=Status.FAIL, message="critical", timestamp=datetime.now())
+            for _ in range(20)
+        ]
+
+        stats = calculate_risk_statistics(results)
+
+        assert stats.failed == 20
+        # high_risk_count와 medium_risk_count는 severity에 따라 결정됨
+        assert stats.risk_level in ["위험", "높음"]

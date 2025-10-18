@@ -206,9 +206,7 @@ class TestLinuxScannerConnection:
         )
 
         # SSH 클라이언트 connect가 예외 발생
-        with patch.object(
-            scanner._ssh_client, "connect", new_callable=AsyncMock
-        ) as mock_connect:
+        with patch.object(scanner._ssh_client, "connect", new_callable=AsyncMock) as mock_connect:
             from src.infrastructure.network.ssh_client import SSHClientError
 
             mock_connect.side_effect = SSHClientError("Connection refused")
@@ -258,9 +256,7 @@ class TestLinuxScannerCommandExecution:
         scanner._connected = True
 
         # execute 메서드 mock
-        with patch.object(
-            scanner._ssh_client, "execute", new_callable=AsyncMock
-        ) as mock_execute:
+        with patch.object(scanner._ssh_client, "execute", new_callable=AsyncMock) as mock_execute:
             mock_execute.return_value = "command output"
 
             result = await scanner.execute_command("ls -la")
@@ -352,3 +348,73 @@ class TestLinuxScannerScanning:
 
         with pytest.raises(RuntimeError, match="규칙이 로드되지 않았습니다"):
             await scanner.scan_all()
+
+
+@pytest.mark.unit
+class TestScanResultAdditional:
+    """ScanResult 추가 테스트 (커버리지 증가)"""
+
+    def test_scan_result_with_dict_results(self):
+        """Dict 형태의 results 테스트"""
+        results = {
+            "U-01": CheckResult(status=Status.PASS, message="통과", timestamp=datetime.now()),
+            "U-02": CheckResult(status=Status.FAIL, message="실패", timestamp=datetime.now()),
+            "U-03": CheckResult(status=Status.MANUAL, message="수동", timestamp=datetime.now()),
+        }
+
+        scan_result = ScanResult(server_id="test-server", platform="linux", results=results)
+
+        assert scan_result.total == 3
+        assert scan_result.passed == 1
+        assert scan_result.failed == 1
+        assert scan_result.manual == 1
+
+    def test_scan_result_empty(self):
+        """빈 결과 테스트"""
+        scan_result = ScanResult(
+            server_id="empty-server",
+            platform="linux",
+        )
+
+        assert scan_result.total == 0
+        assert scan_result.passed == 0
+        assert scan_result.failed == 0
+        assert scan_result.manual == 0
+        assert scan_result.score == 0.0
+
+    def test_scan_result_score_calculation(self):
+        """점수 계산 테스트"""
+        # 50% PASS
+        results = {
+            f"U-{i:02d}": CheckResult(
+                status=Status.PASS if i <= 5 else Status.FAIL,
+                message="test",
+                timestamp=datetime.now(),
+            )
+            for i in range(1, 11)
+        }
+
+        scan_result = ScanResult(server_id="test", platform="linux", results=results)
+
+        assert scan_result.total == 10
+        assert scan_result.score == pytest.approx(50.0, rel=0.1)
+
+
+@pytest.mark.unit
+class TestBaseScannerAdditional:
+    """BaseScanner 추가 테스트"""
+
+    def test_base_scanner_rules_property(self):
+        """규칙 리스트 확인"""
+        scanner = LinuxScanner(server_id="test", platform="linux")
+
+        assert hasattr(scanner, "rules")
+        assert isinstance(scanner.rules, list)
+        assert len(scanner.rules) == 0  # 초기에는 비어있음
+
+    def test_base_scanner_connection_state(self):
+        """연결 상태 확인"""
+        scanner = LinuxScanner(server_id="test", platform="linux")
+
+        assert hasattr(scanner, "is_connected")
+        # 초기에는 연결되지 않음

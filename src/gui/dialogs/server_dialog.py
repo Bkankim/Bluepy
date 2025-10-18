@@ -121,9 +121,7 @@ class ServerDialog(QDialog):
         layout.addWidget(extra_group)
 
         # 버튼
-        button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
-        )
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         button_box.accepted.connect(self._on_accept)
         button_box.rejected.connect(self.reject)
 
@@ -147,14 +145,14 @@ class ServerDialog(QDialog):
         if not self.server_data:
             return
 
-        self.name_edit.setText(self.server_data.get('name', ''))
-        self.host_edit.setText(self.server_data.get('host', ''))
-        self.platform_combo.setCurrentText(self.server_data.get('platform', 'linux'))
-        self.username_edit.setText(self.server_data.get('username', ''))
-        self.port_spin.setValue(self.server_data.get('port', 22))
-        self.auth_method_combo.setCurrentText(self.server_data.get('auth_method', 'password'))
-        self.key_path_edit.setText(self.server_data.get('key_path', ''))
-        self.description_edit.setPlainText(self.server_data.get('description', ''))
+        self.name_edit.setText(self.server_data.get("name", ""))
+        self.host_edit.setText(self.server_data.get("host", ""))
+        self.platform_combo.setCurrentText(self.server_data.get("platform", "linux"))
+        self.username_edit.setText(self.server_data.get("username", ""))
+        self.port_spin.setValue(self.server_data.get("port", 22))
+        self.auth_method_combo.setCurrentText(self.server_data.get("auth_method", "password"))
+        self.key_path_edit.setText(self.server_data.get("key_path", ""))
+        self.description_edit.setPlainText(self.server_data.get("description", ""))
 
     def _on_accept(self):
         """확인 버튼 핸들러"""
@@ -183,14 +181,14 @@ class ServerDialog(QDialog):
             서버 정보 딕셔너리
         """
         return {
-            'name': self.name_edit.text().strip(),
-            'host': self.host_edit.text().strip(),
-            'platform': self.platform_combo.currentText(),
-            'username': self.username_edit.text().strip(),
-            'port': self.port_spin.value(),
-            'auth_method': self.auth_method_combo.currentText(),
-            'key_path': self.key_path_edit.text().strip(),
-            'description': self.description_edit.toPlainText().strip(),
+            "name": self.name_edit.text().strip(),
+            "host": self.host_edit.text().strip(),
+            "platform": self.platform_combo.currentText(),
+            "username": self.username_edit.text().strip(),
+            "port": self.port_spin.value(),
+            "auth_method": self.auth_method_combo.currentText(),
+            "key_path": self.key_path_edit.text().strip(),
+            "description": self.description_edit.toPlainText().strip(),
         }
 
 

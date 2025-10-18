@@ -151,9 +151,7 @@ class TestYAMLRequiredFields:
             with open(yaml_file, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
             assert "check" in data, f"{yaml_file.name}에 check 필드가 없습니다"
-            assert (
-                "commands" in data["check"]
-            ), f"{yaml_file.name}에 check.commands 필드가 없습니다"
+            assert "commands" in data["check"], f"{yaml_file.name}에 check.commands 필드가 없습니다"
             assert isinstance(
                 data["check"]["commands"], list
             ), f"{yaml_file.name}의 check.commands가 리스트가 아닙니다"
@@ -228,9 +226,7 @@ class TestRuleMetadataConversion:
             except Exception as e:
                 failed_conversions.append((yaml_file.name, str(e)))
 
-        assert (
-            len(failed_conversions) == 0
-        ), f"RuleMetadata 변환 실패: {failed_conversions}"
+        assert len(failed_conversions) == 0, f"RuleMetadata 변환 실패: {failed_conversions}"
 
 
 # ==================== Validator 경로 형식 검증 ====================
@@ -290,9 +286,7 @@ class TestRemediationField:
             yaml_file = rules_dir / f"U-{i:02d}.yaml"
             with open(yaml_file, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
-            assert (
-                "remediation" in data
-            ), f"{yaml_file.name}에 remediation 필드가 없습니다"
+            assert "remediation" in data, f"{yaml_file.name}에 remediation 필드가 없습니다"
 
     def test_remediation_has_auto_field(self, rules_dir):
         """remediation.auto 필드가 boolean인지 확인 (샘플)"""
@@ -350,9 +344,7 @@ class TestRuleStatistics:
             category_count[category] = category_count.get(category, 0) + 1
 
         # 최소 3개 이상의 카테고리가 있어야 함
-        assert (
-            len(category_count) >= 3
-        ), f"카테고리가 3개 미만입니다: {list(category_count.keys())}"
+        assert len(category_count) >= 3, f"카테고리가 3개 미만입니다: {list(category_count.keys())}"
 
         # 총 개수 확인
         total = sum(category_count.values())

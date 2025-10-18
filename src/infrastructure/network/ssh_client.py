@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 class SSHClientError(Exception):
     """SSH 클라이언트 예외"""
+
     pass
 
 
@@ -45,7 +46,7 @@ class SSHClient:
         password: Optional[str] = None,
         key_filename: Optional[str] = None,
         port: int = 22,
-        timeout: int = 30
+        timeout: int = 30,
     ):
         """초기화
 
@@ -82,19 +83,19 @@ class SSHClient:
 
             # AsyncSSH 연결 옵션
             connect_kwargs = {
-                'host': self.host,
-                'port': self.port,
-                'username': self.username,
-                'connect_timeout': self.timeout,
-                'known_hosts': None,  # 보안: 프로덕션에서는 known_hosts 사용 권장
+                "host": self.host,
+                "port": self.port,
+                "username": self.username,
+                "connect_timeout": self.timeout,
+                "known_hosts": None,  # 보안: 프로덕션에서는 known_hosts 사용 권장
             }
 
             # 인증 방법 선택
             if self.key_filename:
-                connect_kwargs['client_keys'] = [self.key_filename]
+                connect_kwargs["client_keys"] = [self.key_filename]
                 logger.debug(f"SSH 키 사용: {self.key_filename}")
             elif self.password:
-                connect_kwargs['password'] = self.password
+                connect_kwargs["password"] = self.password
                 logger.debug("패스워드 인증 사용")
             else:
                 raise SSHClientError("패스워드 또는 SSH 키가 필요합니다")

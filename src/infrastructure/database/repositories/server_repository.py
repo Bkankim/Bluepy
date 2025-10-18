@@ -39,7 +39,7 @@ class ServerRepository:
         auth_method: str = "password",
         key_path: Optional[str] = None,
         platform: str = "linux",
-        description: Optional[str] = None
+        description: Optional[str] = None,
     ) -> Server:
         """서버 추가
 
@@ -72,7 +72,7 @@ class ServerRepository:
             auth_method=auth_method,
             key_path=key_path,
             platform=platform,
-            description=description
+            description=description,
         )
 
         self.session.add(server)
@@ -111,11 +111,7 @@ class ServerRepository:
         """
         return self.session.query(Server).order_by(Server.created_at.desc()).all()
 
-    def update(
-        self,
-        server_id: int,
-        **kwargs
-    ) -> Optional[Server]:
+    def update(self, server_id: int, **kwargs) -> Optional[Server]:
         """서버 정보 수정
 
         Args:
@@ -134,8 +130,14 @@ class ServerRepository:
 
         # 허용된 필드만 업데이트
         allowed_fields = [
-            'name', 'host', 'port', 'username',
-            'auth_method', 'key_path', 'platform', 'description'
+            "name",
+            "host",
+            "port",
+            "username",
+            "auth_method",
+            "key_path",
+            "platform",
+            "description",
         ]
 
         for key, value in kwargs.items():

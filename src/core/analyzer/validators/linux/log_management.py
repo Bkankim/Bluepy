@@ -31,9 +31,8 @@ def check_u72(command_outputs: List[str]) -> CheckResult:
     """
     return CheckResult(
         status=Status.MANUAL,
-        message="수동 점검: 로그 기록의 검토, 분석, 리포트 작성 및 보고 등이 정기적으로 이루어지는지 확인하세요"
+        message="수동 점검: 로그 기록의 검토, 분석, 리포트 작성 및 보고 등이 정기적으로 이루어지는지 확인하세요",
     )
-
 
 
 def check_u73(command_outputs: List[str]) -> CheckResult:
@@ -55,7 +54,5 @@ def check_u73(command_outputs: List[str]) -> CheckResult:
     """
     return CheckResult(
         status=Status.MANUAL,
-        message="수동 점검: 로그 기록 정책이 정책에 따라 설정되어 수립되어 있는지 확인하세요"
+        message="수동 점검: 로그 기록 정책이 정책에 따라 설정되어 수립되어 있는지 확인하세요",
     )
-
-

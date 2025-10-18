@@ -74,10 +74,7 @@ class ScanResult:
         if self.total == 0:
             return 0.0
 
-        weighted_score = (
-            self.passed * 1.0 +
-            self.manual * 0.5
-        )
+        weighted_score = self.passed * 1.0 + self.manual * 0.5
         return (weighted_score / self.total) * 100
 
 
@@ -170,10 +167,7 @@ class BaseScanner(ABC):
         if not self._rules:
             raise RuntimeError("규칙이 로드되지 않았습니다. load_rules()를 먼저 호출하세요.")
 
-        result = ScanResult(
-            server_id=self.server_id,
-            platform=self.platform
-        )
+        result = ScanResult(server_id=self.server_id, platform=self.platform)
 
         for rule in self._rules:
             check_result = await self.scan_one(rule)

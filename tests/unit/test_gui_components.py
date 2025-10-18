@@ -121,25 +121,19 @@ class TestGUIModuleStructure:
     def test_gui_package_has_init(self, project_root):
         """gui 패키지에 __init__.py가 있는지 확인"""
         init_file = project_root / "src" / "gui" / "__init__.py"
-        assert (
-            init_file.exists()
-        ), f"gui 패키지에 __init__.py가 없습니다: {init_file}"
+        assert init_file.exists(), f"gui 패키지에 __init__.py가 없습니다: {init_file}"
 
     def test_views_package_has_init(self, project_root):
         """views 패키지에 __init__.py가 있는지 확인"""
         init_file = project_root / "src" / "gui" / "views" / "__init__.py"
         if (project_root / "src" / "gui" / "views").exists():
-            assert (
-                init_file.exists()
-            ), f"views 패키지에 __init__.py가 없습니다: {init_file}"
+            assert init_file.exists(), f"views 패키지에 __init__.py가 없습니다: {init_file}"
 
     def test_dialogs_package_has_init(self, project_root):
         """dialogs 패키지에 __init__.py가 있는지 확인"""
         init_file = project_root / "src" / "gui" / "dialogs" / "__init__.py"
         if (project_root / "src" / "gui" / "dialogs").exists():
-            assert (
-                init_file.exists()
-            ), f"dialogs 패키지에 __init__.py가 없습니다: {init_file}"
+            assert init_file.exists(), f"dialogs 패키지에 __init__.py가 없습니다: {init_file}"
 
 
 # ==================== PySide6 Dependency Tests ====================
@@ -198,9 +192,7 @@ class TestGUIWithMocks:
 
             # MainWindow의 부모 클래스 확인
             # (실제 인스턴스를 생성하지 않고 클래스 구조만 확인)
-            assert issubclass(MainWindow, QMainWindow) or hasattr(
-                MainWindow, "__bases__"
-            )
+            assert issubclass(MainWindow, QMainWindow) or hasattr(MainWindow, "__bases__")
         except Exception:
             # headless 환경에서는 skip
             pytest.skip("GUI 환경이 아니므로 skip")

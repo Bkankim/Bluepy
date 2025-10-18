@@ -160,7 +160,7 @@ class ServerView(QWidget):
             "서버 삭제",
             f"'{item.text()}' 서버를 삭제하시겠습니까?",
             QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            QMessageBox.No,
         )
 
         if reply == QMessageBox.Yes:

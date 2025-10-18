@@ -97,7 +97,15 @@ class TestFunctionInfo:
 
         # 필수 필드 확인
         fields = {f.name for f in dataclasses.fields(FunctionInfo)}
-        expected_fields = {"name", "number", "kisa_code", "source", "complexity", "severity", "commands"}
+        expected_fields = {
+            "name",
+            "number",
+            "kisa_code",
+            "source",
+            "complexity",
+            "severity",
+            "commands",
+        }
 
         assert expected_fields.issubset(
             fields
@@ -121,9 +129,7 @@ class TestKISANamesMapping:
         """KISA_NAMES 상수가 정의되어 있는지 확인"""
         import migrate_legacy
 
-        assert hasattr(
-            migrate_legacy, "KISA_NAMES"
-        ), "KISA_NAMES 상수가 정의되지 않았습니다"
+        assert hasattr(migrate_legacy, "KISA_NAMES"), "KISA_NAMES 상수가 정의되지 않았습니다"
 
     def test_kisa_names_count(self):
         """KISA_NAMES에 73개 항목이 있는지 확인"""
@@ -176,9 +182,7 @@ class TestMigrationScriptConstants:
         """KISA_PATTERN 상수가 정의되어 있는지 확인"""
         import migrate_legacy
 
-        assert hasattr(
-            migrate_legacy, "KISA_PATTERN"
-        ), "KISA_PATTERN 상수가 정의되지 않았습니다"
+        assert hasattr(migrate_legacy, "KISA_PATTERN"), "KISA_PATTERN 상수가 정의되지 않았습니다"
 
     def test_kisa_pattern_format(self):
         """KISA_PATTERN 정규식 확인"""

@@ -45,7 +45,7 @@ class ScanWorker(QThread):
         password: Optional[str] = None,
         key_filename: Optional[str] = None,
         port: int = 22,
-        rules_dir: str = "config/rules"
+        rules_dir: str = "config/rules",
     ):
         """초기화
 
@@ -104,7 +104,7 @@ class ScanWorker(QThread):
             username=self.username,
             password=self.password,
             key_filename=self.key_filename,
-            port=self.port
+            port=self.port,
         )
 
         try:
@@ -151,10 +151,7 @@ class ScanWorker(QThread):
         # Scanner의 scan_all()을 호출하되, 각 규칙마다 진행률 업데이트
         # 현재 BaseScanner.scan_all()은 순차 실행이므로, 여기서 직접 구현
 
-        result = ScanResult(
-            server_id=scanner.server_id,
-            platform=scanner.platform
-        )
+        result = ScanResult(server_id=scanner.server_id, platform=scanner.platform)
 
         current = 0
         for rule in scanner._rules:

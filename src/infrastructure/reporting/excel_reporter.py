@@ -37,10 +37,7 @@ class ExcelReporter:
         self.wb = None
 
     def generate(
-        self,
-        scan_result: ScanResult,
-        output_path: str,
-        server_name: Optional[str] = None
+        self, scan_result: ScanResult, output_path: str, server_name: Optional[str] = None
     ) -> str:
         """보고서 생성
 

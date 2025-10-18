@@ -190,9 +190,9 @@ class RuleMetadata(BaseModel):
     severity: Severity
     kisa_standard: str
     description: str
-    commands: List[str] = Field(..., min_length=1)
+    commands: List[str] = Field(default_factory=list)
     validator: str = Field(
-        ..., pattern=r"^validators\.(linux|macos|windows)\.check_[a-z]\d{2}_\w+$"
+        ..., pattern=r"^validators\.(linux|macos|windows)\.check_[a-z]\d{2}(_\w+)?$"
     )
     expected_result: Optional[str] = None
     remediation: Optional[RemediationInfo] = None

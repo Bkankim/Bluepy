@@ -4,7 +4,9 @@ category: 서비스 관리
 severity: high
 description: r계열 서비스 비활성화 취약점을 점검합니다.
 check:
-  commands: []
+  commands:
+    - cat /etc/inetd.conf | grep -E "rsh|rlogin|rexec"
+    - cat /etc/xinetd.d/rsh
 validator: validators.linux.check_u38
 remediation:
   auto: false

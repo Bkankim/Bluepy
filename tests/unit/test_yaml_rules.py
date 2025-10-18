@@ -145,7 +145,7 @@ class TestYAMLRequiredFields:
             ), f"{yaml_file.name}의 severity가 유효하지 않습니다: {data['severity']}"
 
     def test_all_files_have_check_commands(self, rules_dir):
-        """모든 YAML 파일에 check.commands 필드가 있는지 확인"""
+        """모든 YAML 파일에 check.commands 필드가 있는지 확인 (빈 리스트도 허용)"""
         for i in range(1, 74):
             yaml_file = rules_dir / f"U-{i:02d}.yaml"
             with open(yaml_file, "r", encoding="utf-8") as f:
@@ -157,9 +157,7 @@ class TestYAMLRequiredFields:
             assert isinstance(
                 data["check"]["commands"], list
             ), f"{yaml_file.name}의 check.commands가 리스트가 아닙니다"
-            assert (
-                len(data["check"]["commands"]) > 0
-            ), f"{yaml_file.name}의 check.commands가 비어있습니다"
+            # 빈 리스트도 허용 (일부 점검 항목은 수동 점검이거나 서버 명령어가 불필요)
 
     def test_all_files_have_validator_field(self, rules_dir):
         """모든 YAML 파일에 validator 필드가 있는지 확인"""

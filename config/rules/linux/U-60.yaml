@@ -4,7 +4,9 @@ category: 서비스 관리
 severity: low
 description: ftp 서비스 확인 취약점을 점검합니다.
 check:
-  commands: []
+  commands:
+    - systemctl status vsftpd
+    - cat /etc/vsftpd/vsftpd.conf
 validator: validators.linux.check_u60
 remediation:
   auto: false

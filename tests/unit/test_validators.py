@@ -105,7 +105,7 @@ class TestAccountManagementValidators:
         """check_u01: PASS 케이스 (pam_securetty 설정되고 pts 없음)"""
         # /etc/pam.d/login에 pam_securetty.so 있고, /etc/securetty에 pts 없음
         command_outputs = [
-            "auth required pam_securetty.so\nauth include system-auth",
+            "auth required /lib/security/pam_securetty.so\nauth include system-auth",
             "console\ntty1\ntty2\ntty3\n",  # pts 없음
         ]
 
@@ -113,7 +113,7 @@ class TestAccountManagementValidators:
 
         assert isinstance(result, CheckResult)
         assert result.status == Status.PASS
-        assert "원격 로그인 제한" in result.message or "양호" in result.message.lower()
+        assert "안전" in result.message or "pam_securetty" in result.message
 
     def test_check_u01_fail_case(self):
         """check_u01: FAIL 케이스 (pts 허용됨)"""
@@ -130,27 +130,27 @@ class TestAccountManagementValidators:
 
     def test_check_u03_pass_case(self):
         """check_u03: PASS 케이스 (계정 잠금 임계값 설정됨)"""
-        # pam_tally2 또는 pam_faillock 설정됨
+        # pam_tally.so 두 라인 설정
         command_outputs = [
-            "auth required pam_tally2.so deny=5 unlock_time=120\n",
+            "auth required /lib/security/pam_tally.so deny=5 unlock_time=120 no_magic_root\naccount required /lib/security/pam_tally.so no_magic_root reset\n",
         ]
 
         result = linux.check_u03(command_outputs)
 
         assert isinstance(result, CheckResult)
-        assert result.status in [Status.PASS, Status.MANUAL]
+        assert result.status == Status.PASS
 
     def test_check_u04_pass_case(self):
         """check_u04: PASS 케이스 (패스워드 파일 보호)"""
-        # /etc/shadow 파일 존재 (Shadow 패스워드 사용)
+        # /etc/passwd에서 shadow 패스워드 사용 (두 번째 필드가 'x')
         command_outputs = [
-            "-rw-r----- 1 root shadow 1234 Jan 1 12:00 /etc/shadow\n",
+            "root:x:0:0:root:/root:/bin/bash",
         ]
 
         result = linux.check_u04(command_outputs)
 
         assert isinstance(result, CheckResult)
-        # check_u04는 shadow 파일 존재 시 PASS
+        # check_u04는 shadow 패스워드 사용 시 PASS
         assert result.status == Status.PASS
 
 
@@ -159,11 +159,10 @@ class TestFileManagementValidators:
     """file_management 카테고리 validator 테스트"""
 
     def test_check_u18_pass_case(self):
-        """check_u18: PASS 케이스 (/etc/passwd 644, /etc/shadow 400)"""
-        # 올바른 권한 설정
+        """check_u18: PASS 케이스 (/etc/passwd 권한 rw-------  root)"""
+        # 올바른 권한 설정 (rw------- root)
         command_outputs = [
-            "-rw-r--r-- 1 root root 2345 Jan 1 12:00 /etc/passwd\n",  # 644
-            "-r-------- 1 root root 1234 Jan 1 12:00 /etc/shadow\n",  # 400
+            "-rw------- 1 root root 2345 Jan 1 12:00 /etc/passwd\n",
         ]
 
         result = linux.check_u18(command_outputs)
@@ -186,16 +185,16 @@ class TestFileManagementValidators:
         assert result.status in [Status.PASS, Status.FAIL, Status.MANUAL]
 
     def test_check_u27_pass_case(self):
-        """check_u27: PASS 케이스 (rsh/rlogin/rexec 서비스 비활성화)"""
-        # rsh, rlogin, rexec 서비스가 비활성화된 경우
+        """check_u27: PASS 케이스 (/dev 불필요한 device 파일 없음)"""
+        # device 파일이 없는 경우 (빈 출력)
         command_outputs = [
-            "# rsh disabled\n# rlogin disabled\n# rexec disabled\n",
+            "",
         ]
 
         result = linux.check_u27(command_outputs)
 
         assert isinstance(result, CheckResult)
-        assert result.status in [Status.PASS, Status.MANUAL]
+        assert result.status == Status.PASS
 
     def test_check_u27_fail_case(self):
         """check_u27: FAIL 케이스 (rsh 활성화)"""
@@ -215,16 +214,16 @@ class TestServiceManagementValidators:
     """service_management 카테고리 validator 테스트"""
 
     def test_check_u36_pass_case(self):
-        """check_u36: PASS 케이스 (Anonymous FTP 비활성화)"""
-        # vsftpd.conf에서 anonymous_enable=NO 설정
+        """check_u36: PASS 케이스 (Finger 서비스 비활성화)"""
+        # Finger 서비스가 비활성화된 경우 (빈 출력)
         command_outputs = [
-            "anonymous_enable=NO\nlocal_enable=YES\n",
+            "",
         ]
 
         result = linux.check_u36(command_outputs)
 
         assert isinstance(result, CheckResult)
-        assert result.status in [Status.PASS, Status.MANUAL]
+        assert result.status == Status.PASS
 
     def test_check_u36_fail_case(self):
         """check_u36: FAIL 케이스 (Anonymous FTP 활성화)"""
@@ -239,17 +238,17 @@ class TestServiceManagementValidators:
         assert result.status in [Status.FAIL, Status.MANUAL]
 
     def test_check_u44_pass_case(self):
-        """check_u44: PASS 케이스 (Sendmail 버전 최신)"""
-        # Sendmail 8.14 이상 또는 비활성화
+        """check_u44: PASS 케이스 (RPC 서비스 비활성화)"""
+        # RPC 관련 서비스가 비활성화된 경우 (빈 출력)
         command_outputs = [
-            "Sendmail 8.15.2\n",
+            "",
         ]
 
         result = linux.check_u44(command_outputs)
 
         assert isinstance(result, CheckResult)
-        # 버전이 최신이면 PASS 또는 MANUAL
-        assert result.status in [Status.PASS, Status.MANUAL]
+        # RPC 서비스가 없으면 PASS
+        assert result.status == Status.PASS
 
 
 @pytest.mark.unit

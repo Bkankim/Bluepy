@@ -338,21 +338,21 @@ class TestRuleMetadata:
         assert len(rule.name) == 200
 
     def test_rule_metadata_commands_not_empty(self):
-        """RuleMetadata commands 비어있지 않음 검증"""
-        # 빈 리스트 불가
-        with pytest.raises(ValidationError):
-            RuleMetadata(
-                id="U-01",
-                name="Test Rule",
-                category="테스트",
-                severity=Severity.HIGH,
-                kisa_standard="U-01",
-                description="Test",
-                commands=[],
-                validator="validators.linux.check_u01_test",
-            )
+        """RuleMetadata commands 빈 리스트 허용 검증"""
+        # 빈 리스트도 허용 (일부 점검 항목은 수동 점검이거나 서버 명령어가 불필요)
+        rule_empty = RuleMetadata(
+            id="U-01",
+            name="Test Rule",
+            category="테스트",
+            severity=Severity.HIGH,
+            kisa_standard="U-01",
+            description="Test",
+            commands=[],
+            validator="validators.linux.check_u01_test",
+        )
+        assert rule_empty.commands == []
 
-        # 최소 1개 이상
+        # 리스트가 있어도 정상 작동
         rule = RuleMetadata(
             id="U-01",
             name="Test Rule",

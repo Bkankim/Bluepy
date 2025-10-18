@@ -162,7 +162,7 @@ class TestExcelContent:
 
         # 시트 이름 확인
         assert "요약" in wb.sheetnames
-        assert "상세" in wb.sheetnames
+        assert "상세 결과" in wb.sheetnames
         assert "통계" in wb.sheetnames
 
     def test_summary_sheet_has_server_info(self, tmp_path):
@@ -210,7 +210,7 @@ class TestExcelContent:
         import openpyxl
 
         wb = openpyxl.load_workbook(result_path)
-        ws = wb["상세"]
+        ws = wb["상세 결과"]
 
         # 헤더 행이 있는지 확인
         assert ws["A1"].value is not None
@@ -263,7 +263,7 @@ class TestExcelEdgeCases:
         import openpyxl
 
         wb = openpyxl.load_workbook(result_path)
-        ws = wb["상세"]
+        ws = wb["상세 결과"]
 
         # 100개 결과 + 헤더 = 최소 101행
         assert ws.max_row >= 101
@@ -317,7 +317,7 @@ class TestExcelReporterIntegration:
         # (구현에 따라 다를 수 있으므로 존재만 확인)
 
         # 상세 시트에 4개 결과 확인
-        detail_ws = wb["상세"]
+        detail_ws = wb["상세 결과"]
         assert detail_ws.max_row >= 5  # 헤더 + 4개 결과
 
         # 통계 시트 존재 확인

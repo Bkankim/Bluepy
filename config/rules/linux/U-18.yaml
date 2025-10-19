@@ -5,12 +5,15 @@ severity: high
 description: /etc/passwd 파일 소유자 및 권한 설정 취약점을 점검합니다.
 check:
   commands:
-  - cat $APACHE_DIRECTORY/conf/httpd.conf | egrep "User|Group"
+  - ls -l /etc/passwd
 validator: validators.linux.check_u18
 remediation:
-  auto: false
-  backup_files: []
-  commands: []
+  auto: true
+  description: /etc/passwd 파일 권한을 600 (rw-------)으로 설정합니다.
+  backup_files:
+  - /etc/passwd
+  commands:
+  - chmod 600 /etc/passwd
 platforms:
 - linux
 - macos

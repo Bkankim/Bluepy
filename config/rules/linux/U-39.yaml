@@ -9,9 +9,14 @@ check:
   - ls -al /etc/crontab
 validator: validators.linux.check_u39
 remediation:
-  auto: false
-  backup_files: []
-  commands: []
+  auto: true
+  description: cron 파일 권한을 640 (rw-r-----)으로 설정합니다.
+  backup_files:
+  - /etc/crontab
+  - /var/spool/cron/crontabs
+  commands:
+  - chmod 640 /etc/crontab
+  - chmod 640 /var/spool/cron/crontabs/* 2>/dev/null || true
 platforms:
 - linux
 - macos

@@ -5,9 +5,12 @@ severity: high
 description: /etc/syslog.conf 파일 소유자 및 권한 설정 취약점을 점검합니다.
 check:
   commands:
-  - cat $APACHE_DIRECTORY/conf/httpd.conf | grep LimitRequestBody
+  - ls -l /etc/syslog.conf
 validator: validators.linux.check_u22
 remediation:
-  auto: false
-  backup_files: []
-  commands: []
+  auto: true
+  description: /etc/syslog.conf 파일 권한을 644 (rw-r--r--)로 설정합니다.
+  backup_files:
+  - /etc/syslog.conf
+  commands:
+  - chmod 644 /etc/syslog.conf

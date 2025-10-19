@@ -197,13 +197,21 @@ python3.12 scripts/migrate_legacy.py \
   * MacOSRemediator 구현 (5개 auto: true 규칙, ~50줄)
   * 총 ~400줄 추가
 
-- **Phase 3 Week 8 완료**: GUI 통합 (commit TBD)
+- **Phase 3 Week 8 완료**: GUI 통합 (commit 78bb83d)
   * RemediationWorker 클래스 (QThread + asyncio, 244줄)
   * RemediationDialog 대화상자 (Dry-run 미리보기 + 실행, 364줄)
   * ResultView 자동 수정 버튼 추가 (+79줄)
   * MainWindow 시그널 연결 및 통합 (+49줄)
   * 2단계 워크플로우 (Dry-run → 확인 → 실행)
   * 총 ~700줄 추가 (신규 2개, 수정 4개)
+
+- **Phase 1 기술 부채 완전 해결** (commit c7080a1)
+  * GUI 한글 폰트 문제 해결 (commit 1a65b7a) - Noto Sans CJK 폰트 설치 및 설정
+  * 테스트 271 passed, 1 skipped (10개 실패 → 0개 실패)
+  * 커버리지 56% (15% → 56%, +41% 향상)
+  * RuleLoader 경로 중복 문제 해결 (config/rules/linux/linux)
+  * Integration 테스트 API 불일치 수정 (ScanResult wrapper, 한글→영어)
+  * Unit 테스트 헬퍼 함수 추가 및 API 표준화
 
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기

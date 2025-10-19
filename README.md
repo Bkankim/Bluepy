@@ -26,11 +26,12 @@
 - **macOS** (50개 점검 항목) ✅ - SIP, Gatekeeper, FileVault 등 (Phase 2 완료)
 - **Windows** (예정, 50개 항목) - 레지스트리, 방화벽, 그룹 정책
 
-### ⚡ 원클릭 자동 수정 (Phase 3 부분 완료)
+### ⚡ 원클릭 자동 수정 (Phase 3 완료)
 - 취약점 자동 수정 ✅ - macOS 5개 규칙 지원 (M-03~M-08)
 - 안전한 백업 + 롤백 ✅ - SHA256 체크섬, 원자성 보장
 - Dry-run 모드 ✅ - 실제 실행 전 시뮬레이션
-- GUI 통합 - 향후 작업 (미리보기, 배치 수정)
+- GUI 통합 ✅ - 미리보기, 배치 수정 (commit 78bb83d)
+- Linux Remediation - 다음 단계 (10-15개 규칙 예정)
 
 ### 🖥️ 비전공자 친화 GUI
 - PySide6 기반 네이티브 GUI
@@ -122,14 +123,21 @@ bluepy/
 | Phase | 기간 | 주요 기능 | 상태 |
 |-------|------|----------|------|
 | **Phase 1** | Week 1-4 | Linux MVP (Scanner, Analyzer, GUI, Excel) | ✅ 완료 |
-| **Phase 1.5** | Day 1-3 | Testing Infrastructure (커버리지 65%) | ✅ 완료 |
+| **Phase 1 기술 부채** | 2일 | 테스트 271/272 통과, 커버리지 56% | ✅ 완료 |
+| **Phase 1.5** | Day 1-3 | Testing Infrastructure | 🔄 진행 중 (56% → 65% 목표) |
 | **Phase 2** | Day 1-5 | macOS 지원 (50개 규칙, UnixScanner 추상화) | ✅ 완료 |
-| **Phase 3** | Week 7 | Remediation 엔진 (백업/롤백, macOS 5개 규칙) | ✅ 완료 |
-| **Phase 3** | Week 8 | GUI 통합 (자동 수정 버튼, 미리보기) | ⏳ 보류 |
+| **Phase 3** | Week 7-8 | Remediation 엔진 + GUI 통합 (macOS 완성) | ✅ 완료 |
+| **다음 2주** | Week 1-2 | 커버리지 65% + Linux Remediation + Phase 5 일부 | 🎯 계획 중 |
 | **Phase 4** | 3주 | Windows 지원 | ⏳ 대기 |
-| **Phase 5** | 2주 | 고급 기능 | ⏳ 대기 |
+| **Phase 5** | 2주 | 고급 기능 (대시보드, PDF, 스케줄러) | ⏳ 대기 |
 
-**진행률**: **Phase 1~2 완료, Phase 3 부분 완료 (4/7주, 57%)**
+**진행률**: **65% 완료 (약 8주 작업)**
+
+**주요 성과**:
+- 테스트 271/272 통과
+- 커버리지 56%
+- GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정)
+- macOS Remediation 완성
 
 자세한 내용은 [docs/ROADMAP.md](docs/ROADMAP.md) 참조
 

@@ -3,17 +3,20 @@
 **작성일**: 2025-10-17 (최종 업데이트: 2025-10-19)
 **총 기간**: 12.5주 (약 3개월)
 **시작일**: 2025-10-17
-**상태**: **In Progress (57% 완료 - Phase 1~2 완료, Phase 3 부분 완료)**
+**상태**: **In Progress (65% 완료 - Phase 1~3 완료, Phase 5 준비 중)**
 
 **진행 현황**:
 - Phase 1 (Linux MVP): 완료 (Week 1-4)
-- Phase 1.5 (Testing): 완료 (Day 1-3, 커버리지 65%)
+- Phase 1.5 (Testing): 부분 완료 (테스트 271/272 통과, 커버리지 56%)
 - Phase 2 (macOS): 완료 (Day 1-5, 50개 규칙)
 - Phase 3 Week 7 (Remediation 엔진): 완료
-- Phase 3 Week 8 (GUI 통합): 보류
-- 총 8개 Git 커밋, 69 files 변경
+- Phase 3 Week 8 (GUI 통합): 완료 (commit 78bb83d)
+- Phase 1 기술 부채 해결: 완료 (commit c7080a1, 1a65b7a)
+- 총 10개 Git 커밋
 
-**다음 단계**: Phase 4 (Windows 지원) 또는 Phase 1 기술 부채 해결
+**다음 2주 계획**:
+- Week 1: Phase 1.5 완성 (커버리지 65%) + Linux Remediation 구현
+- Week 2: Phase 5 Quick Wins (History View, 다크 모드, 설정 UI)
 
 ---
 
@@ -1126,6 +1129,148 @@ docs/USER_MANUAL.md
 | **Windows 규칙** | 50개 동작 | 실제 Windows 점검 |
 | **3-OS 통합** | GUI에서 모두 선택 가능 | 수동 테스트 |
 | **Windows 자동 수정** | 80% 성공률 | 테스트 VM |
+
+---
+
+## 6.6 다음 2주 상세 계획 (현재 위치)
+
+### 목표
+
+**"Phase 1.5 완성 + Linux Remediation + Phase 5 Quick Wins"**
+
+현재 상태:
+- 테스트: 271/272 통과
+- 커버리지: 56% (목표 65%)
+- macOS Remediation: 완성
+- Linux Remediation: 미구현
+
+### Week 1: 품질 강화 + 핵심 기능 완성
+
+#### Day 1-2: 커버리지 65% 달성
+
+**작업 항목**:
+- [ ] Remediation 모듈 테스트 추가 (~400 lines, 0% → 60%)
+  - BackupManager 테스트 (백업, 롤백, 체크섬)
+  - BaseRemediator 테스트 (dry-run, 검증)
+  - MacOSRemediator 통합 테스트
+- [ ] GUI 기본 테스트 추가 (0% → 30%)
+  - MainWindow 초기화 테스트
+  - ServerDialog CRUD 테스트
+  - ResultView 렌더링 테스트
+- [ ] Unix Scanner 테스트 추가 (44% → 70%)
+  - 공통 로직 테스트
+  - 에러 처리 테스트
+- [ ] Database Repository 테스트 추가 (80% → 95%)
+  - CRUD 엣지 케이스
+  - 트랜잭션 테스트
+
+**결과물**:
+- ✅ Phase 1.5 완전 완성 (커버리지 65%+)
+- ✅ 약 100-150개 테스트 추가
+
+#### Day 3-5: Linux Remediation 구현
+
+**작업 항목**:
+- [ ] `src/core/remediation/linux_remediator.py` 구현 (~300-500 lines)
+  ```python
+  class LinuxRemediator(BaseRemediator):
+      async def remediate_u01(self, item):  # root 원격 로그인
+          # /etc/pam.d/login에 pam_securetty.so 추가
+      async def remediate_u04(self, item):  # shadow 패스워드
+          # pwconv 실행
+      # ... (10-15개 함수)
+  ```
+- [ ] auto: true 규칙 선정 및 구현
+  - U-01: root 원격 로그인 제한
+  - U-04: shadow 패스워드 사용
+  - U-18: /etc/passwd 권한 (chmod 644)
+  - U-19: /etc/shadow 권한 (chmod 400)
+  - U-32: UMASK 설정
+  - U-39: cron 권한
+  - U-36~U-40: 서비스 비활성화 (systemd)
+  - 총 10-15개
+- [ ] YAML 파일 업데이트 (remediation.auto: true)
+- [ ] 테스트 작성 및 검증
+
+**결과물**:
+- ✅ Linux Remediation 완성
+- ✅ Linux MVP 완전 완성 (스캔 + 분석 + 자동 수정)
+
+### Week 2: Phase 5 Quick Wins
+
+#### Day 6-8: History View 구현
+
+**작업 항목**:
+- [ ] `src/gui/views/history_view.py` 구현 (~250 lines)
+  - QTableView로 과거 스캔 목록 표시
+  - 날짜 필터 (QDateEdit)
+  - 상세 조회 (더블 클릭 → ResultView)
+- [ ] `src/infrastructure/database/repositories/scan_repository.py` 확장
+  - get_scan_history(server_id, start_date, end_date)
+  - get_scan_by_id(scan_id)
+- [ ] MainWindow에 History 탭 추가
+- [ ] 테스트 작성
+
+**결과물**:
+- ✅ 과거 스캔 이력 조회 기능
+
+#### Day 9: 다크 모드 구현
+
+**작업 항목**:
+- [ ] `src/gui/resources/dark.qss` 스타일시트 작성
+  ```css
+  QMainWindow {
+      background-color: #2b2b2b;
+      color: #ffffff;
+  }
+  QPushButton {
+      background-color: #3c3f41;
+      border: 1px solid #555555;
+  }
+  /* ... */
+  ```
+- [ ] 설정에 테마 선택 추가 (Light/Dark)
+- [ ] 동적 스타일 변경 기능
+  ```python
+  def apply_theme(theme_name):
+      app.setStyleSheet(load_stylesheet(theme_name))
+  ```
+
+**결과물**:
+- ✅ 다크 모드 지원
+
+#### Day 10: 설정 UI 구현
+
+**작업 항목**:
+- [ ] `src/gui/dialogs/settings_dialog.py` 구현 (~150 lines)
+  - 테마 선택 (Light/Dark)
+  - 로그 레벨 (DEBUG/INFO/WARNING/ERROR)
+  - 언어 선택 (한국어/English) - 준비만
+  - 백업 디렉토리 설정
+- [ ] `src/infrastructure/config/settings.py` 구현
+  - JSON 기반 설정 저장/로드
+  - 기본값 설정
+- [ ] MainWindow 메뉴에 "설정" 추가
+
+**결과물**:
+- ✅ 설정 UI 완성
+
+### 성공 기준
+
+| 항목 | 목표 | 검증 방법 |
+|------|------|----------|
+| **커버리지** | 65%+ | pytest --cov |
+| **Linux Remediation** | 10-15개 규칙 자동 수정 | 테스트 서버 검증 |
+| **History View** | 과거 스캔 조회 가능 | 수동 테스트 |
+| **다크 모드** | 테마 전환 동작 | 수동 테스트 |
+| **설정 UI** | 설정 저장/로드 | 수동 테스트 |
+
+### 2주 후 상태
+
+- Phase 1.5: 완료 (커버리지 65%+)
+- Phase 3: 완전 완료 (Linux + macOS Remediation)
+- Phase 5: 부분 완료 (3개 기능)
+- 진행률: 65% → 약 75%
 
 ---
 

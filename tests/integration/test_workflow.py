@@ -69,7 +69,7 @@ class TestFullScanWorkflow:
         assert len(rules) == 73, "73개 규칙이 로딩되어야 합니다"
 
         # 2. Scanner 생성 및 규칙 설정
-        scanner = LinuxScanner(host="test.example.com", username="testuser", password="testpass")
+        scanner = LinuxScanner(server_id="test-server", host="test.example.com", username="testuser", password="testpass")
         scanner.rules = rules[:5]  # 처음 5개 규칙만 테스트
         scanner._ssh_client = mock_ssh_client
         scanner._connected = True
@@ -94,13 +94,13 @@ class TestFullScanWorkflow:
         assert scan_result.passed == 1
         assert scan_result.failed == 1
         assert scan_result.manual == 1
-        assert scan_result.score == pytest.approx(33.33, rel=0.1)
+        assert scan_result.score == pytest.approx(50.0, rel=0.1)  # MANUAL을 0.5로 계산: (1 + 0.5) / 3 * 100 = 50%
 
         # 5. RiskCalculator로 분석
-        risk_stats = calculate_risk_statistics(sample_results)
+        risk_stats = calculate_risk_statistics(scan_result)
 
         assert isinstance(risk_stats, RiskStatistics)
-        assert risk_stats.total_checks == 3
+        assert risk_stats.total == 3
         assert risk_stats.passed == 1
         assert risk_stats.failed == 1
         assert risk_stats.manual == 1
@@ -110,7 +110,7 @@ class TestFullScanWorkflow:
         report_path = temp_report_dir / "test_report.xlsx"
 
         reporter.generate(
-            results=sample_results, output_path=str(report_path), server_name="test.example.com"
+            scan_result=scan_result, output_path=str(report_path), server_name="test.example.com"
         )
 
         # 7. 보고서 파일 생성 확인
@@ -136,8 +136,8 @@ class TestFullScanWorkflow:
         assert scan_result.failed == 0
         assert scan_result.score == 100.0
 
-        risk_stats = calculate_risk_statistics(results)
-        assert risk_stats.risk_level == "안전"
+        risk_stats = calculate_risk_statistics(scan_result)
+        assert risk_stats.risk_level == "safe"
 
     def test_workflow_with_all_fail_results(self):
         """모든 점검이 실패한 경우 워크플로우"""
@@ -158,8 +158,8 @@ class TestFullScanWorkflow:
         assert scan_result.failed == 10
         assert scan_result.score == 0.0
 
-        risk_stats = calculate_risk_statistics(results)
-        assert risk_stats.risk_level == "위험"
+        risk_stats = calculate_risk_statistics(scan_result)
+        assert risk_stats.risk_level == "critical"
 
     def test_workflow_with_mixed_results(self):
         """혼합 결과 워크플로우"""
@@ -181,10 +181,10 @@ class TestFullScanWorkflow:
         assert scan_result.passed == 2
         assert scan_result.failed == 1
         assert scan_result.manual == 1
-        assert 40 < scan_result.score < 60  # 약 50%
+        assert 60 < scan_result.score < 65  # MANUAL을 0.5로 계산: (2 + 0.5) / 4 * 100 = 62.5%
 
-        risk_stats = calculate_risk_statistics(results)
-        assert risk_stats.total_checks == 4
+        risk_stats = calculate_risk_statistics(scan_result)
+        assert risk_stats.total == 4
 
 
 @pytest.mark.integration

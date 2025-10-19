@@ -24,6 +24,34 @@ from src.core.analyzer.risk_calculator import (
 )
 
 
+# ==================== Helper Functions ====================
+
+
+def create_test_scan_result(
+    results: list,
+    server_id: str = "test-server",
+    platform: str = "linux"
+) -> ScanResult:
+    """테스트용 ScanResult 생성 헬퍼
+
+    CheckResult 리스트를 ScanResult로 래핑합니다.
+
+    Args:
+        results: CheckResult 리스트
+        server_id: 서버 ID
+        platform: 플랫폼
+
+    Returns:
+        results가 담긴 ScanResult 객체
+    """
+    return ScanResult(
+        server_id=server_id,
+        platform=platform,
+        scan_time=datetime.now(),
+        results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
+    )
+
+
 # ==================== RiskStatistics Tests ====================
 
 
@@ -381,9 +409,10 @@ class TestRiskCalculatorAdditional:
             for i in range(10)
         ]
 
-        stats = calculate_risk_statistics(results)
+        scan_result = create_test_scan_result(results)
+        stats = calculate_risk_statistics(scan_result)
 
-        assert stats.total_checks == 10
+        assert stats.total == 10
         assert stats.passed == 0
         assert stats.failed == 0
         assert stats.manual == 10
@@ -391,20 +420,20 @@ class TestRiskCalculatorAdditional:
 
     def test_evaluate_risk_level_edge_cases(self):
         """위험도 평가 경계값 테스트"""
-        # 정확히 80%
-        assert evaluate_risk_level(80.0, 0) == "안전"
+        # 정확히 80% - low
+        assert evaluate_risk_level(80.0, 0) == "low"
 
-        # 정확히 60%
+        # 정확히 60% - medium
         level_60 = evaluate_risk_level(60.0, 0)
-        assert level_60 in ["낮음", "안전"]
+        assert level_60 == "medium"
 
-        # 정확히 40%
+        # 정확히 40% - high
         level_40 = evaluate_risk_level(40.0, 0)
-        assert level_40 in ["중간", "높음"]
+        assert level_40 == "high"
 
-        # 정확히 20%
-        level_20 = evaluate_risk_level(20.0, 0, 0)
-        assert level_20 in ["높음", "위험"]
+        # 정확히 20% - critical
+        level_20 = evaluate_risk_level(20.0, 0)
+        assert level_20 == "critical"
 
     def test_category_distribution_coverage(self):
         """카테고리 분포 커버리지 테스트"""
@@ -413,7 +442,8 @@ class TestRiskCalculatorAdditional:
             for _ in range(5)
         ]
 
-        dist = get_category_distribution(results)
+        scan_result = create_test_scan_result(results)
+        dist = get_category_distribution(scan_result)
 
         assert isinstance(dist, dict)
         # 빈 카테고리도 0으로 표시되어야 함
@@ -421,16 +451,16 @@ class TestRiskCalculatorAdditional:
     def test_severity_distribution_all_types(self):
         """모든 심각도 타입 테스트"""
         results = [
-            CheckResult(status=Status.PASS, message="test", timestamp=datetime.now())
-            for _ in range(3)
+            CheckResult(status=Status.FAIL, message="test", timestamp=datetime.now())
+            for _ in range(9)
         ]
 
-        dist = get_severity_distribution(results)
+        scan_result = create_test_scan_result(results)
+        dist = get_severity_distribution(scan_result)
 
         assert "high" in dist
-        assert "medium" in dist
+        assert "mid" in dist
         assert "low" in dist
-        assert "info" in dist
         assert all(isinstance(v, int) for v in dist.values())
 
     def test_risk_statistics_with_high_risk_counts(self):
@@ -440,8 +470,11 @@ class TestRiskCalculatorAdditional:
             for _ in range(20)
         ]
 
-        stats = calculate_risk_statistics(results)
+        scan_result = create_test_scan_result(results)
+        stats = calculate_risk_statistics(scan_result)
 
         assert stats.failed == 20
-        # high_risk_count와 medium_risk_count는 severity에 따라 결정됨
-        assert stats.risk_level in ["위험", "높음"]
+        assert stats.total == 20
+        assert stats.score == 0.0
+        # score=0.0 → critical
+        assert stats.risk_level == "critical"

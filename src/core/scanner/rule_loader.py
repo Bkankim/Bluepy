@@ -152,8 +152,8 @@ def load_rules(rules_dir: str, platform: str = "linux") -> List[RuleMetadata]:
     """규칙 디렉토리에서 모든 YAML 파일 로드
 
     Args:
-        rules_dir: 규칙 파일 디렉토리 경로 (예: config/rules)
-        platform: 플랫폼 이름 (linux, macos, windows)
+        rules_dir: 규칙 파일 디렉토리 경로 (예: config/rules 또는 config/rules/linux)
+        platform: 플랫폼 이름 (linux, macos, windows) - rules_dir이 플랫폼 포함하지 않을 때만 사용
 
     Returns:
         RuleMetadata 객체 리스트 (id 순서로 정렬)
@@ -161,7 +161,12 @@ def load_rules(rules_dir: str, platform: str = "linux") -> List[RuleMetadata]:
     Raises:
         RuleLoaderError: 디렉토리가 없거나 파일 로드 실패
     """
-    rules_path = Path(rules_dir) / platform
+    rules_path = Path(rules_dir)
+
+    # rules_dir이 이미 플랫폼별 경로인지 확인 (예: config/rules/linux)
+    # 아니면 platform을 추가 (예: config/rules + linux)
+    if rules_path.name not in ["linux", "macos", "windows"]:
+        rules_path = rules_path / platform
 
     if not rules_path.exists():
         raise RuleLoaderError(f"규칙 디렉토리가 존재하지 않습니다: {rules_path}")

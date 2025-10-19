@@ -149,7 +149,7 @@ class TestValidatorAnalyzerIntegration:
             results={f"U-{i:02d}": r for i, r in enumerate(all_pass, 1)}
         )
         risk_stats_safe = calculate_risk_statistics(scan_result_safe)
-        assert risk_stats_safe.risk_level == "안전"
+        assert risk_stats_safe.risk_level == "safe"
 
         # 모두 FAIL 시나리오
         all_fail = [linux.check_u04(["root:pwd:0:0:root:/root:/bin/bash"]) for _ in range(5)]
@@ -160,7 +160,7 @@ class TestValidatorAnalyzerIntegration:
             results={f"U-{i:02d}": r for i, r in enumerate(all_fail, 1)}
         )
         risk_stats_danger = calculate_risk_statistics(scan_result_danger)
-        assert risk_stats_danger.risk_level in ["위험", "높음", "중간"]
+        assert risk_stats_danger.risk_level in ["critical", "high", "medium"]
 
     def test_category_distribution_from_validators(self):
         """Validator 결과로부터 카테고리 분포 분석"""
@@ -202,7 +202,7 @@ class TestValidatorAnalyzerIntegration:
         severity_dist = get_severity_distribution(scan_result)
 
         assert isinstance(severity_dist, dict)
-        assert all(k in severity_dist for k in ["high", "medium", "low", "info"])
+        assert all(k in severity_dist for k in ["high", "mid", "low"])
         assert all(isinstance(v, int) for v in severity_dist.values())
 
 
@@ -255,15 +255,15 @@ class TestScanResultAnalyzerIntegration:
         )
 
         # 3. 통계 계산
-        risk_stats = calculate_risk_statistics(validator_results)
+        risk_stats = calculate_risk_statistics(scan_result)
 
         # 4. 검증
-        assert scan_result.total == risk_stats.total_checks
+        assert scan_result.total == risk_stats.total
         assert scan_result.score == risk_stats.pass_rate
         assert len(validator_results) == 3
 
         # 5. 위험도 평가
         risk_level = evaluate_risk_level(
-            risk_stats.pass_rate, risk_stats.high_risk_count, risk_stats.medium_risk_count
+            risk_stats.pass_rate, risk_stats.high_risk
         )
-        assert risk_level in ["안전", "낮음", "중간", "높음", "위험"]
+        assert risk_level in ["safe", "low", "medium", "high", "critical"]

@@ -213,6 +213,38 @@ python3.12 scripts/migrate_legacy.py \
   * Integration 테스트 API 불일치 수정 (ScanResult wrapper, 한글→영어)
   * Unit 테스트 헬퍼 함수 추가 및 API 표준화
 
+- **테스트 인프라 강화** (commits eaf7a7d, 6a14415)
+  * Remediation 엔진 단위 테스트 완성 (commit eaf7a7d)
+    - test_backup_manager.py (278줄, 13개 테스트) - 100% 커버리지
+    - test_base_remediator.py (336줄, 10개 테스트) - 98% 커버리지
+    - test_macos_remediator.py (206줄, 9개 테스트) - 100% 커버리지
+    - 테스트 303개 (271 → 303, +32개)
+    - Remediation 모듈 완전 테스트 완료
+
+  * 핵심 모듈 테스트 확장 (commit 6a14415)
+    - test_database_models.py (8개 테스트, 신규) - Server/ScanHistory 모델, DB 헬퍼 100% 커버리지
+    - test_server_repository.py (22개 테스트, 신규) - CRUD 전체 100% 커버리지
+    - test_analyzer.py 확장 (+1개) - rules_metadata 분기 테스트
+    - test_scanner.py 확장 (+1개) - scan_all 성공 경로 테스트
+    - test_rule_loader.py 확장 (+4개) - 예외 처리 테스트
+    - 테스트 340개 (303 → 340, +37개)
+    - 커버리지 63% (56% → 61% → 63%)
+
+  * 100% 커버리지 달성 모듈
+    - risk_calculator.py (94% → 100%)
+    - database/models.py (80% → 100%)
+    - server_repository.py (31% → 100%)
+    - backup_manager.py (100%)
+    - macos_remediator.py (100%)
+    - domain/models.py (100%)
+    - excel_reporter.py (100%)
+
+  * 90%+ 커버리지 달성 모듈
+    - base_scanner.py (85% → 92%)
+    - base_remediator.py (98%)
+    - file_management.py (91%)
+    - service_management.py (93%)
+
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기
 

@@ -9,12 +9,15 @@
 """
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QBrush, QColor
+from PySide6.QtGui import QBrush, QColor, QIcon
 from PySide6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QPushButton,
     QSplitter,
+    QStyle,
+    QApplication,
     QTextEdit,
     QTreeWidget,
     QTreeWidgetItem,
@@ -30,10 +33,12 @@ class ResultView(QWidget):
 
     Signals:
         item_selected: 항목이 선택되었을 때 발생 (rule_id: str)
+        remediate_requested: 자동 수정 요청 (rule_id: str, rule_name: str, status: str)
     """
 
     # 커스텀 시그널
     item_selected = Signal(str)
+    remediate_requested = Signal(str, str, str)  # rule_id, rule_name, status
 
     # 상태별 색상
     COLOR_PASS = QColor(76, 175, 80)  # 녹색
@@ -108,6 +113,23 @@ class ResultView(QWidget):
         self.detail_text = QTextEdit()
         self.detail_text.setReadOnly(True)
         detail_layout.addWidget(self.detail_text)
+
+        # 자동 수정 버튼
+        button_layout = QHBoxLayout()
+
+        self.remediate_btn = QPushButton("자동 수정")
+        self.remediate_btn.setEnabled(False)
+        self.remediate_btn.setToolTip("선택된 규칙을 자동으로 수정합니다 (지원되는 규칙만)")
+
+        # 아이콘 추가 (표준 아이콘 사용)
+        icon = QApplication.style().standardIcon(QStyle.SP_DialogApplyButton)
+        self.remediate_btn.setIcon(icon)
+
+        self.remediate_btn.clicked.connect(self._on_remediate_clicked)
+        button_layout.addWidget(self.remediate_btn)
+
+        button_layout.addStretch()
+        detail_layout.addLayout(button_layout)
 
         splitter.addWidget(detail_widget)
 
@@ -186,6 +208,7 @@ class ResultView(QWidget):
         selected_items = self.result_tree.selectedItems()
         if not selected_items:
             self.detail_text.clear()
+            self._update_remediate_button(None)
             return
 
         item = selected_items[0]
@@ -194,10 +217,14 @@ class ResultView(QWidget):
         if not rule_id:
             # 카테고리 선택
             self.detail_text.clear()
+            self._update_remediate_button(None)
             return
 
         # 상세 정보 표시
         self._show_detail(item)
+
+        # 자동 수정 버튼 상태 업데이트
+        self._update_remediate_button(item)
 
         # 시그널 발생
         self.item_selected.emit(rule_id)
@@ -276,3 +303,55 @@ class ResultView(QWidget):
         self.clear()
         # TODO: scan_result에서 데이터 추출하여 트리 구성
         self._load_sample_data()
+
+    def _update_remediate_button(self, item: QTreeWidgetItem):
+        """자동 수정 버튼 상태 업데이트
+
+        Args:
+            item: 트리 아이템 (None이면 버튼 비활성화)
+        """
+        if not item:
+            self.remediate_btn.setEnabled(False)
+            return
+
+        status = item.text(1)
+        rule_id = item.data(0, Qt.UserRole)
+
+        # TODO: 실제 규칙 메타데이터에서 remediation.auto 확인
+        # 현재는 샘플로 FAIL 상태이면서 특정 규칙만 자동 수정 가능으로 설정
+        auto_fixable_rules = ["U-03", "U-40", "M-03", "M-04", "M-05", "M-06", "M-07", "M-08"]
+
+        can_remediate = status == "FAIL" and rule_id in auto_fixable_rules
+
+        self.remediate_btn.setEnabled(can_remediate)
+
+        if can_remediate:
+            self.remediate_btn.setToolTip(f"{rule_id}를 자동으로 수정합니다")
+        else:
+            if status != "FAIL":
+                self.remediate_btn.setToolTip("FAIL 상태인 규칙만 자동 수정 가능합니다")
+            else:
+                self.remediate_btn.setToolTip("이 규칙은 자동 수정이 지원되지 않습니다")
+
+    def _on_remediate_clicked(self):
+        """자동 수정 버튼 클릭 핸들러"""
+        selected_items = self.result_tree.selectedItems()
+        if not selected_items:
+            return
+
+        item = selected_items[0]
+        rule_id = item.data(0, Qt.UserRole)
+        status = item.text(1)
+
+        if not rule_id:
+            return
+
+        # 규칙 이름 추출 (형식: "U-03: 계정잠금 임계값 설정")
+        full_text = item.text(0)
+        if ": " in full_text:
+            rule_name = full_text.split(": ", 1)[1]
+        else:
+            rule_name = full_text
+
+        # 시그널 발생
+        self.remediate_requested.emit(rule_id, rule_name, status)

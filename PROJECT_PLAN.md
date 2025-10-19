@@ -779,25 +779,27 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
   - MacOSRemediator 구현 (macOS 5개 auto: true 규칙 지원)
   - LinuxRemediator (향후 확장)
 
-- [ ] Week 8: 안전 장치 + GUI (보류)
-  - 롤백 매니저 (BackupManager에 포함됨)
-  - Dry-run 모드 (BaseRemediator에 구현됨)
-  - 미리보기 UI (향후 GUI 통합)
-  - 배치 수정 (향후 확장)
+- [x] Week 8: GUI 통합 (완료, commit TBD)
+  - RemediationWorker 클래스 (QThread + asyncio, 244줄)
+  - RemediationDialog 대화상자 (Dry-run 미리보기 + 실행, 364줄)
+  - ResultView 자동 수정 버튼 추가 (+79줄)
+  - MainWindow 시그널 연결 및 통합 (+49줄)
+  - 2단계 워크플로우 (Dry-run → 확인 → 실행)
 
 **결과물**:
 - ✅ Remediation 엔진 구축 (4개 클래스, ~400줄)
 - ✅ 백업/롤백 시스템 (원자성 보장, 체크섬 검증)
 - ✅ macOS 자동 수정 (5개 규칙: M-03, M-04, M-05, M-06, M-07, M-08)
 - ✅ Dry-run 모드 (실제 실행 전 시뮬레이션)
+- ✅ GUI 통합 (자동 수정 대화상자, ~700줄)
 - ⏸ Linux 자동 수정 (향후 확장)
-- ⏸ GUI 통합 (향후 작업)
+- ⏸ 배치 수정 (향후 확장)
 
 **성공 기준**:
 - ✅ Remediation 아키텍처 설계 완료
 - ✅ Scanner와 Remediator 분리 (관심사 분리)
 - ✅ 백업 무결성 보장 (SHA256)
-- ⏸ GUI 통합 (미완)
+- ✅ GUI 통합 완료 (자동 수정 버튼, 미리보기, 진행 표시)
 
 ---
 

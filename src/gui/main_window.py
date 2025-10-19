@@ -28,6 +28,7 @@ from .views.server_view import ServerView
 from .views.scan_view import ScanView
 from .views.result_view import ResultView
 from .dialogs.server_dialog import ServerDialog
+from .dialogs.remediation_dialog import RemediationDialog
 from .workers.scan_worker import ScanWorker
 from ..infrastructure.reporting.excel_reporter import ExcelReporter
 
@@ -135,6 +136,9 @@ class MainWindow(QMainWindow):
 
         # 스캔 버튼 시그널
         self.scan_view.scan_requested.connect(self._on_start_scan)
+
+        # 자동 수정 시그널
+        self.result_view.remediate_requested.connect(self._on_remediate_requested)
 
     def _on_add_server(self):
         """서버 추가 핸들러"""
@@ -309,6 +313,46 @@ class MainWindow(QMainWindow):
             "<p>버전: 2.0.0</p>"
             "<p>Copyright 2025</p>",
         )
+
+    def _on_remediate_requested(self, rule_id: str, rule_name: str, status: str):
+        """자동 수정 요청 핸들러
+
+        Args:
+            rule_id: 규칙 ID (예: M-03)
+            rule_name: 규칙 이름
+            status: 현재 상태 (FAIL 등)
+        """
+        # 서버 정보 확인
+        if not self.current_server:
+            QMessageBox.warning(
+                self, "서버 선택 필요", "먼저 자동 수정할 서버를 선택하세요."
+            )
+            return
+
+        # 플랫폼 확인 (현재 macOS만 지원)
+        platform = self.current_server.get("platform", "linux")
+        if platform not in ["macos", "linux"]:
+            QMessageBox.warning(
+                self,
+                "지원하지 않는 플랫폼",
+                f"현재 {platform} 플랫폼의 자동 수정은 지원되지 않습니다.\n"
+                "macOS와 Linux만 지원됩니다.",
+            )
+            return
+
+        # RemediationDialog 생성 및 실행
+        dialog = RemediationDialog(
+            parent=self,
+            rule_id=rule_id,
+            rule_name=rule_name,
+            server=self.current_server,
+        )
+
+        # 모달 대화상자로 실행
+        dialog.exec()
+
+        # 대화상자 종료 후 상태 업데이트
+        self.statusBar().showMessage(f"{rule_id} 자동 수정 대화상자 종료")
 
     def update_status(self, message: str):
         """상태 메시지 업데이트

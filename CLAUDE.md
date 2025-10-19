@@ -197,6 +197,14 @@ python3.12 scripts/migrate_legacy.py \
   * MacOSRemediator 구현 (5개 auto: true 규칙, ~50줄)
   * 총 ~400줄 추가
 
+- **Phase 3 Week 8 완료**: GUI 통합 (commit TBD)
+  * RemediationWorker 클래스 (QThread + asyncio, 244줄)
+  * RemediationDialog 대화상자 (Dry-run 미리보기 + 실행, 364줄)
+  * ResultView 자동 수정 버튼 추가 (+79줄)
+  * MainWindow 시그널 연결 및 통합 (+49줄)
+  * 2단계 워크플로우 (Dry-run → 확인 → 실행)
+  * 총 ~700줄 추가 (신규 2개, 수정 4개)
+
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기
 

@@ -4,10 +4,13 @@
 
 주요 Worker:
 - scan_worker: 스캔 실행 Worker (QThread 기반)
+- remediation_worker: 자동 수정 Worker (QThread 기반)
 """
 
 from .scan_worker import ScanWorker
+from .remediation_worker import RemediationWorker
 
 __all__ = [
     "ScanWorker",
+    "RemediationWorker",
 ]

@@ -128,15 +128,17 @@ bluepy/
 | **Phase 2** | Day 1-5 | macOS 지원 (50개 규칙, UnixScanner 추상화) | ✅ 완료 |
 | **Phase 3** | Week 7-8 | Remediation 엔진 + GUI 통합 (macOS 완성) | ✅ 완료 |
 | **테스트 강화** | 2일 | Remediation/Database/Repository 테스트 | ✅ 완료 (커버리지 63%) |
+| **Linux Remediation** | 2일 | Linux 자동 수정 10개 규칙 (Tier 1+2) | ✅ 완료 |
 | **Phase 4** | 3주 | Windows 지원 | ⏳ 대기 |
 | **Phase 5** | 2주 | 고급 기능 (대시보드, PDF, 스케줄러) | ⏳ 대기 |
 
-**진행률**: **70% 완료 (약 8.5주 작업)**
+**진행률**: **75% 완료 (약 9주 작업)**
 
 **주요 성과**:
-- 테스트 340개 통과 (100% 통과율)
+- 테스트 354개 통과 (100% 통과율)
 - 커버리지 63% (핵심 모듈 90-100%)
 - GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정)
+- Linux Remediation 완성 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
 - macOS Remediation 완성
 - Remediation 엔진 완전 테스트 (100% 커버리지)
 

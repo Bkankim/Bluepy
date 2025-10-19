@@ -245,6 +245,33 @@ python3.12 scripts/migrate_legacy.py \
     - file_management.py (91%)
     - service_management.py (93%)
 
+- **Linux Remediation 구현** (commits 38d104c, ebaaa0f)
+  * Tier 1: 단순 chmod 명령어 (commit 38d104c)
+    - LinuxRemediator 클래스 구현 (61줄, 100% 커버리지)
+    - U-18: /etc/passwd 권한 600
+    - U-19: /etc/shadow 권한 400
+    - U-22: /etc/syslog.conf 권한 644
+    - U-23: /etc/services 권한 644
+    - U-39: cron 파일 권한 640
+    - 테스트 10개 추가
+    - 중요 버그 수정: 4개 YAML check.commands 수정
+
+  * Tier 2: PAM/sed 파일 수정 (commit ebaaa0f)
+    - U-01: root 원격 접속 제한 (PAM + sed)
+    - U-03: 계정 잠금 임계값 (PAM 2줄)
+    - U-06: root su 제한 (PAM)
+    - U-21: /etc/inetd.conf 권한 600
+    - U-38: r계열 서비스 비활성화 (sed 3줄)
+    - 테스트 5개 추가
+    - 전체 테스트 354개 (340 → 355, +15개)
+    - 커버리지 63% 유지
+
+  * Linux Remediation 완성 (10개 규칙)
+    - chmod 명령어: 6개
+    - PAM 설정: 3개
+    - sed 파일 수정: 1개
+    - Idempotent 설계 (grep -q || echo 패턴)
+
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기
 

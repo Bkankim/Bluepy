@@ -83,7 +83,10 @@ class TestFullScanWorkflow:
         ]
 
         scan_result = ScanResult(
-            server="test.example.com", scan_date=datetime.now(), results=sample_results
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(sample_results, 1)}
         )
 
         # 4. 결과 검증
@@ -122,7 +125,10 @@ class TestFullScanWorkflow:
         ]
 
         scan_result = ScanResult(
-            server="test.example.com", scan_date=datetime.now(), results=results
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
         )
 
         assert scan_result.total == 10
@@ -141,7 +147,10 @@ class TestFullScanWorkflow:
         ]
 
         scan_result = ScanResult(
-            server="test.example.com", scan_date=datetime.now(), results=results
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
         )
 
         assert scan_result.total == 10
@@ -162,7 +171,10 @@ class TestFullScanWorkflow:
         ]
 
         scan_result = ScanResult(
-            server="test.example.com", scan_date=datetime.now(), results=results
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
         )
 
         assert scan_result.total == 4

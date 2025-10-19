@@ -11,6 +11,7 @@ src/core/analyzer/risk_calculator.py를 테스트합니다.
 """
 
 import pytest
+from datetime import datetime
 
 from src.core.domain.models import CheckResult, Status
 from src.core.scanner.base_scanner import ScanResult
@@ -391,14 +392,14 @@ class TestRiskCalculatorAdditional:
     def test_evaluate_risk_level_edge_cases(self):
         """위험도 평가 경계값 테스트"""
         # 정확히 80%
-        assert evaluate_risk_level(80.0, 0, 0) == "안전"
+        assert evaluate_risk_level(80.0, 0) == "안전"
 
         # 정확히 60%
-        level_60 = evaluate_risk_level(60.0, 0, 0)
+        level_60 = evaluate_risk_level(60.0, 0)
         assert level_60 in ["낮음", "안전"]
 
         # 정확히 40%
-        level_40 = evaluate_risk_level(40.0, 0, 0)
+        level_40 = evaluate_risk_level(40.0, 0)
         assert level_40 in ["중간", "높음"]
 
         # 정확히 20%

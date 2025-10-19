@@ -121,11 +121,19 @@ class TestValidatorAnalyzerIntegration:
             linux.check_u10(["root:x:0:0:..."]),  # MANUAL
         ]
 
-        # 2. RiskCalculator로 분석
-        risk_stats = calculate_risk_statistics(results)
+        # 2. ScanResult 생성
+        scan_result = ScanResult(
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
+        )
 
-        # 3. 결과 검증
-        assert risk_stats.total_checks == 3
+        # 3. RiskCalculator로 분석
+        risk_stats = calculate_risk_statistics(scan_result)
+
+        # 4. 결과 검증
+        assert risk_stats.total == 3
         assert risk_stats.passed >= 1
         assert risk_stats.failed >= 1
         assert risk_stats.manual >= 1
@@ -134,12 +142,24 @@ class TestValidatorAnalyzerIntegration:
         """Validator 결과로부터 위험도 평가"""
         # 모두 PASS 시나리오
         all_pass = [linux.check_u04(["root:x:0:0:root:/root:/bin/bash"]) for _ in range(5)]
-        risk_stats_safe = calculate_risk_statistics(all_pass)
+        scan_result_safe = ScanResult(
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(all_pass, 1)}
+        )
+        risk_stats_safe = calculate_risk_statistics(scan_result_safe)
         assert risk_stats_safe.risk_level == "안전"
 
         # 모두 FAIL 시나리오
         all_fail = [linux.check_u04(["root:pwd:0:0:root:/root:/bin/bash"]) for _ in range(5)]
-        risk_stats_danger = calculate_risk_statistics(all_fail)
+        scan_result_danger = ScanResult(
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(all_fail, 1)}
+        )
+        risk_stats_danger = calculate_risk_statistics(scan_result_danger)
         assert risk_stats_danger.risk_level in ["위험", "높음", "중간"]
 
     def test_category_distribution_from_validators(self):
@@ -150,8 +170,15 @@ class TestValidatorAnalyzerIntegration:
             linux.check_u36([]),  # service_management
         ]
 
-        risk_stats = calculate_risk_statistics(results)
-        category_dist = get_category_distribution(results)
+        scan_result = ScanResult(
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
+        )
+
+        risk_stats = calculate_risk_statistics(scan_result)
+        category_dist = get_category_distribution(scan_result)
 
         assert isinstance(category_dist, dict)
         # 카테고리 키가 존재하는지만 확인
@@ -165,7 +192,14 @@ class TestValidatorAnalyzerIntegration:
             linux.check_u10([]),  # MEDIUM severity
         ]
 
-        severity_dist = get_severity_distribution(results)
+        scan_result = ScanResult(
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
+        )
+
+        severity_dist = get_severity_distribution(scan_result)
 
         assert isinstance(severity_dist, dict)
         assert all(k in severity_dist for k in ["high", "medium", "low", "info"])
@@ -188,14 +222,17 @@ class TestScanResultAnalyzerIntegration:
 
         # 2. ScanResult 생성
         scan_result = ScanResult(
-            server="test.example.com", scan_date=datetime.now(), results=results
+            server_id="test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(results, 1)}
         )
 
         # 3. RiskStatistics 계산
-        risk_stats = calculate_risk_statistics(results)
+        risk_stats = calculate_risk_statistics(scan_result)
 
         # 4. 통계 일치 확인
-        assert risk_stats.total_checks == scan_result.total
+        assert risk_stats.total == scan_result.total
         assert risk_stats.passed == scan_result.passed
         assert risk_stats.failed == scan_result.failed
         assert risk_stats.manual == scan_result.manual
@@ -211,9 +248,10 @@ class TestScanResultAnalyzerIntegration:
 
         # 2. ScanResult 생성
         scan_result = ScanResult(
-            server="integration-test.example.com",
-            scan_date=datetime.now(),
-            results=validator_results,
+            server_id="integration-test.example.com",
+            platform="linux",
+            scan_time=datetime.now(),
+            results={f"U-{i:02d}": r for i, r in enumerate(validator_results, 1)},
         )
 
         # 3. 통계 계산

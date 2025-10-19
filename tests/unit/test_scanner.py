@@ -349,6 +349,54 @@ class TestLinuxScannerScanning:
         with pytest.raises(RuntimeError, match="규칙이 로드되지 않았습니다"):
             await scanner.scan_all()
 
+    async def test_scan_all_success(self):
+        """scan_all 정상 실행 테스트"""
+        from unittest.mock import AsyncMock
+        from src.core.domain.models import RuleMetadata, Severity
+
+        scanner = LinuxScanner(
+            server_id="server-001",
+            host="192.168.1.100",
+            username="admin",
+            password="secret",
+        )
+
+        # 연결 상태 및 규칙 설정
+        scanner._connected = True
+        scanner._rules = [
+            RuleMetadata(
+                id="U-01",
+                name="테스트 규칙",
+                category="account_management",
+                description="Test rule",
+                severity=Severity.HIGH,
+                kisa_standard="U-01",
+                commands=["echo test"],
+                validator="validators.linux.check_u01",
+            )
+        ]
+
+        # scan_one 메서드 모킹
+        async def mock_scan_one(rule):
+            return CheckResult(
+                status=Status.PASS,
+                message=f"{rule.id} 통과",
+                timestamp=datetime.now()
+            )
+
+        scanner.scan_one = AsyncMock(side_effect=mock_scan_one)
+
+        # Act
+        result = await scanner.scan_all()
+
+        # Assert
+        assert result.server_id == "server-001"
+        assert result.platform == "linux"
+        assert result.total == 1
+        assert "U-01" in result.results
+        assert result.results["U-01"].status == Status.PASS
+        scanner.scan_one.assert_called_once()
+
 
 @pytest.mark.unit
 class TestScanResultAdditional:

@@ -103,3 +103,48 @@ class TestLoadRules:
         """유효하지 않은 경로로 로딩 시 에러"""
         with pytest.raises(RuleLoaderError):
             load_rules("/invalid/path/that/does/not/exist", platform="linux")
+
+
+@pytest.mark.unit
+class TestLoadYamlFileErrors:
+    """load_yaml_file 예외 처리 테스트"""
+
+    def test_load_yaml_file_not_found(self, tmp_path):
+        """존재하지 않는 파일 로딩 시 에러"""
+        non_existent = tmp_path / "non_existent.yaml"
+
+        with pytest.raises(RuleLoaderError, match="파일을 찾을 수 없습니다"):
+            load_yaml_file(non_existent)
+
+    def test_load_yaml_file_not_dict(self, tmp_path):
+        """YAML 파일이 dict가 아닐 때 에러"""
+        yaml_file = tmp_path / "list.yaml"
+        yaml_file.write_text("- item1\n- item2\n")  # list YAML
+
+        with pytest.raises(RuleLoaderError, match="딕셔너리가 아닙니다"):
+            load_yaml_file(yaml_file)
+
+    def test_load_yaml_file_invalid_syntax(self, tmp_path):
+        """잘못된 YAML 문법 시 에러"""
+        yaml_file = tmp_path / "invalid.yaml"
+        yaml_file.write_text("key: [unclosed\n")  # 잘못된 YAML
+
+        with pytest.raises(RuleLoaderError, match="YAML 파싱 실패"):
+            load_yaml_file(yaml_file)
+
+
+@pytest.mark.unit
+class TestConvertYamlErrors:
+    """convert_yaml_to_metadata 예외 처리 테스트"""
+
+    def test_convert_missing_required_field(self, tmp_path):
+        """필수 필드 누락 시 에러"""
+        yaml_data = {
+            "id": "U-01",
+            "name": "Test",
+            # category, severity, description 등 누락
+        }
+        yaml_path = tmp_path / "test.yaml"
+
+        with pytest.raises(RuleLoaderError, match="필수 필드 누락"):
+            convert_yaml_to_metadata(yaml_data, yaml_path)

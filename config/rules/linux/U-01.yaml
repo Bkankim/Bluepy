@@ -5,12 +5,18 @@ severity: high
 description: root 계정 원격 접속 제한 취약점을 점검합니다.
 check:
   commands:
-  - cat /etc/inetd.conf
+  - cat /etc/pam.d/login
+  - cat /etc/securetty
 validator: validators.linux.check_u01
 remediation:
-  auto: false
-  backup_files: []
-  commands: []
+  auto: true
+  description: pam_securetty.so를 설정하고 /etc/securetty에서 pts를 제거합니다.
+  backup_files:
+  - /etc/pam.d/login
+  - /etc/securetty
+  commands:
+  - grep -q "pam_securetty.so" /etc/pam.d/login || echo "auth required /lib/security/pam_securetty.so" >> /etc/pam.d/login
+  - sed -i '/^pts/d' /etc/securetty
 platforms:
 - linux
 - macos

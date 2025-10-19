@@ -172,3 +172,75 @@ class TestLinuxRemediatorIntegration:
         assert len(result) == 2
         assert result[0] == "chmod 640 /etc/crontab"
         assert mock_scanner.execute_command.await_count == 2
+
+
+class TestLinuxRemediatorTier2:
+    """통합 테스트 (Tier 2 규칙 - PAM/sed)"""
+
+    @pytest.mark.asyncio
+    async def test_u01_pam_securetty(self, linux_remediator, mock_scanner):
+        """U-01: root 원격 접속 제한 (PAM + sed)"""
+        commands = [
+            'grep -q "pam_securetty.so" /etc/pam.d/login || echo "auth required /lib/security/pam_securetty.so" >> /etc/pam.d/login',
+            "sed -i '/^pts/d' /etc/securetty",
+        ]
+
+        result = await linux_remediator._execute_commands(commands)
+
+        assert len(result) == 2
+        assert "pam_securetty.so" in result[0]
+        assert "sed" in result[1]
+        assert mock_scanner.execute_command.await_count == 2
+
+    @pytest.mark.asyncio
+    async def test_u03_pam_tally(self, linux_remediator, mock_scanner):
+        """U-03: 계정 잠금 임계값 (PAM 2줄)"""
+        commands = [
+            'grep -q "pam_tally.so.*deny=5" /etc/pam.d/system-auth || echo "auth required /lib/security/pam_tally.so deny=5 unlock_time=120 no_magic_root" >> /etc/pam.d/system-auth',
+            'grep -q "pam_tally.so.*reset" /etc/pam.d/system-auth || echo "account required /lib/security/pam_tally.so no_magic_root reset" >> /etc/pam.d/system-auth',
+        ]
+
+        result = await linux_remediator._execute_commands(commands)
+
+        assert len(result) == 2
+        assert "deny=5" in result[0]
+        assert "reset" in result[1]
+
+    @pytest.mark.asyncio
+    async def test_u06_pam_wheel(self, linux_remediator, mock_scanner):
+        """U-06: root su 제한 (PAM)"""
+        commands = [
+            'grep -q "pam_wheel.so" /etc/pam.d/su || echo "auth required /lib/security/pam_wheel.so debug group=wheel" >> /etc/pam.d/su'
+        ]
+
+        result = await linux_remediator._execute_commands(commands)
+
+        assert len(result) == 1
+        assert "pam_wheel.so" in result[0]
+
+    @pytest.mark.asyncio
+    async def test_u21_chmod_inetd(self, linux_remediator, mock_scanner):
+        """U-21: /etc/inetd.conf 권한 설정 (600)"""
+        commands = ["chmod 600 /etc/inetd.conf"]
+
+        result = await linux_remediator._execute_commands(commands)
+
+        assert len(result) == 1
+        assert result[0] == "chmod 600 /etc/inetd.conf"
+
+    @pytest.mark.asyncio
+    async def test_u38_sed_rservices(self, linux_remediator, mock_scanner):
+        """U-38: r계열 서비스 비활성화 (sed 3줄)"""
+        commands = [
+            "sed -i 's/^rsh/#rsh/' /etc/inetd.conf 2>/dev/null || true",
+            "sed -i 's/^rlogin/#rlogin/' /etc/inetd.conf 2>/dev/null || true",
+            "sed -i 's/^rexec/#rexec/' /etc/inetd.conf 2>/dev/null || true",
+        ]
+
+        result = await linux_remediator._execute_commands(commands)
+
+        assert len(result) == 3
+        assert "rsh" in result[0]
+        assert "rlogin" in result[1]
+        assert "rexec" in result[2]
+        assert mock_scanner.execute_command.await_count == 3

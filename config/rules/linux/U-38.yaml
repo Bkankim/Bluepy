@@ -9,9 +9,14 @@ check:
   - cat /etc/xinetd.d/rsh
 validator: validators.linux.check_u38
 remediation:
-  auto: false
-  backup_files: []
-  commands: []
+  auto: true
+  description: r계열 서비스(rsh, rlogin, rexec)를 비활성화합니다.
+  backup_files:
+  - /etc/inetd.conf
+  commands:
+  - sed -i 's/^rsh/#rsh/' /etc/inetd.conf 2>/dev/null || true
+  - sed -i 's/^rlogin/#rlogin/' /etc/inetd.conf 2>/dev/null || true
+  - sed -i 's/^rexec/#rexec/' /etc/inetd.conf 2>/dev/null || true
 platforms:
 - linux
 - macos

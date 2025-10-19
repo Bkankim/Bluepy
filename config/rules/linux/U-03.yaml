@@ -5,12 +5,16 @@ severity: high
 description: 계정잠금 임계값 설정 취약점을 점검합니다.
 check:
   commands:
-  - cat ls -al /etc/xinet.d/* | egrep "rsh|rlogin|rexec" | egrep -v "grep|klogin|kshell|kexec"
+  - cat /etc/pam.d/system-auth
 validator: validators.linux.check_u03
 remediation:
-  auto: false
-  backup_files: []
-  commands: []
+  auto: true
+  description: pam_tally.so를 설정하여 계정 잠금 임계값을 설정합니다.
+  backup_files:
+  - /etc/pam.d/system-auth
+  commands:
+  - grep -q "pam_tally.so.*deny=5" /etc/pam.d/system-auth || echo "auth required /lib/security/pam_tally.so deny=5 unlock_time=120 no_magic_root" >> /etc/pam.d/system-auth
+  - grep -q "pam_tally.so.*reset" /etc/pam.d/system-auth || echo "account required /lib/security/pam_tally.so no_magic_root reset" >> /etc/pam.d/system-auth
 platforms:
 - linux
 - macos

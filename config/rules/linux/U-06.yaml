@@ -5,12 +5,16 @@ severity: low
 description: root 계정 su 제한 취약점을 점검합니다.
 check:
   commands:
-  - ps -ef | grep nfsd
+  - cat /etc/group | grep wheel
+  - cat /etc/pam.d/su
 validator: validators.linux.check_u06
 remediation:
-  auto: false
-  backup_files: []
-  commands: []
+  auto: true
+  description: pam_wheel.so를 설정하여 root su 제한을 적용합니다.
+  backup_files:
+  - /etc/pam.d/su
+  commands:
+  - grep -q "pam_wheel.so" /etc/pam.d/su || echo "auth required /lib/security/pam_wheel.so debug group=wheel" >> /etc/pam.d/su
 platforms:
 - linux
 - macos

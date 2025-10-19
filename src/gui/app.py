@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QFont
 
 from .main_window import MainWindow
 from ..infrastructure.database.models import init_database
@@ -35,6 +36,18 @@ def main():
 
     # Qt 애플리케이션 생성
     app = QApplication(sys.argv)
+
+    # 한글 폰트 설정 (fallback 체인)
+    font = QFont()
+    font.setFamilies([
+        "Noto Sans CJK KR",
+        "Noto Sans KR",
+        "NanumGothic",
+        "DejaVu Sans",
+        "Sans Serif"
+    ])
+    font.setPointSize(10)
+    app.setFont(font)
 
     # 애플리케이션 정보 설정
     app.setApplicationName("BluePy 2.0")

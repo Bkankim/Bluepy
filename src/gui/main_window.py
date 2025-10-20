@@ -118,6 +118,14 @@ class MainWindow(QMainWindow):
         start_scan_action.setShortcut("F5")
         start_scan_action.triggered.connect(self._on_start_scan)
 
+        # 보기 메뉴
+        view_menu = menubar.addMenu("보기(&V)")
+
+        # 테마 전환
+        toggle_theme_action = view_menu.addAction("테마 전환(&T)")
+        toggle_theme_action.setShortcut("Ctrl+T")
+        toggle_theme_action.triggered.connect(self._on_toggle_theme)
+
         # 도움말 메뉴
         help_menu = menubar.addMenu("도움말(&H)")
 
@@ -361,6 +369,21 @@ class MainWindow(QMainWindow):
             message: 표시할 메시지
         """
         self.statusBar().showMessage(message)
+
+    def _on_toggle_theme(self):
+        """테마 토글 슬롯
+
+        다크 모드와 라이트 모드를 전환합니다.
+        """
+        from .theme_manager import get_theme_manager
+
+        theme_manager = get_theme_manager()
+        theme_manager.toggle_theme()
+
+        # 상태바 메시지 업데이트
+        current_theme = theme_manager.get_current_theme()
+        theme_name = "다크 모드" if current_theme.value == "dark" else "라이트 모드"
+        self.statusBar().showMessage(f"테마 변경: {theme_name}")
 
 
 def main():

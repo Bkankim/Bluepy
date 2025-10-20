@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QFont
 
 from .main_window import MainWindow
+from .theme_manager import get_theme_manager
 from ..infrastructure.database.models import init_database
 
 
@@ -53,6 +54,11 @@ def main():
     app.setApplicationName("BluePy 2.0")
     app.setOrganizationName("BluePy")
     app.setApplicationVersion("2.0.0")
+
+    # 테마 초기화 (저장된 테마 로드)
+    theme_manager = get_theme_manager()
+    saved_theme = theme_manager.load_theme()
+    theme_manager.set_theme(app, saved_theme)
 
     # 메인 윈도우 생성 및 표시
     window = MainWindow()

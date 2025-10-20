@@ -1,6 +1,6 @@
 # BluePy 2.0 - 문서 허브
 
-**Last Updated**: 2025-10-17
+**Last Updated**: 2025-10-20
 
 BluePy 2.0 프로젝트의 모든 문서를 안내합니다.
 

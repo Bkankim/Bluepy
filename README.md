@@ -27,11 +27,11 @@
 - **Windows** (예정, 50개 항목) - 레지스트리, 방화벽, 그룹 정책
 
 ### ⚡ 원클릭 자동 수정 (Phase 3 완료)
-- 취약점 자동 수정 ✅ - macOS 5개 규칙 지원 (M-03~M-08)
+- 취약점 자동 수정 ✅ - macOS 5개 + Linux 10개 규칙 지원
 - 안전한 백업 + 롤백 ✅ - SHA256 체크섬, 원자성 보장
 - Dry-run 모드 ✅ - 실제 실행 전 시뮬레이션
 - GUI 통합 ✅ - 미리보기, 배치 수정 (commit 78bb83d)
-- Linux Remediation - 다음 단계 (10-15개 규칙 예정)
+- Linux Remediation ✅ - 완료 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
 
 ### 🖥️ 비전공자 친화 GUI
 - PySide6 기반 네이티브 GUI
@@ -39,11 +39,12 @@
 - 색상 코드 (🔴 위험, 🟡 경고, 🟢 안전)
 - 내장 교육 콘텐츠 (왜 위험한지, 어떻게 고치는지)
 
-### 📊 이력 관리 및 분석
-- 과거 점검 결과 저장
-- 트렌드 분석 (개선/악화 추세)
-- 규정 준수 추적 (KISA, PCI-DSS)
-- PDF/Excel/HTML 보고서 생성
+### 📊 이력 관리 및 분석 (Phase 5 부분 완료)
+- 과거 점검 결과 저장 ✅
+- 트렌드 분석 (개선/악화 추세) ✅ - PyQtGraph 차트
+- History View ✅ - QTableWidget + 트렌드 차트 (commit 4ceb74c)
+- 다크 모드 지원 ✅ - VSCode 색상 팔레트 (commit ca08e0c)
+- PDF/Excel/HTML 보고서 생성 ✅ - Excel 완료 (commit b2cd6cc)
 
 ---
 
@@ -130,17 +131,18 @@ bluepy/
 | **테스트 강화** | 2일 | Remediation/Database/Repository 테스트 | ✅ 완료 (커버리지 63%) |
 | **Linux Remediation** | 2일 | Linux 자동 수정 10개 규칙 (Tier 1+2) | ✅ 완료 |
 | **Phase 4** | 3주 | Windows 지원 | ⏳ 대기 |
-| **Phase 5** | 2주 | 고급 기능 (대시보드, PDF, 스케줄러) | ⏳ 대기 |
+| **Phase 5** | 2주 | 고급 기능 (대시보드, 이력, 다크 모드) | 🔄 진행 중 (2/3 완료) |
 
-**진행률**: **75% 완료 (약 9주 작업)**
+**진행률**: **80% 완료 (약 9.5주 작업)**
 
 **주요 성과**:
 - 테스트 354개 통과 (100% 통과율)
 - 커버리지 63% (핵심 모듈 90-100%)
-- GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정)
+- GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정, 이력, 테마)
 - Linux Remediation 완성 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
-- macOS Remediation 완성
-- Remediation 엔진 완전 테스트 (100% 커버리지)
+- macOS Remediation 완성 (5개 규칙)
+- Phase 5 Quick Wins 완료 (다크 모드, History View)
+- 총 18개 Git 커밋
 
 자세한 내용은 [docs/ROADMAP.md](docs/ROADMAP.md) 참조
 

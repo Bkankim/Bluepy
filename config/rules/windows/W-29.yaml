@@ -1,0 +1,32 @@
+id: W-29
+name: 계정 잠금 임계값 (RemoteAccess)
+category: 레지스트리
+severity: high
+description: |
+  RemoteAccess 서비스의 계정 잠금 임계값이 적절하게 설정되어 있는지 확인합니다.
+  잘못된 로그인 시도 횟수를 제한하여 무차별 대입 공격(Brute Force)을 방지합니다.
+  권장값은 5회 이하입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\RemoteAccess\Parameters\AccountLockout" -Name "MaxDenials" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty MaxDenials
+
+validator: validators.windows.check_w29
+
+remediation:
+  auto: true
+  description: RemoteAccess 계정 잠금 임계값을 5회로 설정합니다.
+  backup_files: []
+  commands:
+    - |
+      if (-not (Test-Path "HKLM:\System\CurrentControlSet\Services\RemoteAccess\Parameters\AccountLockout")) {
+        New-Item -Path "HKLM:\System\CurrentControlSet\Services\RemoteAccess\Parameters\AccountLockout" -Force
+      }
+      Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\RemoteAccess\Parameters\AccountLockout" -Name "MaxDenials" -Value 5 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "1.2.1"
+  description: "Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempts'"

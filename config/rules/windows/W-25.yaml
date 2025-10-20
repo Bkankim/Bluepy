@@ -1,0 +1,28 @@
+id: W-25
+name: 스크린 세이버 대기 시간
+category: 레지스트리
+severity: medium
+description: |
+  스크린 세이버 활성화 대기 시간을 15분(900초) 이하로 설정하여
+  무단 접근 위험을 최소화합니다.
+  ScreenSaveTimeOut 값이 900 이하인지 확인합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "ScreenSaveTimeOut" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty ScreenSaveTimeOut
+
+validator: validators.windows.check_w25
+
+remediation:
+  auto: true
+  description: 스크린 세이버 대기 시간을 15분으로 설정합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "ScreenSaveTimeOut" -Value 900
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.52.3.9.3"
+  description: "Ensure 'Screen saver timeout' is set to '900 seconds or less, but not 0'"

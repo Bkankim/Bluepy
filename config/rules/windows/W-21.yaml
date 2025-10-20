@@ -1,0 +1,28 @@
+id: W-21
+name: LAN Manager 인증 수준
+category: 레지스트리
+severity: high
+description: |
+  LAN Manager 인증 수준을 NTLMv2 이상으로 설정하여
+  약한 LM 및 NTLM 인증 프로토콜 사용을 차단합니다.
+  LmCompatibilityLevel 값이 5 이상인지 확인합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LmCompatibilityLevel
+
+validator: validators.windows.check_w21
+
+remediation:
+  auto: true
+  description: LAN Manager 인증 수준을 NTLMv2로 설정합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel" -Value 5
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.11.7"
+  description: "Ensure 'Network security: LAN Manager authentication level' is set to 'Send NTLMv2 response only. Refuse LM & NTLM'"

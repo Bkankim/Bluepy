@@ -1,0 +1,28 @@
+id: W-30
+name: 세션 유휴 시간 제한
+category: 레지스트리
+severity: medium
+description: |
+  SMB 서버의 세션 유휴 시간 제한이 적절하게 설정되어 있는지 확인합니다.
+  유휴 세션을 자동으로 종료하여 무단 액세스를 방지합니다.
+  권장값은 15분 이하입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\LanmanServer\Parameters" -Name "AutoDisconnect" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutoDisconnect
+
+validator: validators.windows.check_w30
+
+remediation:
+  auto: true
+  description: 세션 유휴 시간 제한을 15분으로 설정합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\LanmanServer\Parameters" -Name "AutoDisconnect" -Value 15 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.9.1"
+  description: "Ensure 'Microsoft network server: Amount of idle time required before suspending session' is set to '15 or fewer minutes'"

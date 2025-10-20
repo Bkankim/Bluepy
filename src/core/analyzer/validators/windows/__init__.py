@@ -29,6 +29,16 @@ from .registry import (
     check_w18,
     check_w19,
     check_w20,
+    check_w21,
+    check_w22,
+    check_w23,
+    check_w24,
+    check_w25,
+    check_w26,
+    check_w27,
+    check_w28,
+    check_w29,
+    check_w30,
 )
 
 __all__ = [
@@ -55,4 +65,14 @@ __all__ = [
     "check_w18",
     "check_w19",
     "check_w20",
+    "check_w21",
+    "check_w22",
+    "check_w23",
+    "check_w24",
+    "check_w25",
+    "check_w26",
+    "check_w27",
+    "check_w28",
+    "check_w29",
+    "check_w30",
 ]

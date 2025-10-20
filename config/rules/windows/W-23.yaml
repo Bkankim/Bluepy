@@ -1,0 +1,28 @@
+id: W-23
+name: 캐시된 로그온 수 제한
+category: 레지스트리
+severity: medium
+description: |
+  도메인 컨트롤러에 접근할 수 없을 때 사용되는
+  캐시된 로그온 자격 증명의 수를 제한합니다.
+  CachedLogonsCount 값이 2 이하인지 확인합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "CachedLogonsCount" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty CachedLogonsCount
+
+validator: validators.windows.check_w23
+
+remediation:
+  auto: true
+  description: 캐시된 로그온 수를 2로 제한합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "CachedLogonsCount" -Value 2
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.11.4"
+  description: "Configure 'Interactive logon: Number of previous logons to cache (in case domain controller is not available)' to '2 or fewer logons'"

@@ -1,0 +1,28 @@
+id: W-22
+name: NTLM 세션 보안 (클라이언트)
+category: 레지스트리
+severity: high
+description: |
+  NTLM 클라이언트 세션 보안을 강화하여
+  128비트 암호화 및 NTLMv2 세션 보안을 요구합니다.
+  NTLMMinClientSec 값이 537395200 이상인지 확인합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0" -Name "NTLMMinClientSec" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NTLMMinClientSec
+
+validator: validators.windows.check_w22
+
+remediation:
+  auto: true
+  description: NTLM 클라이언트 세션 보안을 강화합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0" -Name "NTLMMinClientSec" -Value 537395200
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.11.8"
+  description: "Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) clients' is set to 'Require NTLMv2 session security, Require 128-bit encryption'"

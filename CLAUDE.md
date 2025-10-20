@@ -340,6 +340,33 @@ python3.12 scripts/migrate_legacy.py \
   * 문서화
     - docs/SETTINGS_UI_IMPLEMENTATION.md (완전한 구현 가이드)
 
+- **Phase 4 Windows 지원** (2025-10-20, commit 3735972)
+  * WinRMClient 클래스 (310줄)
+    - pywinrm 기반 비동기 Windows 원격 관리
+    - execute_powershell() - PowerShell 스크립트 실행
+    - get_registry_value() - Windows 레지스트리 조회
+    - check_service() - Windows 서비스 상태 확인
+    - 에러 처리 3종: WinRMConnectionError, WinRMCommandError, WinRMTimeoutError
+    - asyncio 래핑 (run_in_executor 사용)
+    - Context Manager 지원
+  * WindowsScanner 클래스 (247줄)
+    - BaseScanner 상속, UnixScanner 패턴 유지
+    - WinRMClient 통합
+    - Validator 동적 import 및 호출
+    - 에러 발생 시 MANUAL 상태 반환
+  * Windows 규칙 10개 (YAML 283줄 + Validator 343줄)
+    - 계정 관리 7개: W-01~W-07 (Administrator 이름, Guest, 패스워드 정책)
+    - 서비스 관리 3개: W-08~W-10 (Firewall, Defender, 원격 데스크톱 NLA)
+    - CIS Benchmark 기반 선정
+    - 모든 Validator 함수 완전 구현 (PASS/FAIL 판단 로직)
+  * 테스트 스켈레톤 (194줄)
+    - tests/unit/test_winrm_client.py
+    - 27개 테스트 메서드 (TODO 마커)
+  * 코드 품질
+    - Black 포맷팅 완료 (2개 파일)
+    - Ruff 린팅 통과 (0개 에러)
+    - Python 구문 검증 100%
+
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기
 
@@ -409,3 +436,195 @@ alembic downgrade -1
 ### 코드 작성 지침
 - 모든 Class, def 위에는 간단하게 기능을 설명하는 주석을 달아줄 것.
 - **모듈 사용을 기본**으로 하여 호환성 / 재사용성 / 유지보수성 의 원칙을 꼭 지킬 것.
+
+---
+
+## YAML 구조화된 작업 템플릿
+
+아래 YAML 템플릿을 참고하여 일관된 방식으로 작업을 진행합니다.
+
+### Phase 작업 템플릿
+
+```yaml
+phase:
+  name: "Phase 4 Windows 지원"
+  id: "phase-4"
+  duration: "3주"
+  status: "진행 중"  # 준비 중 / 진행 중 / 완료
+  progress: 30%
+
+  objectives:
+    - "WinRM 연결 시스템 구현"
+    - "Windows 50개 규칙 작성"
+    - "WindowsRemediator 구현"
+    - "3-OS 통합 완성"
+
+  deliverables:
+    - type: "코드"
+      files:
+        - "src/infrastructure/network/winrm_client.py"
+        - "src/core/scanner/windows_scanner.py"
+        - "src/core/remediation/windows_remediator.py"
+      lines: 1500
+    - type: "규칙"
+      count: 50
+      files: "config/rules/windows/*.yaml"
+    - type: "테스트"
+      count: 100
+      files: "tests/unit/test_winrm*.py"
+    - type: "문서"
+      files:
+        - "docs/WINDOWS_SETUP.md"
+        - "PROJECT_PLAN.md"
+
+  success_criteria:
+    - name: "Windows 50개 규칙 동작"
+      status: "partial"  # pass / fail / partial / pending
+      progress: 20%  # 10/50
+    - name: "코드 품질 검증"
+      checks:
+        - "Black 포맷팅 통과"
+        - "Ruff 린팅 0개 에러"
+        - "Python 구문 검증 100%"
+    - name: "테스트 커버리지"
+      target: "60%"
+      current: "61%"
+```
+
+### 코드 작성 체크리스트
+
+```yaml
+code_checklist:
+  before_writing:
+    - "[ ] 기존 코드 패턴 확인 (BaseScanner, UnixScanner 등)"
+    - "[ ] 필요한 import 문 확인"
+    - "[ ] 타입 힌트 정의 (from typing import List, Optional)"
+    - "[ ] 에러 처리 전략 수립"
+
+  during_writing:
+    - "[ ] 모든 클래스/함수에 docstring 추가"
+    - "[ ] Type hints 완전 작성"
+    - "[ ] 에러 처리 구현 (try-except, 로깅)"
+    - "[ ] 일관된 네이밍 (snake_case 함수, PascalCase 클래스)"
+
+  after_writing:
+    - "[ ] Black 포맷팅 실행"
+    - "[ ] Ruff 린팅 실행 및 수정"
+    - "[ ] Python 구문 검증 (py_compile)"
+    - "[ ] Import 테스트"
+    - "[ ] 단위 테스트 작성"
+```
+
+### 테스트 작성 체크리스트
+
+```yaml
+test_checklist:
+  unit_tests:
+    - "[ ] 정상 동작 테스트 (happy path)"
+    - "[ ] 에러 케이스 테스트 (edge cases)"
+    - "[ ] 빈 입력 테스트 (empty input)"
+    - "[ ] None 입력 테스트"
+    - "[ ] Mock 사용 (외부 의존성 제거)"
+
+  integration_tests:
+    - "[ ] 실제 데이터 흐름 테스트"
+    - "[ ] Scanner → Analyzer → Result 전체 플로우"
+    - "[ ] 에러 발생 시 복구 테스트"
+
+  coverage_goals:
+    target: "60%"
+    priorities:
+      - "Core 모듈: 80%+"
+      - "GUI 모듈: 30%+"
+      - "Infrastructure: 60%+"
+```
+
+### 문서화 체크리스트
+
+```yaml
+documentation_checklist:
+  code_level:
+    - "[ ] 모든 public 클래스에 docstring"
+    - "[ ] 모든 public 함수에 docstring"
+    - "[ ] 복잡한 로직에 inline 주석"
+    - "[ ] Type hints 완전 작성"
+
+  project_level:
+    - "[ ] PROJECT_PLAN.md 업데이트"
+    - "[ ] ROADMAP.md 업데이트"
+    - "[ ] CLAUDE.md 업데이트 (완료 작업 반영)"
+    - "[ ] README.md 업데이트 (주요 기능 변경 시)"
+
+  phase_completion:
+    - "[ ] Phase별 완료 문서 작성"
+    - "[ ] 구현 가이드 문서 (필요 시)"
+    - "[ ] 사용자 매뉴얼 업데이트 (GUI 변경 시)"
+```
+
+### Git 커밋 템플릿
+
+```yaml
+commit_template:
+  format: |
+    feat/fix/docs: [간결한 제목] (50자 이내)
+
+    [상세 설명]
+    - 신규 파일: X개, Y줄
+    - 수정 파일: Z개
+    - 주요 변경사항 나열
+
+    [테스트]
+    - 테스트 N개 통과
+    - 커버리지 X%
+
+    [Phase 진행률]
+    - Phase X: Y% → Z%
+
+    Generated with Claude Code (https://claude.com/claude-code)
+
+    Co-Authored-By: Claude <noreply@anthropic.com>
+
+  types:
+    feat: "새로운 기능 추가"
+    fix: "버그 수정"
+    docs: "문서 수정"
+    test: "테스트 추가/수정"
+    refactor: "코드 리팩토링"
+    style: "코드 포맷팅"
+
+  examples:
+    - "feat: Phase 4 Week 1 - Windows 지원 기본 구조 완성"
+    - "docs: 전체 문서 최신화 (Phase 5 Quick Wins 반영)"
+    - "test: Remediation 엔진 단위 테스트 완성"
+```
+
+### 에이전트 사용 템플릿
+
+```yaml
+agent_usage:
+  parallel_execution:
+    when:
+      - "독립적인 조사 작업 (WinRM 조사, CIS Benchmark 분석)"
+      - "독립적인 구현 작업 (여러 Validator 함수)"
+      - "독립적인 테스트 작업"
+
+    example: |
+      Task 1: WinRM 연결 방법 조사 (Explore agent)
+      Task 2: Windows CIS Benchmark 분석 (Explore agent)
+      Task 3: WinRMClient 클래스 구현 (general-purpose agent)
+      → 3개 에이전트 병렬 실행
+
+  sequential_execution:
+    when:
+      - "의존성이 있는 작업 (설계 → 구현 → 테스트)"
+      - "이전 결과가 필요한 작업"
+
+    example: |
+      Step 1: 설계 완료
+      Step 2: 구현 시작 (Step 1 결과 필요)
+      Step 3: 테스트 (Step 2 결과 필요)
+```
+
+---
+
+위 YAML 템플릿을 참고하여 일관된 방식으로 작업을 진행하면, Claude가 더 명확하게 이해하고 효율적으로 작동합니다.

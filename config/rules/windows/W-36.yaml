@@ -1,0 +1,28 @@
+id: W-36
+name: NetBIOS over TCP/IP 비활성화
+category: 서비스 관리
+severity: medium
+description: |
+  NetBIOS over TCP/IP가 비활성화되어 있는지 확인합니다.
+  NetBIOS는 레거시 프로토콜로 LLMNR 스푸핑 공격에 취약합니다.
+  NodeType 값이 2 (P-node)로 설정되면 NetBIOS가 비활성화됩니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters" -Name "NodeType" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NodeType
+
+validator: validators.windows.check_w36
+
+remediation:
+  auto: true
+  description: NetBIOS over TCP/IP를 비활성화합니다 (NodeType = 2).
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters" -Name "NodeType" -Value 2 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.5.8.1"
+  description: "Ensure 'Turn off multicast name resolution' is set to 'Enabled'"

@@ -24,7 +24,7 @@
 ### 🌐 멀티플랫폼 지원
 - **Linux** (73개 점검 항목) ✅ - KISA 기준 완전 준수
 - **macOS** (50개 점검 항목) ✅ - SIP, Gatekeeper, FileVault 등 (Phase 2 완료)
-- **Windows** (진행 중, 30/50개 항목, 60%) - 레지스트리, 방화벽, 그룹 정책
+- **Windows** (진행 중, 40/50개 항목, 80%) - 레지스트리, 서비스 관리, 방화벽
 
 ### ⚡ 원클릭 자동 수정 (Phase 3 완료)
 - 취약점 자동 수정 ✅ - macOS 5개 + Linux 10개 규칙 지원
@@ -101,7 +101,7 @@ bluepy/
 │   └── rules/              # 점검 규칙 (YAML)
 │       ├── linux/          # Linux 73개 규칙 ✅
 │       ├── macos/          # macOS 10개 전용 + 40개 공유 ✅
-│       └── windows/        # Windows 30개 규칙 (진행 중, 60%)
+│       └── windows/        # Windows 40개 규칙 (진행 중, 80%)
 │
 ├── data/                    # 데이터 저장소
 │   ├── databases/          # SQLite
@@ -130,10 +130,10 @@ bluepy/
 | **Phase 3** | Week 7-8 | Remediation 엔진 + GUI 통합 (macOS 완성) | ✅ 완료 |
 | **테스트 강화** | 2일 | Remediation/Database/Repository 테스트 | ✅ 완료 (커버리지 63%) |
 | **Linux Remediation** | 2일 | Linux 자동 수정 10개 규칙 (Tier 1+2) | ✅ 완료 |
-| **Phase 4** | 3주 | Windows 지원 (30/50개 규칙) | 🔄 진행 중 (60%) |
+| **Phase 4** | 3주 | Windows 지원 (40/50개 규칙) | 🔄 진행 중 (80%) |
 | **Phase 5** | 2주 | 고급 기능 (대시보드, 이력, 다크 모드) | 🔄 진행 중 (2/3 완료) |
 
-**진행률**: **90% 완료 (약 10.8주 작업)**
+**진행률**: **92% 완료 (약 11주 작업)**
 
 **주요 성과**:
 - 테스트 354개 통과 (100% 통과율)
@@ -142,11 +142,12 @@ bluepy/
 - Linux Remediation 완성 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
 - macOS Remediation 완성 (5개 규칙)
 - Phase 5 Quick Wins 완료 (다크 모드, History View)
-- Windows 30개 규칙 완성 (W-01~W-30, 60%)
+- Windows 40개 규칙 완성 (W-01~W-40, 80%)
   * Week 1: 계정/서비스 관리 10개 (commit 3735972)
   * Week 2 Day 1: 레지스트리 10개 W-11~W-20 (commit 1bcef01)
   * Week 2 Day 2: 레지스트리 10개 W-21~W-30 (commit dff93ae)
-- 총 24개 Git 커밋
+  * Week 2 Day 3: 서비스 관리 10개 W-31~W-40
+- 총 25개 Git 커밋
 
 자세한 내용은 [docs/ROADMAP.md](docs/ROADMAP.md) 참조
 

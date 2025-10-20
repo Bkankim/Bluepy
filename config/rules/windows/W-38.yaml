@@ -1,0 +1,31 @@
+id: W-38
+name: Print Spooler 서비스 비활성화
+category: 서비스 관리
+severity: low
+description: |
+  Print Spooler 서비스가 비활성화되어 있는지 확인합니다.
+  서버 환경에서 프린터를 사용하지 않는 경우 PrintNightmare 등의 취약점을 방지하기 위해
+  Print Spooler 서비스를 비활성화해야 합니다.
+  Start 값이 4 (Disabled)이면 서비스가 비활성화됩니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Spooler" -Name "Start" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Start
+
+validator: validators.windows.check_w38
+
+remediation:
+  auto: true
+  description: Print Spooler 서비스를 비활성화합니다.
+  backup_files: []
+  commands:
+    - Stop-Service -Name "Spooler" -Force -ErrorAction SilentlyContinue
+    - Set-Service -Name "Spooler" -StartupType Disabled
+    - Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Spooler" -Name "Start" -Value 4 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "5.28"
+  description: "Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (Automated)"

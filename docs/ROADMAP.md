@@ -1119,10 +1119,32 @@ docs/USER_MANUAL.md
 - ✅ W-21~W-30 완전 구현
 - ✅ Windows 30/50 규칙 완료 (60%)
 
-#### Day 3-5: 서비스 관리 + 패치/로그 (예정)
+#### Day 3: 서비스 관리 규칙 10개 (완료)
+
+**완료 항목**:
+- [x] W-31~W-40 YAML 작성 및 Validator 구현
+  - W-31: Telnet 서비스 비활성화 (high)
+  - W-32: FTP 서비스 비활성화 (medium)
+  - W-33: SNMP 서비스 비활성화 (medium)
+  - W-34: RDP 유휴 세션 시간 제한 (medium)
+  - W-35: SMB Server Signing 강제 (high)
+  - W-36: NetBIOS over TCP/IP 비활성화 (medium)
+  - W-37: LLMNR 비활성화 (medium)
+  - W-38: Print Spooler 서비스 비활성화 (low)
+  - W-39: Windows Search 서비스 비활성화 (low)
+  - W-40: IIS Admin 서비스 비활성화 (medium)
+- [x] service_management.py 확장 (check_w31~w40, +252줄)
+- [x] __init__.py export 추가 (10개 함수)
+- [x] 5개 전문 에이전트 활용 (sequential-thinking + Explore + 2개 병렬 + code-analyzer)
+- [x] 654줄 신규 코드 (YAML 323줄 + Validator 331줄)
+
+**결과물**:
+- ✅ W-31~W-40 완전 구현
+- ✅ Windows 40/50 규칙 완료 (80%)
+
+#### Day 4-5: 패치/로그 + 통합 테스트 (예정)
 
 **작업 항목**:
-- [ ] Day 3: 서비스 관리 10개 (W-31~W-40)
 - [ ] Day 4: 패치 5개 + 로그 5개 (W-41~W-50)
 - [ ] Day 5: 통합 테스트 + 문서화
 

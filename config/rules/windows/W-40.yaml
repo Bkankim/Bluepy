@@ -1,0 +1,31 @@
+id: W-40
+name: IIS Admin 서비스 비활성화
+category: 서비스 관리
+severity: medium
+description: |
+  IIS Admin 서비스가 비활성화되어 있는지 확인합니다.
+  웹 서버를 사용하지 않는 시스템에서는 IIS 서비스를 비활성화하여
+  공격 표면을 축소하고 불필요한 리소스 사용을 방지해야 합니다.
+  Start 값이 4 (Disabled)이면 서비스가 비활성화됩니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\IISADMIN" -Name "Start" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Start
+
+validator: validators.windows.check_w40
+
+remediation:
+  auto: true
+  description: IIS Admin 서비스를 비활성화합니다.
+  backup_files: []
+  commands:
+    - Stop-Service -Name "IISADMIN" -Force -ErrorAction SilentlyContinue
+    - Set-Service -Name "IISADMIN" -StartupType Disabled
+    - Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\IISADMIN" -Name "Start" -Value 4 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "5.12"
+  description: "Ensure 'IIS Admin Service (IISADMIN)' is set to 'Disabled' or 'Not Installed'"

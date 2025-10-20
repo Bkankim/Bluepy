@@ -1,0 +1,29 @@
+id: W-35
+name: SMB Server Signing 강제
+category: 서비스 관리
+severity: high
+description: |
+  SMB 서버 서명(Signing)이 강제되어 있는지 확인합니다.
+  SMB 서명을 활성화하면 중간자 공격(MITM) 및 세션 하이재킹을 방지할 수 있습니다.
+  RequireSecuritySignature 값이 1이어야 합니다.
+  권장값은 1(Enabled)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty RequireSecuritySignature
+
+validator: validators.windows.check_w35
+
+remediation:
+  auto: true
+  description: SMB 서버 서명을 강제로 활성화합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "RequireSecuritySignature" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.9.2"
+  description: "Ensure 'Microsoft network server: Digitally sign communications (always)' is set to 'Enabled'"

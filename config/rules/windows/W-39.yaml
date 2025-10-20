@@ -1,0 +1,31 @@
+id: W-39
+name: Windows Search 서비스 비활성화
+category: 서비스 관리
+severity: low
+description: |
+  Windows Search 서비스가 비활성화되어 있는지 확인합니다.
+  서버 환경에서 파일 인덱싱 기능이 불필요한 경우 성능 향상 및 공격 표면 축소를 위해
+  Windows Search 서비스를 비활성화할 수 있습니다.
+  Start 값이 4 (Disabled)이면 서비스가 비활성화됩니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\WSearch" -Name "Start" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Start
+
+validator: validators.windows.check_w39
+
+remediation:
+  auto: true
+  description: Windows Search 서비스를 비활성화합니다.
+  backup_files: []
+  commands:
+    - Stop-Service -Name "WSearch" -Force -ErrorAction SilentlyContinue
+    - Set-Service -Name "WSearch" -StartupType Disabled
+    - Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\WSearch" -Name "Start" -Value 4 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "5.40"
+  description: "Ensure 'Windows Search (WSearch)' is set to 'Disabled' or 'Not Installed'"

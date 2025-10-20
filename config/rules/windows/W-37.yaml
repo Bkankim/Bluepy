@@ -1,0 +1,29 @@
+id: W-37
+name: LLMNR 비활성화
+category: 서비스 관리
+severity: medium
+description: |
+  LLMNR(Link-Local Multicast Name Resolution)이 비활성화되어 있는지 확인합니다.
+  LLMNR은 맨인더미들(Man-in-the-Middle) 공격 및 자격증명 릴레이 공격에 취약합니다.
+  EnableMulticast 값이 0이면 LLMNR이 비활성화됩니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableMulticast" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty EnableMulticast
+
+validator: validators.windows.check_w37
+
+remediation:
+  auto: true
+  description: LLMNR을 비활성화합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Force | Out-Null
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableMulticast" -Value 0 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.5.8.1"
+  description: "Ensure 'Turn off multicast name resolution' is set to 'Enabled'"

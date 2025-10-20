@@ -1,0 +1,29 @@
+id: W-34
+name: RDP 유휴 세션 시간 제한
+category: 서비스 관리
+severity: medium
+description: |
+  RDP 유휴 세션 시간 제한이 적절하게 설정되어 있는지 확인합니다.
+  유휴 원격 데스크톱 세션을 자동으로 종료하여 무단 액세스를 방지합니다.
+  권장값은 900000밀리초(15분) 이하입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty MaxIdleTime
+
+validator: validators.windows.check_w34
+
+remediation:
+  auto: true
+  description: RDP 유휴 세션 시간 제한을 15분으로 설정합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Force | Out-Null
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 900000 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.61.2"
+  description: "Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less'"

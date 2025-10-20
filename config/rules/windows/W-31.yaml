@@ -1,0 +1,29 @@
+id: W-31
+name: Telnet 서비스 비활성화
+category: 서비스 관리
+severity: high
+description: |
+  Telnet 서비스가 비활성화되어 있는지 확인합니다.
+  Telnet은 암호화되지 않은 원격 접속 프로토콜로 보안 위험이 큽니다.
+  SSH 등 암호화된 대체 프로토콜을 사용해야 합니다.
+  권장값은 4(Disabled)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\TlntSvr" -Name "Start" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Start
+
+validator: validators.windows.check_w31
+
+remediation:
+  auto: true
+  description: Telnet 서비스를 비활성화합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\TlntSvr" -Name "Start" -Value 4 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "5.37"
+  description: "Ensure 'Telnet Client' is set to 'Disabled'"

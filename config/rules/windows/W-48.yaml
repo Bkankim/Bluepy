@@ -1,0 +1,30 @@
+id: W-48
+name: Command Line Process Auditing 활성화
+category: 로깅/감사
+severity: high
+description: |
+  Command Line Process Auditing이 활성화되어 있는지 확인합니다.
+  프로세스 실행 시 명령줄 인수를 로깅하여 악성 행위를 추적할 수 있습니다.
+  공격자가 실행한 명령어를 포렌식 분석할 수 있어 보안 사고 대응에 필수적입니다.
+  권장값은 1 (활성화)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" -Name "ProcessCreationIncludeCmdLine_Enabled" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty ProcessCreationIncludeCmdLine_Enabled
+
+validator: validators.windows.check_w48
+
+remediation:
+  auto: true
+  description: Command Line Process Auditing을 활성화합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" -Name "ProcessCreationIncludeCmdLine_Enabled" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "17.3.1"
+  description: "Ensure 'Include command line in process creation events' is set to 'Enabled'"

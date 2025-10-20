@@ -1,0 +1,29 @@
+id: W-45
+name: 자동 재부팅 금지 설정
+category: 패치 관리
+severity: medium
+description: |
+  사용자가 로그온한 상태에서 자동 재부팅을 금지하도록 설정되어 있는지 확인합니다.
+  업데이트 후 자동 재부팅은 작업 중인 사용자의 데이터 손실을 야기할 수 있습니다.
+  NoAutoRebootWithLoggedOnUsers 값이 1이면 로그온 사용자가 있을 때 자동 재부팅하지 않습니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoRebootWithLoggedOnUsers" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NoAutoRebootWithLoggedOnUsers
+
+validator: validators.windows.check_w45
+
+remediation:
+  auto: true
+  description: 로그온 사용자가 있을 때 자동 재부팅을 금지합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoRebootWithLoggedOnUsers" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.101.1.3"
+  description: "Ensure 'No auto-restart with logged on users for scheduled automatic updates installations' is set to 'Disabled'"

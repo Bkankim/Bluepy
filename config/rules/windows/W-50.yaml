@@ -1,0 +1,31 @@
+id: W-50
+name: 보안 이벤트 로그 보존 정책
+category: 로깅/감사
+severity: medium
+description: |
+  보안 이벤트 로그 보존 정책이 적절하게 설정되어 있는지 확인합니다.
+  보안 이벤트 로그를 충분한 기간 동안 보존하여
+  보안 사고 조사 및 컴플라이언스 요구사항을 충족해야 합니다.
+  권장값은 1 (로그 보존) 또는 0 (필요 시 덮어쓰기, 로그 크기 설정 필요)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security" -Name "Retention" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Retention
+
+validator: validators.windows.check_w50
+
+remediation:
+  auto: true
+  description: 보안 이벤트 로그 보존 정책을 설정합니다 (90일 보존).
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security" -Name "Retention" -Value 1 -Type String
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security" -Name "MaxSize" -Value 196608 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.26.3.1"
+  description: "Ensure 'Security: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"

@@ -1,0 +1,29 @@
+id: W-41
+name: Windows Update 자동 업데이트 활성화
+category: 패치 관리
+severity: high
+description: |
+  Windows Update 자동 업데이트가 활성화되어 있는지 확인합니다.
+  자동 업데이트가 비활성화되면 보안 패치가 적용되지 않아 취약점에 노출됩니다.
+  NoAutoUpdate 값이 0이면 자동 업데이트가 활성화됩니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoUpdate" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NoAutoUpdate
+
+validator: validators.windows.check_w41
+
+remediation:
+  auto: true
+  description: Windows Update 자동 업데이트를 활성화합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoUpdate" -Value 0 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.101.1.1"
+  description: "Ensure 'Configure Automatic Updates' is set to 'Enabled'"

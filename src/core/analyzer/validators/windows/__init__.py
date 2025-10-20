@@ -50,6 +50,20 @@ from .registry import (
     check_w29,
     check_w30,
 )
+from .patch_management import (
+    check_w41,
+    check_w42,
+    check_w43,
+    check_w44,
+    check_w45,
+)
+from .logging_auditing import (
+    check_w46,
+    check_w47,
+    check_w48,
+    check_w49,
+    check_w50,
+)
 
 __all__ = [
     # Account Management
@@ -95,4 +109,16 @@ __all__ = [
     "check_w28",
     "check_w29",
     "check_w30",
+    # Patch Management
+    "check_w41",
+    "check_w42",
+    "check_w43",
+    "check_w44",
+    "check_w45",
+    # Logging/Auditing
+    "check_w46",
+    "check_w47",
+    "check_w48",
+    "check_w49",
+    "check_w50",
 ]

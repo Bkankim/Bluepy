@@ -1,0 +1,30 @@
+id: W-49
+name: Windows Defender 로그 활성화
+category: 로깅/감사
+severity: medium
+description: |
+  Windows Defender 로그가 활성화되어 있는지 확인합니다.
+  Defender 로그는 악성코드 탐지 및 차단 내역을 기록하여
+  보안 위협 분석에 필수적인 정보를 제공합니다.
+  권장값은 0 (로그 활성화, DisableGenericRePorts=0)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" -Name "DisableGenericRePorts" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty DisableGenericRePorts
+
+validator: validators.windows.check_w49
+
+remediation:
+  auto: true
+  description: Windows Defender 로그를 활성화합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" -Name "DisableGenericRePorts" -Value 0 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.13.1.1"
+  description: "Ensure 'Configure Watson events' is set to 'Enabled'"

@@ -1,0 +1,30 @@
+id: W-46
+name: PowerShell Script Block Logging 활성화
+category: 로깅/감사
+severity: high
+description: |
+  PowerShell Script Block Logging이 활성화되어 있는지 확인합니다.
+  PowerShell 스크립트 블록 로깅은 악성 PowerShell 공격을 탐지하는 데 필수적입니다.
+  모든 PowerShell 스크립트 블록 실행 내용이 이벤트 로그에 기록됩니다.
+  권장값은 1 (활성화)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty EnableScriptBlockLogging
+
+validator: validators.windows.check_w46
+
+remediation:
+  auto: true
+  description: PowerShell Script Block Logging을 활성화합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.95.1"
+  description: "Ensure 'Turn on PowerShell Script Block Logging' is set to 'Enabled'"

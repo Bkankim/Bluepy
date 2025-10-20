@@ -1,0 +1,29 @@
+id: W-42
+name: Windows Update 자동 설치 설정
+category: 패치 관리
+severity: medium
+description: |
+  Windows Update 자동 설치 옵션이 적절하게 설정되어 있는지 확인합니다.
+  AUOptions 값이 4이면 자동 다운로드 및 설치가 활성화됩니다.
+  권장값은 4 (자동 다운로드 및 예약된 시간에 설치)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AUOptions
+
+validator: validators.windows.check_w42
+
+remediation:
+  auto: true
+  description: Windows Update를 자동 다운로드 및 설치 모드로 설정합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Value 4 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.101.1.2"
+  description: "Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"

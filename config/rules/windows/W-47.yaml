@@ -1,0 +1,30 @@
+id: W-47
+name: PowerShell Module Logging 활성화
+category: 로깅/감사
+severity: medium
+description: |
+  PowerShell Module Logging이 활성화되어 있는지 확인합니다.
+  PowerShell 모듈 로깅은 PowerShell 모듈 실행 내역을 추적하여
+  악성 스크립트 활동을 탐지하는 데 도움을 줍니다.
+  권장값은 1 (활성화)입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -Name "EnableModuleLogging" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty EnableModuleLogging
+
+validator: validators.windows.check_w47
+
+remediation:
+  auto: true
+  description: PowerShell Module Logging을 활성화합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -Name "EnableModuleLogging" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.95.2"
+  description: "Ensure 'Turn on PowerShell Module Logging' is set to 'Enabled'"

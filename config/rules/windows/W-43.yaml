@@ -1,0 +1,29 @@
+id: W-43
+name: Windows Update 예정 설치 시간
+category: 패치 관리
+severity: medium
+description: |
+  Windows Update 예정 설치 일자가 적절하게 설정되어 있는지 확인합니다.
+  ScheduledInstallDay 값이 0이면 매일 설치를 의미하며, 1-7은 특정 요일을 의미합니다.
+  보안 패치를 신속하게 적용하기 위해 0 (매일) 설정을 권장합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "ScheduledInstallDay" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty ScheduledInstallDay
+
+validator: validators.windows.check_w43
+
+remediation:
+  auto: true
+  description: Windows Update 설치 일자를 매일로 설정합니다.
+  backup_files: []
+  commands:
+    - New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Force -ErrorAction SilentlyContinue
+    - Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "ScheduledInstallDay" -Value 0 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.101.1.2"
+  description: "Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"

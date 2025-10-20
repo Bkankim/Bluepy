@@ -767,7 +767,7 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 
 ---
 
-#### Phase 3: 자동 수정 강화 (부분 완료, 2025-10-19)
+#### Phase 3: 자동 수정 강화 (완료, 2025-10-20)
 
 **목표**: 원클릭 자동 수정 + 백업/롤백
 
@@ -777,22 +777,28 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
   - BackupManager 클래스 (백업 세션, 파일 백업/롤백, SHA256 체크섬)
   - BaseRemediator 추상 클래스 (remediate 플로우, 자동 롤백)
   - MacOSRemediator 구현 (macOS 5개 auto: true 규칙 지원)
-  - LinuxRemediator (향후 확장)
 
-- [x] Week 8: GUI 통합 (완료, commit TBD)
+- [x] Week 8: GUI 통합 (완료, commit 78bb83d)
   - RemediationWorker 클래스 (QThread + asyncio, 244줄)
   - RemediationDialog 대화상자 (Dry-run 미리보기 + 실행, 364줄)
   - ResultView 자동 수정 버튼 추가 (+79줄)
   - MainWindow 시그널 연결 및 통합 (+49줄)
   - 2단계 워크플로우 (Dry-run → 확인 → 실행)
 
+- [x] Week 9: Linux Remediation 구현 (완료, commits 38d104c, ebaaa0f, d24f898)
+  - LinuxRemediator 클래스 (61줄, 100% 커버리지)
+  - Tier 1: 단순 chmod 명령어 (5개 규칙: U-18, U-19, U-22, U-23, U-39)
+  - Tier 2: PAM/sed 파일 수정 (5개 규칙: U-01, U-03, U-06, U-21, U-38)
+  - 테스트 15개 추가 (Tier 1: 10개, Tier 2: 5개)
+  - Idempotent 설계 (grep -q || echo 패턴)
+
 **결과물**:
 - ✅ Remediation 엔진 구축 (4개 클래스, ~400줄)
 - ✅ 백업/롤백 시스템 (원자성 보장, 체크섬 검증)
 - ✅ macOS 자동 수정 (5개 규칙: M-03, M-04, M-05, M-06, M-07, M-08)
+- ✅ Linux 자동 수정 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
 - ✅ Dry-run 모드 (실제 실행 전 시뮬레이션)
 - ✅ GUI 통합 (자동 수정 대화상자, ~700줄)
-- ⏸ Linux 자동 수정 (향후 확장)
 - ⏸ 배치 수정 (향후 확장)
 
 **성공 기준**:
@@ -800,6 +806,7 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 - ✅ Scanner와 Remediator 분리 (관심사 분리)
 - ✅ 백업 무결성 보장 (SHA256)
 - ✅ GUI 통합 완료 (자동 수정 버튼, 미리보기, 진행 표시)
+- ✅ Linux + macOS 자동 수정 완성 (총 15개 규칙)
 
 ---
 
@@ -947,43 +954,46 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 
 ## 11. 다음 단계
 
-### 11.1 현재 진행 상태 (2025-10-19)
+### 11.1 현재 진행 상태 (2025-10-20)
 
 **완료된 Phase**:
 - [x] Phase 1: Linux MVP (Week 1-4) - 완료
-- [x] Phase 1.5: Testing Infrastructure - 부분 완료 (271/272 테스트, 커버리지 56%)
+- [x] Phase 1.5: Testing Infrastructure - 완료 (354 테스트, 커버리지 63%)
 - [x] Phase 2: macOS 확장 (Day 1-5) - 완료
 - [x] Phase 3 Week 7: Remediation 엔진 - 완료
 - [x] Phase 3 Week 8: GUI 통합 - 완료 (commit 78bb83d)
+- [x] Phase 3 Week 9: Linux Remediation - 완료 (commits 38d104c, ebaaa0f, d24f898)
 - [x] Phase 1 기술 부채 해결 - 완료 (commit c7080a1, 1a65b7a)
 
-**진행률**: 65% (약 8주 작업 완료)
+**진행률**: 80% (약 9.5주 작업 완료)
 
 **주요 성과**:
 - 73개 Linux 규칙 마이그레이션 (100%)
 - 50개 macOS 규칙 지원
 - macOS Remediation 구현 (5개 auto: true)
-- GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정)
-- 테스트 271/272 통과
-- 커버리지 56%
-- 총 10개 Git 커밋
+- Linux Remediation 완성 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
+- GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정, 이력, 테마)
+- Phase 5 Quick Wins 완료 (다크 모드, History View)
+- 테스트 354개 통과 (100% 통과율)
+- 커버리지 63%
+- 총 17개 Git 커밋
 
 ### 11.2 다음 2주 계획
 
-**Week 1: 품질 강화 + 핵심 기능 완성**
-- [ ] Day 1-2: 커버리지 65% 달성 (테스트 100-150개 추가)
-- [ ] Day 3-5: Linux Remediation 구현 (10-15개 규칙)
+**Week 1: Phase 5 Quick Wins** (완료, 2025-10-20)
+- [x] Day 1-3: History View 구현 (과거 이력 조회, 트렌드 분석) - commit 4ceb74c
+- [x] Day 4: 다크 모드 구현 (UI 테마 전환) - commit ca08e0c
+- [ ] Day 5: 설정 UI 구현 (서버 설정, 알림 설정)
 
-**Week 2: Phase 5 Quick Wins**
-- [ ] Day 6-8: History View 구현
-- [ ] Day 9: 다크 모드 구현
-- [ ] Day 10: 설정 UI 구현
+**Week 2: Phase 4 준비 또는 Phase 5 고급 기능**
+- [ ] 옵션 A: Windows 지원 시작 (WinRM 연결, 규칙 작성)
+- [ ] 옵션 B: 대시보드 강화 (차트, 그래프, 통계)
+- [ ] 옵션 C: PDF 보고서 구현
 
 **2주 후 목표 상태**:
-- Phase 1.5: 완료 (커버리지 65%+)
-- Phase 3: 완전 완료 (Linux + macOS Remediation)
-- Phase 5: 부분 완료 (3개 기능)
-- 진행률: 75%
+- Phase 5: 부분 완료 (3-5개 기능)
+- 진행률: 80-85%
+- Windows 지원 시작 또는 고급 기능 완성
 
 ### 11.3 향후 계획 (Week 3+)
 

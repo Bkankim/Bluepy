@@ -7,15 +7,18 @@
 
 ---
 
-## 전체 진행 상황 (2025-10-18 업데이트)
+## 전체 진행 상황 (2025-10-20 업데이트)
 
 ### Phase 1 완료 요약
 - **Week 1**: 73개 Validator 함수 마이그레이션 (100%)
 - **Week 2**: Scanner/Analyzer 엔진 구현 (1,050 lines)
 - **Week 3**: GUI + Database 구현 (1,490 lines)
 - **Week 4**: Integration + Reporting (784 lines)
-- **총 구현**: 3,324 lines
+- **Phase 3 Week 9**: Linux Remediation 완성 (10개 규칙)
+- **Phase 5 Week 1**: Quick Wins 완료 (다크 모드 + History View)
+- **총 구현**: 3,324 lines + Remediation + Quick Wins (2,427 lines)
 - **Linux MVP**: 완성!
+- **자동 수정 기능**: 완성! (Linux 10개 + macOS 5개 = 총 15개 규칙)
 
 ### 완료된 작업
 - Task 1.0-2.0: 완료 (Legacy 분석, 도메인 모델, 마이그레이션 엔진)
@@ -71,6 +74,15 @@
 - b2cd6cc: feat: Implement Week 4 - Integration and Excel Reporting
 - 947261b: feat: Implement Week 3 - GUI Basic Structure and Database
 - a97b9f3: feat: Implement Week 2 - Core Scanner and Analyzer modules
+
+**Git Commits (Phase 3 - Remediation)**:
+- 38d104c: feat: Linux Remediation Tier 1 구현 (5개 규칙)
+- ebaaa0f: feat: Linux Remediation Tier 2 구현 (5개 규칙)
+- d24f898: docs: Linux Remediation 완성 문서화 (10개 규칙)
+
+**Git Commits (Phase 5 - Quick Wins)**:
+- ca08e0c: feat: 다크 모드 기능 구현 (ThemeManager, QSS, 총 1,883 insertions)
+- 4ceb74c: feat: History View 구현 (HistoryRepository, HistoryView, PyQtGraph, 총 544 insertions)
 
 ---
 

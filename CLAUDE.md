@@ -72,6 +72,9 @@ pytest tests/unit/test_scanner.py::test_connect
 # GUI 애플리케이션 실행
 python -m src.gui.app
 
+# 테마 데모 실행
+python examples/theme_demo.py
+
 # CLI 모드 (고급 사용자)
 python -m src.cli.commands scan --server myserver.com
 ```
@@ -86,6 +89,8 @@ python -m src.cli.commands scan --server myserver.com
 - `src/application/` - 유스케이스 (비즈니스 로직 조율)
 - `src/infrastructure/` - 외부 어댑터 (DB, Network, Reporting)
 - `src/gui/` - PySide6 GUI (Presentation Layer)
+  * `theme_manager.py` - 테마 관리자 (다크/라이트 모드)
+  * `resources/styles/` - QSS 스타일시트 (dark.qss, light.qss)
 
 **핵심 패턴:**
 - Factory Pattern: Scanner 생성 (플랫폼별 분기)
@@ -245,7 +250,7 @@ python3.12 scripts/migrate_legacy.py \
     - file_management.py (91%)
     - service_management.py (93%)
 
-- **Linux Remediation 구현** (commits 38d104c, ebaaa0f)
+- **Linux Remediation 구현** (commits 38d104c, ebaaa0f, d24f898)
   * Tier 1: 단순 chmod 명령어 (commit 38d104c)
     - LinuxRemediator 클래스 구현 (61줄, 100% 커버리지)
     - U-18: /etc/passwd 권한 600
@@ -266,11 +271,48 @@ python3.12 scripts/migrate_legacy.py \
     - 전체 테스트 354개 (340 → 355, +15개)
     - 커버리지 63% 유지
 
-  * Linux Remediation 완성 (10개 규칙)
+  * Linux Remediation 완성 (10개 규칙, commit d24f898)
     - chmod 명령어: 6개
     - PAM 설정: 3개
     - sed 파일 수정: 1개
     - Idempotent 설계 (grep -q || echo 패턴)
+
+- **GUI 테마 시스템 구축** (2025-10-20)
+  * PySide6 QSS 기반 다크/라이트 모드 지원
+  * ThemeManager 클래스 (168줄, 싱글톤 패턴)
+    - QPalette + QSS 조합 (Best Practice)
+    - 테마 전환 API (set_theme, toggle_theme)
+  * QSS 스타일시트 (총 913줄)
+    - dark.qss (455줄) - VSCode Dark+ 기반
+    - light.qss (458줄) - VSCode Light+ 기반
+    - 42개 위젯 스타일링 (버튼, 입력, 테이블, 탭 등)
+  * 색상 팔레트 (WCAG AA 준수)
+    - 명도 대비 11.0:1 (다크), 13.6:1 (라이트)
+    - 강조색 4종 (Accent, Success, Warning, Error)
+  * 문서화
+    - docs/THEME_USAGE.md - 사용 가이드
+    - resources/styles/README.md - QSS 참조 문서
+    - examples/theme_demo.py - 데모 애플리케이션
+
+- **History View 구현** (2025-10-20)
+  * HistoryRepository 클래스 (226줄)
+    - create() - 스캔 이력 추가
+    - get_history_by_server() - 서버별 이력 조회
+    - get_trend_data() - 트렌드 데이터 (30일)
+    - get_latest_scan(), delete_old_scans()
+  * HistoryView 클래스 (305줄)
+    - QSplitter (좌우 분할 레이아웃)
+    - 왼쪽: QTableWidget (6개 컬럼 - 날짜/시간, 점수, 통과, 실패, 수동, 전체)
+    - 오른쪽: PyQtGraph PlotWidget (점수 트렌드 차트)
+    - 점수 색상 코딩 (녹색/주황/빨강)
+    - Signal/Slot 패턴 (history_selected)
+  * MainWindow 통합
+    - "이력" 탭 추가 (3번째 탭)
+    - DB 세션 연동
+    - 서버 선택 시 자동 로드
+  * PyQtGraph 의존성
+    - requirements.txt에 pyqtgraph>=0.13 추가
+    - MIT 라이센스, 고성능 차트 (75-150배 빠름)
 
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기

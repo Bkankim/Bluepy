@@ -1,0 +1,2 @@
+# config 디렉토리 유지용 파일
+# settings.json은 사용자별로 생성되므로 Git에서 제외됨

@@ -30,9 +30,11 @@ from .views.result_view import ResultView
 from .views.history_view import HistoryView
 from .dialogs.server_dialog import ServerDialog
 from .dialogs.remediation_dialog import RemediationDialog
+from .dialogs.settings_dialog import SettingsDialog
 from .workers.scan_worker import ScanWorker
 from ..infrastructure.reporting.excel_reporter import ExcelReporter
 from ..infrastructure.database.models import create_db_engine, create_db_session
+from ..infrastructure.config.settings import load_settings, get_setting
 
 
 class MainWindow(QMainWindow):
@@ -67,6 +69,9 @@ class MainWindow(QMainWindow):
         # 데이터베이스 세션
         self.db_engine = create_db_engine("data/databases/bluepy.db")
         self.db_session = create_db_session(self.db_engine)
+
+        # 설정 로드
+        self.app_settings = load_settings()
 
         # UI 초기화
         self._setup_ui()
@@ -122,12 +127,20 @@ class MainWindow(QMainWindow):
         exit_action.triggered.connect(self.close)
 
         # 스캔 메뉴
-        scan_menu = menubar.addMenu("스캔(&S)")
+        scan_menu = menubar.addMenu("스캔(&C)")
 
         # 스캔 시작
         start_scan_action = scan_menu.addAction("스캔 시작(&S)")
         start_scan_action.setShortcut("F5")
         start_scan_action.triggered.connect(self._on_start_scan)
+
+        # 설정 메뉴
+        settings_menu = menubar.addMenu("설정(&S)")
+
+        # 설정 열기
+        open_settings_action = settings_menu.addAction("설정(&P)")
+        open_settings_action.setShortcut("Ctrl+,")
+        open_settings_action.triggered.connect(self._on_open_settings)
 
         # 보기 메뉴
         view_menu = menubar.addMenu("보기(&V)")
@@ -404,6 +417,39 @@ class MainWindow(QMainWindow):
         current_theme = theme_manager.get_current_theme()
         theme_name = "다크 모드" if current_theme.value == "dark" else "라이트 모드"
         self.statusBar().showMessage(f"테마 변경: {theme_name}")
+
+    def _on_open_settings(self):
+        """설정 대화상자 열기 핸들러
+
+        설정 대화상자를 모달로 열고, 저장 시 즉시 적용합니다.
+        """
+        dialog = SettingsDialog(self)
+
+        if dialog.exec():
+            # 설정이 저장되었으므로 재로드
+            self.app_settings = load_settings()
+
+            # 테마 적용
+            theme = get_setting(self.app_settings, "appearance.theme", "dark")
+            self._apply_theme(theme)
+
+            # 상태바 메시지
+            self.statusBar().showMessage("설정이 저장되었습니다.")
+
+    def _apply_theme(self, theme: str):
+        """테마 적용
+
+        Args:
+            theme: 테마 이름 ("dark" 또는 "light")
+        """
+        from .theme_manager import get_theme_manager, Theme
+
+        theme_manager = get_theme_manager()
+        theme_enum = Theme.DARK if theme == "dark" else Theme.LIGHT
+
+        # 현재 테마와 다르면 변경
+        if theme_manager.get_current_theme() != theme_enum:
+            theme_manager.set_theme(QApplication.instance(), theme_enum)
 
 
 def main():

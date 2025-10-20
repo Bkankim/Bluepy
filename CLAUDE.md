@@ -314,6 +314,32 @@ python3.12 scripts/migrate_legacy.py \
     - requirements.txt에 pyqtgraph>=0.13 추가
     - MIT 라이센스, 고성능 차트 (75-150배 빠름)
 
+- **Settings UI 구현** (2025-10-20)
+  * Settings 모듈 (193줄)
+    - JSON 기반 설정 저장/로드 (config/settings.json)
+    - 기본값 관리 (테마, 로그 레벨, 언어, 백업 디렉토리)
+    - 점 표기법 키 접근 (get_setting, set_setting)
+    - 중첩 딕셔너리 병합 (_deep_update)
+    - UTF-8 인코딩 (한글 지원)
+  * SettingsDialog 클래스 (234줄)
+    - 4개 그룹박스 (외관, 로깅, 언어, 백업)
+    - 테마 선택 (Dark/Light)
+    - 로그 레벨 선택 (DEBUG/INFO/WARNING/ERROR)
+    - 언어 선택 (한국어/English, 현재 비활성화)
+    - 백업 디렉토리 경로 설정 (찾아보기 버튼)
+    - 유효성 검사 및 에러 처리
+  * MainWindow 통합
+    - "설정" 메뉴 추가 (Ctrl+,)
+    - 설정 변경 시 즉시 적용 (테마 자동 전환)
+    - 상태바 메시지 표시
+  * 테스트 완료
+    - 단위 테스트 26개 (test_settings.py, 302줄)
+    - GUI 테스트 13개 (test_settings_dialog.py, 217줄)
+    - 총 39개 테스트 모두 통과
+    - 커버리지: settings.py 93%, settings_dialog.py 100%
+  * 문서화
+    - docs/SETTINGS_UI_IMPLEMENTATION.md (완전한 구현 가이드)
+
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기
 

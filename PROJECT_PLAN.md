@@ -958,42 +958,43 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 
 **완료된 Phase**:
 - [x] Phase 1: Linux MVP (Week 1-4) - 완료
-- [x] Phase 1.5: Testing Infrastructure - 완료 (354 테스트, 커버리지 63%)
+- [x] Phase 1.5: Testing Infrastructure - 완료
 - [x] Phase 2: macOS 확장 (Day 1-5) - 완료
 - [x] Phase 3 Week 7: Remediation 엔진 - 완료
 - [x] Phase 3 Week 8: GUI 통합 - 완료 (commit 78bb83d)
 - [x] Phase 3 Week 9: Linux Remediation - 완료 (commits 38d104c, ebaaa0f, d24f898)
 - [x] Phase 1 기술 부채 해결 - 완료 (commit c7080a1, 1a65b7a)
+- [x] Phase 5 Week 1: Quick Wins - 완료 (commits ca08e0c, 4ceb74c, 예정)
 
-**진행률**: 80% (약 9.5주 작업 완료)
+**진행률**: 85% (약 10주 작업 완료)
 
 **주요 성과**:
 - 73개 Linux 규칙 마이그레이션 (100%)
 - 50개 macOS 규칙 지원
 - macOS Remediation 구현 (5개 auto: true)
 - Linux Remediation 완성 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
-- GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정, 이력, 테마)
-- Phase 5 Quick Wins 완료 (다크 모드, History View)
-- 테스트 354개 통과 (100% 통과율)
-- 커버리지 63%
-- 총 17개 Git 커밋
+- GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정, 이력, 테마, 설정)
+- Phase 5 Quick Wins 완전 완료 (다크 모드, History View, 설정 UI)
+- 테스트 393개 통과 (100% 통과율)
+- 커버리지 61%
+- 총 20개 Git 커밋
 
 ### 11.2 다음 2주 계획
 
 **Week 1: Phase 5 Quick Wins** (완료, 2025-10-20)
 - [x] Day 1-3: History View 구현 (과거 이력 조회, 트렌드 분석) - commit 4ceb74c
 - [x] Day 4: 다크 모드 구현 (UI 테마 전환) - commit ca08e0c
-- [ ] Day 5: 설정 UI 구현 (서버 설정, 알림 설정)
+- [x] Day 5: 설정 UI 구현 (테마, 로그 레벨, 백업 디렉토리) - 완료
 
-**Week 2: Phase 4 준비 또는 Phase 5 고급 기능**
-- [ ] 옵션 A: Windows 지원 시작 (WinRM 연결, 규칙 작성)
-- [ ] 옵션 B: 대시보드 강화 (차트, 그래프, 통계)
-- [ ] 옵션 C: PDF 보고서 구현
+**Week 2-4: Phase 4 Windows 지원** (권장)
+- [ ] Week 2 (Day 1-5): WinRM 연결 + 기본 구조 + 첫 10개 규칙
+- [ ] Week 3 (Day 6-10): Windows 규칙 50개 작성
+- [ ] Week 4 (Day 11-15): WindowsRemediator + 통합 + 테스트
 
-**2주 후 목표 상태**:
-- Phase 5: 부분 완료 (3-5개 기능)
-- 진행률: 80-85%
-- Windows 지원 시작 또는 고급 기능 완성
+**3주 후 목표 상태**:
+- Phase 4: 완료 (Windows 50개 규칙, 자동 수정 10개)
+- 진행률: 85% → 95%
+- 3-OS 완전 통합 (Linux + macOS + Windows)
 
 ### 11.3 향후 계획 (Week 3+)
 

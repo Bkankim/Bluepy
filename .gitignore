@@ -101,12 +101,19 @@ Desktop.ini
 *.sqlite
 *.sqlite3
 
+# ===== Settings =====
+# 사용자별 설정 파일 제외 (기본값은 코드에 내장)
+/config/settings.json
+
 # ===== Keep Empty Directories =====
 # data/ 폴더는 유지하되 내용은 제외
 !data/.gitkeep
 !data/databases/.gitkeep
 !data/reports/.gitkeep
 !data/backups/.gitkeep
+
+# config/ 폴더 구조 유지
+!config/.gitkeep
 
 # ===== Temporary Files =====
 *.tmp

@@ -1175,20 +1175,31 @@ docs/USER_MANUAL.md
 
 ---
 
-### 6.4 Week 11: Windows Remediation + 통합
+### 6.4 Week 3: Windows Remediation (Phase 4 Week 3)
 
-#### Day 51-53: WindowsRemediator
+#### Day 1-2: WindowsRemediator 구현 (완료, commit TBD)
 
-**작업 항목**:
-- [ ] `src/core/remediation/windows_remediator.py` 구현
-  - 레지스트리 수정
-  - 그룹 정책 변경
-  - 서비스 관리
-- [ ] 백업/롤백 (Windows 레지스트리)
-- [ ] Dry-run 모드
+**완료 항목**:
+- [x] `src/core/remediation/windows_remediator.py` 구현 (502줄)
+  - WindowsRemediator 클래스 (BaseRemediator 상속)
+  - REGISTRY_RULES (30개), SERVICE_RULES (10개), SPECIAL_RULES (10개)
+  - _execute_commands() 메서드 (PowerShell 실행)
+  - _remediate_registry() 메서드 (YAML 파싱, 명령어 실행, 검증)
+  - _backup_registry() / _rollback_registry() 메서드 (reg export/import)
+  - remediate() 오버라이드 (레지스트리 규칙 분기)
+- [x] 원격 레지스트리 백업/롤백 시스템
+  - reg export로 원격 서버에 .reg 파일 생성
+  - reg import로 롤백 (에러 발생 시 자동)
+  - 백업 파일 경로: C:\Windows\Temp\bluepy_backup_*.reg
+- [x] Dry-run 모드 (BaseRemediator 상속)
+- [x] 9개 전문 에이전트 활용 (sequential-thinking + 4개 Explore + 3개 general-purpose + code-analyzer)
+- [x] 502줄 신규 코드 (windows_remediator.py)
 
 **결과물**:
-- ✅ Windows 자동 수정
+- ✅ WindowsRemediator MVP 완성
+- ✅ 30개 레지스트리 규칙 자동 수정 지원 (W-11~W-30, W-41~W-50)
+- ✅ 코드 품질: Black, Ruff, py_compile 모두 PASS
+- ✅ Import 테스트: WindowsRemediator 성공
 
 #### Day 54-55: GUI 통합 + 테스트
 

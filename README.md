@@ -26,12 +26,13 @@
 - **macOS** (50개 점검 항목) ✅ - SIP, Gatekeeper, FileVault 등 (Phase 2 완료)
 - **Windows** (완료, 50/50개 항목, 100%) ✅ - 레지스트리, 서비스, 패치, 로깅
 
-### ⚡ 원클릭 자동 수정 (Phase 3 완료)
-- 취약점 자동 수정 ✅ - macOS 5개 + Linux 10개 규칙 지원
-- 안전한 백업 + 롤백 ✅ - SHA256 체크섬, 원자성 보장
+### ⚡ 원클릭 자동 수정 (Phase 3-4 완료)
+- 취약점 자동 수정 ✅ - Windows 30개 + macOS 5개 + Linux 10개 규칙 지원
+- 안전한 백업 + 롤백 ✅ - SHA256 체크섬 (Linux/macOS), reg export/import (Windows)
 - Dry-run 모드 ✅ - 실제 실행 전 시뮬레이션
 - GUI 통합 ✅ - 미리보기, 배치 수정 (commit 78bb83d)
 - Linux Remediation ✅ - 완료 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
+- Windows Remediation ✅ - MVP 완료 (30개 레지스트리 규칙: W-11~W-30, W-41~W-50)
 
 ### 🖥️ 비전공자 친화 GUI
 - PySide6 기반 네이티브 GUI
@@ -133,7 +134,7 @@ bluepy/
 | **Phase 4** | 3주 | Windows 지원 (50/50개 규칙) | ✅ 완료 (100%) |
 | **Phase 5** | 2주 | 고급 기능 (대시보드, 이력, 다크 모드) | 🔄 진행 중 (2/3 완료) |
 
-**진행률**: **95% 완료 (약 11.2주 작업)**
+**진행률**: **98% 완료 (약 11.5주 작업)**
 
 **주요 성과**:
 - 테스트 354개 통과 (100% 통과율)

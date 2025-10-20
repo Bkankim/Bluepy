@@ -4,10 +4,13 @@
 
 주요 Repository:
 - server_repository: ServerRepository (CRUD)
+- history_repository: HistoryRepository (CRUD)
 """
 
 from .server_repository import ServerRepository
+from .history_repository import HistoryRepository
 
 __all__ = [
     "ServerRepository",
+    "HistoryRepository",
 ]

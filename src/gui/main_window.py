@@ -27,10 +27,12 @@ from PySide6.QtWidgets import (
 from .views.server_view import ServerView
 from .views.scan_view import ScanView
 from .views.result_view import ResultView
+from .views.history_view import HistoryView
 from .dialogs.server_dialog import ServerDialog
 from .dialogs.remediation_dialog import RemediationDialog
 from .workers.scan_worker import ScanWorker
 from ..infrastructure.reporting.excel_reporter import ExcelReporter
+from ..infrastructure.database.models import create_db_engine, create_db_session
 
 
 class MainWindow(QMainWindow):
@@ -62,6 +64,10 @@ class MainWindow(QMainWindow):
         self.scan_worker = None  # 스캔 Worker
         self.last_scan_result = None  # 마지막 스캔 결과
 
+        # 데이터베이스 세션
+        self.db_engine = create_db_engine("data/databases/bluepy.db")
+        self.db_session = create_db_session(self.db_engine)
+
         # UI 초기화
         self._setup_ui()
         self._create_menus()
@@ -77,10 +83,15 @@ class MainWindow(QMainWindow):
         # 뷰 생성
         self.scan_view = ScanView()
         self.result_view = ResultView()
+        self.history_view = HistoryView()
+
+        # DB 세션 설정
+        self.history_view.set_database_session(self.db_session)
 
         # 탭에 추가
         self.tab_widget.addTab(self.scan_view, "스캔")
         self.tab_widget.addTab(self.result_view, "결과")
+        self.tab_widget.addTab(self.history_view, "이력")
 
         # 서버 목록 도크 위젯
         self.server_view = ServerView()
@@ -183,6 +194,15 @@ class MainWindow(QMainWindow):
 
         # ScanView에 서버 정보 설정
         self.scan_view.set_server(server_id=server_id, server_name=server_id, platform="linux")
+
+        # HistoryView에 이력 로드
+        # TODO: 실제 server DB ID 사용 (현재는 임시로 hash 사용)
+        try:
+            # 임시: server_id 문자열을 hash로 정수 변환 (0-999 범위)
+            server_db_id = abs(hash(server_id)) % 1000
+            self.history_view.load_history(server_db_id)
+        except Exception as e:
+            print(f"Warning: Failed to load history: {e}")
 
         self.server_selected.emit(server_id)
 

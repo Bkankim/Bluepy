@@ -10,6 +10,7 @@ python-dotenv>=1.0       # Environment variables
 # GUI
 PySide6>=6.6             # Qt GUI framework
 qt-material>=2.0         # Material Design theme
+pyqtgraph>=0.13          # High-performance plotting (MIT license)
 
 # Network
 asyncssh>=2.14           # SSH (async)

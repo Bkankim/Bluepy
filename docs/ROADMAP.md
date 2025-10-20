@@ -1074,25 +1074,60 @@ docs/USER_MANUAL.md
 
 ---
 
-### 6.3 Week 10: Windows 규칙 작성
+### 6.3 Week 10: Windows 규칙 작성 (Phase 4 Week 2)
 
-#### Day 46-50: 규칙 작성 집중
+#### Day 1: 레지스트리 규칙 10개 (완료, commit 1bcef01)
 
-**작업 항목**:
-- [ ] CIS Benchmark for Windows 참조
-- [ ] 50개 규칙 YAML 작성
-  - 계정 정책 (15개)
-  - 레지스트리 (20개)
-  - 서비스/방화벽 (10개)
-  - 패치 관리 (5개)
-- [ ] Validator 함수 작성
-  ```python
-  def check_windows_firewall(outputs):
-      # PowerShell 결과 파싱
-  ```
+**완료 항목**:
+- [x] W-11~W-20 YAML 작성 및 Validator 구현
+  - W-11: UAC 관리자 승인 모드
+  - W-12: LM 해시 저장 금지
+  - W-13: 익명 SAM 계정 열거 차단
+  - W-14: 자동 로그온 비활성화
+  - W-15: 원격 레지스트리 서비스 비활성화
+  - W-16: NTLM SSP 서버 세션 보안
+  - W-17: 빈 패스워드 제한
+  - W-18: SMB v1 비활성화
+  - W-19: 익명 공유 차단
+  - W-20: LSA 보호 활성화
+- [x] registry.py 파일 생성 (check_w11~w20, 304줄)
+- [x] 5개 전문 에이전트 활용 (Explore + 2개 병렬 + code-analyzer)
+- [x] 601줄 신규 코드
 
 **결과물**:
-- ✅ Windows 50개 규칙
+- ✅ W-11~W-20 완전 구현
+
+#### Day 2: 레지스트리 규칙 10개 (완료, commit dff93ae)
+
+**완료 항목**:
+- [x] W-21~W-30 YAML 작성 및 Validator 구현
+  - W-21: LAN Manager 인증 수준
+  - W-22: NTLM 클라이언트 세션 보안
+  - W-23: 캐시된 로그온 수 제한
+  - W-24: 스크린 세이버 패스워드
+  - W-25: 스크린 세이버 대기 시간
+  - W-26: Security 로그 크기
+  - W-27: Application 로그 크기
+  - W-28: System 로그 크기
+  - W-29: 계정 잠금 임계값
+  - W-30: 세션 유휴 시간
+- [x] registry.py 확장 (check_w21~w30, +313줄)
+- [x] sequential-thinking + 5개 에이전트 활용
+- [x] 603줄 신규 코드
+
+**결과물**:
+- ✅ W-21~W-30 완전 구현
+- ✅ Windows 30/50 규칙 완료 (60%)
+
+#### Day 3-5: 서비스 관리 + 패치/로그 (예정)
+
+**작업 항목**:
+- [ ] Day 3: 서비스 관리 10개 (W-31~W-40)
+- [ ] Day 4: 패치 5개 + 로그 5개 (W-41~W-50)
+- [ ] Day 5: 통합 테스트 + 문서화
+
+**목표**:
+- ✅ Windows 50개 규칙 완성
 
 ---
 

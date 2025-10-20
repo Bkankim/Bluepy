@@ -966,21 +966,26 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
 - [x] Phase 1 기술 부채 해결 - 완료 (commit c7080a1, 1a65b7a)
 - [x] Phase 5 Week 1: Quick Wins - 완료 (commits ca08e0c, 4ceb74c, 43f9395)
 - [x] Phase 4 Week 1: Windows 기본 구조 - 완료 (commit 3735972)
+- [x] Phase 4 Week 2 Day 1: 레지스트리 규칙 10개 - 완료 (commit 1bcef01)
+- [x] Phase 4 Week 2 Day 2: 레지스트리 규칙 10개 - 완료 (commit dff93ae)
 
-**진행률**: 88% (약 10.3주 작업 완료)
+**진행률**: 90% (약 10.8주 작업 완료)
 
 **주요 성과**:
 - 73개 Linux 규칙 마이그레이션 (100%)
 - 50개 macOS 규칙 지원
-- 10개 Windows 규칙 구현 (첫 단계)
+- 30개 Windows 규칙 구현 (W-01~W-30, 60% 완료)
+  * W-01~W-10: 계정/서비스 관리 (Week 1)
+  * W-11~W-20: 레지스트리 기본 (Week 2 Day 1)
+  * W-21~W-30: 레지스트리 확장 (Week 2 Day 2)
 - macOS Remediation 구현 (5개 auto: true)
 - Linux Remediation 완성 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
 - GUI 완성 (서버 관리, 스캔, 결과, 보고서, 자동 수정, 이력, 테마, 설정)
 - Phase 5 Quick Wins 완전 완료 (다크 모드, History View, 설정 UI)
-- Windows 지원 시작 (WinRMClient, WindowsScanner, 10개 규칙)
+- Windows 지원 진행 (WinRMClient, WindowsScanner, registry.py 606줄)
 - 테스트 393개 통과 (100% 통과율)
 - 커버리지 61%
-- 총 21개 Git 커밋
+- 총 24개 Git 커밋
 
 ### 11.2 다음 2주 계획
 
@@ -993,13 +998,25 @@ Week  1  2  3  4  5  6  7  8  9  10 11 12 13
   * WindowsScanner 클래스 (247줄)
   * Windows 규칙 10개 (YAML + Validator)
 
-**Week 2-3: Phase 4 Windows 완성** (진행 예정)
-- [ ] Week 2 (Day 6-10): Windows 규칙 40개 추가 (총 50개)
-- [ ] Week 3 (Day 11-15): WindowsRemediator + 통합 + 테스트
+**Week 2: Phase 4 Windows 규칙 완성** (진행 중, 40% 완료)
+- [x] Day 1: 레지스트리 규칙 10개 (W-11~W-20) - commit 1bcef01
+  * 601줄 신규 코드
+  * 5개 전문 에이전트 활용 (Explore + 2개 병렬 + code-analyzer)
+- [x] Day 2: 레지스트리 규칙 10개 (W-21~W-30) - commit dff93ae
+  * 603줄 신규 코드
+  * sequential-thinking + 5개 에이전트 병렬 활용
+- [ ] Day 3: 서비스 관리 규칙 10개 (W-31~W-40)
+- [ ] Day 4: 패치 5개 + 로그 5개 (W-41~W-50)
+- [ ] Day 5: 통합 테스트 + 문서화
+
+**Week 3: WindowsRemediator + 통합** (예정)
+- [ ] WindowsRemediator 구현 (10개 auto: true)
+- [ ] 전체 통합 테스트
+- [ ] 성능 최적화
 
 **2주 후 목표 상태**:
 - Phase 4: 완료 (Windows 50개 규칙, 자동 수정 10개)
-- 진행률: 88% → 95%
+- 진행률: 90% → 95%
 - 3-OS 완전 통합 (Linux 73개 + macOS 50개 + Windows 50개 = 총 173개 규칙)
 
 ### 11.3 향후 계획 (Week 3+)

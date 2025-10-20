@@ -523,6 +523,23 @@ python3.12 scripts/migrate_legacy.py \
     - Ruff 린팅 통과 (0개 에러)
     - Python 구문 검증 100%
 
+- **Phase 4 Week 2 Day 1 완료**: 레지스트리 규칙 10개 (commit 1bcef01)
+  * W-11~W-20 구현 (YAML 10개 + Validator 10개)
+  * registry.py 파일 생성 (304줄)
+  * 총 601줄 신규 코드
+  * 에이전트 활용: Explore + 2개 병렬 general-purpose + code-analyzer
+  * 버그 1개 발견 및 수정 (category 일관성)
+  * 코드 품질: Black, Ruff, py_compile 모두 PASS
+
+- **Phase 4 Week 2 Day 2 완료**: 레지스트리 규칙 10개 (commit dff93ae)
+  * W-21~W-30 구현 (YAML 10개 + Validator 10개)
+  * registry.py 확장 (+313줄, 총 606줄)
+  * 총 603줄 신규 코드
+  * 에이전트 활용: sequential-thinking + Explore + 2개 병렬 + code-analyzer (5개)
+  * 버그 0개 (완전 PASS)
+  * 코드 품질: Black, Ruff, py_compile 모두 PASS
+  * Windows 규칙 30/50 완성 (60%)
+
 #### scripts/import_rules.py (개발 예정)
 - YAML 규칙 검증/가져오기
 

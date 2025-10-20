@@ -1,0 +1,28 @@
+id: W-13
+name: 익명 SAM 계정 열거 차단
+category: 레지스트리
+severity: high
+description: |
+  익명 사용자가 SAM 계정을 열거하는 것을 차단합니다.
+  RestrictAnonymousSAM 레지스트리 값이 1인지 확인합니다.
+  이를 통해 공격자가 계정 정보를 수집하는 것을 방지합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "RestrictAnonymousSAM" | Select-Object -ExpandProperty RestrictAnonymousSAM
+
+validator: validators.windows.check_w13
+
+remediation:
+  auto: true
+  description: 익명 SAM 계정 열거를 차단합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "RestrictAnonymousSAM" -Value 1
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.10.6"
+  description: Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled'

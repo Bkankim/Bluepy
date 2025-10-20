@@ -1,0 +1,28 @@
+id: W-11
+name: UAC 관리자 승인 모드 활성화
+category: 레지스트리
+severity: high
+description: |
+  UAC(User Account Control) 관리자 승인 모드를 활성화하여
+  권한 상승 시 사용자 승인을 요구합니다.
+  EnableLUA 레지스트리 값이 1인지 확인합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" | Select-Object -ExpandProperty EnableLUA
+
+validator: validators.windows.check_w11
+
+remediation:
+  auto: true
+  description: UAC 관리자 승인 모드를 활성화합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 1
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.1.1"
+  description: Ensure 'User Account Control: Admin Approval Mode for the Built-in Administrator account' is set to 'Enabled'

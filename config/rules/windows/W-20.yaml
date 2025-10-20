@@ -1,0 +1,29 @@
+id: W-20
+name: LSA 보호 활성화
+category: registry
+severity: high
+description: |
+  LSA(Local Security Authority) 보호 모드를 활성화합니다.
+  RunAsPPL(Protected Process Light) 값이 1로 설정되면 LSA 프로세스가
+  보호 모드로 실행되어 메모리 덤프 공격 및 크리덴셜 탈취를 방지합니다.
+  이는 Pass-the-Hash, Mimikatz 등 고급 지속 위협(APT)에 대응하는 핵심 방어 기법입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty RunAsPPL
+
+validator: validators.windows.check_w20
+
+remediation:
+  auto: true
+  description: LSA 보호 모드를 활성화합니다 (RunAsPPL = 1)
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.8.3"
+  description: "LSA Protection - Enable LSA Protection to prevent credential theft"

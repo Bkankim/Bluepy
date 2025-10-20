@@ -1,0 +1,28 @@
+id: W-12
+name: LM 해시 저장 금지
+category: 레지스트리
+severity: high
+description: |
+  LM(LAN Manager) 해시 저장을 금지하여 취약한 암호화 방식을 방지합니다.
+  NoLMHash 레지스트리 값이 1인지 확인합니다.
+  LM 해시는 쉽게 크랙될 수 있어 보안에 취약합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "NoLMHash" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NoLMHash
+
+validator: validators.windows.check_w12
+
+remediation:
+  auto: true
+  description: LM 해시 저장을 금지합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "NoLMHash" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.11.6"
+  description: Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'

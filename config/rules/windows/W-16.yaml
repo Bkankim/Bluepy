@@ -1,0 +1,28 @@
+id: W-16
+name: NTLM SSP 기반 서버 세션 보안
+category: 레지스트리
+severity: high
+description: |
+  NTLM SSP(Security Support Provider) 기반 서버 세션 보안 설정을 검증합니다.
+  NTLMMinServerSec 값이 537395200 이상이어야 강력한 암호화 및 세션 보안이 적용됩니다.
+  이 설정은 네트워크 인증 시 중간자 공격 및 세션 하이재킹을 방지합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0" -Name "NTLMMinServerSec" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NTLMMinServerSec
+
+validator: validators.windows.check_w16
+
+remediation:
+  auto: true
+  description: NTLM 서버 세션 보안을 강화합니다 (NTLMMinServerSec = 537395200)
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0" -Name "NTLMMinServerSec" -Value 537395200 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.11.8"
+  description: "Network security: Minimum session security for NTLM SSP based (including secure RPC) servers"

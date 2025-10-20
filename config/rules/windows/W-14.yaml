@@ -1,0 +1,28 @@
+id: W-14
+name: 자동 로그온 비활성화
+category: 레지스트리
+severity: high
+description: |
+  자동 로그온 기능을 비활성화하여 무단 접근을 방지합니다.
+  AutoAdminLogon 레지스트리 값이 0인지 확인합니다.
+  자동 로그온은 패스워드 없이 로그인할 수 있어 보안에 취약합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "AutoAdminLogon" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutoAdminLogon
+
+validator: validators.windows.check_w14
+
+remediation:
+  auto: true
+  description: 자동 로그온 기능을 비활성화합니다.
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "AutoAdminLogon" -Value "0"
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.8.1"
+  description: Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon' is set to 'Disabled'

@@ -1,0 +1,29 @@
+id: W-19
+name: 익명 공유 및 파이프 열거 차단
+category: 레지스트리
+severity: high
+description: |
+  익명 사용자의 공유 폴더 및 명명된 파이프 열거를 차단합니다.
+  RestrictNullSessAccess 값이 1로 설정되어야 인증되지 않은 사용자가
+  네트워크 공유 및 파이프 목록을 조회하는 것을 방지할 수 있습니다.
+  이는 정보 노출 및 공격 표면을 줄이는 중요한 보안 설정입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters" -Name "RestrictNullSessAccess" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty RestrictNullSessAccess
+
+validator: validators.windows.check_w19
+
+remediation:
+  auto: true
+  description: 익명 공유 및 파이프 열거를 차단합니다 (RestrictNullSessAccess = 1)
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters" -Name "RestrictNullSessAccess" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.10.9"
+  description: "Network access: Restrict anonymous access to Named Pipes and Shares"

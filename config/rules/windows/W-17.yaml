@@ -1,0 +1,29 @@
+id: W-17
+name: 빈 패스워드로 콘솔 로그온 제한
+category: 레지스트리
+severity: high
+description: |
+  빈 패스워드를 사용하는 계정의 콘솔 로그온을 제한합니다.
+  LimitBlankPasswordUse 값이 1로 설정되어야 패스워드가 없는 계정이
+  네트워크를 통해 로그온하는 것을 방지할 수 있습니다.
+  이는 무단 접근 및 보안 침해를 예방하는 기본적인 보안 설정입니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "LimitBlankPasswordUse" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LimitBlankPasswordUse
+
+validator: validators.windows.check_w17
+
+remediation:
+  auto: true
+  description: 빈 패스워드 계정의 콘솔 로그온을 제한합니다 (LimitBlankPasswordUse = 1)
+  backup_files: []
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "LimitBlankPasswordUse" -Value 1 -Type DWord
+
+platforms:
+  - windows
+
+references:
+  cis: "2.3.1.4"
+  description: "Accounts: Limit local account use of blank passwords to console logon only"

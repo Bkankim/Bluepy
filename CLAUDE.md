@@ -2,8 +2,167 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# agents 사용 지침
-- **반드시** 병렬 수행에 유리한 작업을 스스로 판단하고 적절한 agents를 배정해서 사용.
+---
+
+# ===== 전역 필수 규칙 (GLOBAL MANDATORY RULES) =====
+
+```yaml
+global_rules:
+  agent_utilization:
+    mandate: "반드시 모든 작업에서 적절한 에이전트를 최대한 활용하여 효율을 극대화해야 함"
+    priority: "CRITICAL"
+    enforcement: "이 규칙 위반 시 작업 재수행 필요"
+
+    core_principles:
+      - principle: "에이전트 우선 원칙"
+        rule: "직접 실행 가능한 작업도 에이전트 활용 가능 시 에이전트 사용"
+
+      - principle: "병렬 실행 강제"
+        rule: "독립적인 작업 2개 이상 시 무조건 병렬 에이전트 실행"
+
+      - principle: "전문성 활용"
+        rule: "전문 에이전트가 존재하면 반드시 해당 에이전트 사용"
+
+      - principle: "작업 분할"
+        rule: "큰 작업은 여러 독립적 하위 작업으로 분할 후 병렬 실행"
+
+    available_agents:
+      - name: "general-purpose"
+        priority: "HIGH"
+        use_for:
+          - "복잡한 다단계 작업"
+          - "코드 구현 (여러 파일)"
+          - "심층 리서치"
+          - "문서 작성"
+
+      - name: "Explore"
+        priority: "HIGH"
+        thoroughness_levels: ["quick", "medium", "very thorough"]
+        use_for:
+          - "코드베이스 탐색 (파일 패턴 검색)"
+          - "키워드 검색 (Grep)"
+          - "구조 분석"
+          - "API 엔드포인트 찾기"
+        when_to_use: "파일 위치나 코드 패턴을 모를 때 필수"
+
+      - name: "code-analyzer"
+        priority: "HIGH"
+        use_for:
+          - "최근 코드 변경 분석"
+          - "버그 추적"
+          - "로직 흐름 추적 (다중 파일)"
+          - "잠재적 이슈 발견"
+        when_to_use: "코드 변경 후 검증, 버그 조사 시 필수"
+
+      - name: "file-analyzer"
+        priority: "MEDIUM"
+        use_for:
+          - "로그 파일 분석 및 요약"
+          - "대용량 파일 처리"
+          - "핵심 정보 추출"
+        when_to_use: "로그/대용량 파일 분석 시 필수"
+
+      - name: "test-runner"
+        priority: "HIGH"
+        use_for:
+          - "테스트 실행 및 분석"
+          - "실패 패턴 파악"
+          - "커버리지 분석"
+          - "테스트 건강도 리포트"
+        when_to_use: "코드 변경 후 검증, 테스트 디버깅 시 필수"
+
+      - name: "parallel-worker"
+        priority: "CRITICAL"
+        use_for:
+          - "Git worktree 병렬 작업"
+          - "다중 워크스트림 조율"
+          - "대규모 이슈 병렬 처리"
+        when_to_use: "여러 독립적 작업 스트림 동시 실행 시 필수"
+
+    execution_patterns:
+      parallel:
+        trigger: "독립적인 작업 2개 이상"
+        mandatory: true
+        examples:
+          - scenario: "여러 파일 조사"
+            tasks: ["파일 A 조사", "파일 B 조사", "파일 C 조사"]
+            agents: ["Explore", "Explore", "Explore"]
+
+          - scenario: "여러 규칙 구현"
+            tasks: ["W-11~W-15 구현", "W-16~W-20 구현"]
+            agents: ["general-purpose", "general-purpose"]
+
+          - scenario: "조사 + 구현 병렬"
+            tasks: ["레지스트리 조사", "YAML 작성", "문서 업데이트"]
+            agents: ["Explore", "general-purpose", "general-purpose"]
+
+        action: "반드시 단일 메시지에서 모든 Task 도구 호출"
+
+      sequential:
+        trigger: "의존성이 있는 작업"
+        examples:
+          - scenario: "설계 기반 구현"
+            steps: ["설계 완료", "설계 결과로 구현", "구현 결과로 테스트"]
+
+          - scenario: "조사 결과 활용"
+            steps: ["CIS Benchmark 조사", "조사 결과로 규칙 선정", "선정된 규칙 구현"]
+
+        action: "이전 에이전트 결과를 다음 에이전트 프롬프트에 포함"
+
+    decision_tree:
+      question_1: "이 작업을 독립적인 하위 작업으로 분할 가능한가?"
+      yes_1:
+        action: "분할 후 각 하위 작업마다 에이전트 배정"
+        next: "question_2"
+      no_1:
+        next: "question_3"
+
+      question_2: "하위 작업들이 서로 독립적인가? (의존성 없음)"
+      yes_2:
+        action: "병렬 에이전트 실행 (단일 메시지에서 모든 Task 호출)"
+        result: "PARALLEL EXECUTION"
+      no_2:
+        action: "순차 에이전트 실행 (결과 전달)"
+        result: "SEQUENTIAL EXECUTION"
+
+      question_3: "전문 에이전트가 이 작업에 적합한가?"
+      yes_3:
+        action: "해당 전문 에이전트 사용"
+        result: "SPECIALIZED AGENT"
+      no_3:
+        action: "general-purpose 에이전트 사용"
+        result: "GENERAL AGENT"
+
+    anti_patterns:
+      forbidden:
+        - action: "에이전트 사용 가능한데 직접 실행"
+          reason: "효율성 저하, 컨텍스트 낭비"
+
+        - action: "병렬 가능한 작업을 순차 실행"
+          reason: "시간 낭비"
+
+        - action: "Explore 에이전트 없이 직접 Grep/Glob"
+          reason: "여러 번 시도 시 컨텍스트 낭비"
+
+        - action: "코드 변경 후 code-analyzer 생략"
+          reason: "잠재적 버그 미발견"
+
+        - action: "테스트 실행 시 test-runner 생략"
+          reason: "실패 원인 분석 부족"
+
+    enforcement_checklist:
+      before_every_task:
+        - "[ ] 이 작업을 여러 독립적 하위 작업으로 분할 가능한가?"
+        - "[ ] 각 하위 작업에 적합한 전문 에이전트가 있는가?"
+        - "[ ] 하위 작업들을 병렬로 실행할 수 있는가?"
+        - "[ ] 에이전트 활용 시 직접 실행보다 효율적인가?"
+
+      if_yes_to_any:
+        action: "반드시 에이전트 사용"
+        format: "단일 메시지에서 모든 Task 도구 병렬 호출"
+```
+
+---
 
 # 철칙
 - **반드시** 이모티콘 사용 금지 (📋 ❌ ✅ 🔴 📂 등)
@@ -13,9 +172,6 @@ Use these files when I request structured feature development using PRDs:
 /ai-dev-tasks/create-prd.md
 /ai-dev-tasks/generate-tasks.md
 /ai-dev-tasks/process-task-list.md
-
-# agents 사용 지침
-- **반드시** 병렬 수행에 유리한 작업을 스스로 판단하고 적절한 agents를 배정해서 사용.
 
 ## AI Dev Tasks 사용법
 1. **PRD 생성**: `Use @create-prd.md` + 기능 설명

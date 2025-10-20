@@ -1,0 +1,27 @@
+id: W-02
+name: Guest 계정 비활성화
+category: 계정관리
+severity: high
+description: |
+  Guest 계정을 비활성화하여 익명 접근을 차단합니다.
+  Guest 계정의 Enabled 속성이 False인지 확인합니다.
+
+check:
+  commands:
+    - Get-LocalUser -Name "Guest" | Select-Object -ExpandProperty Enabled
+
+validator: validators.windows.check_w02
+
+remediation:
+  auto: true
+  description: Guest 계정을 비활성화합니다.
+  backup_files: []
+  commands:
+    - Disable-LocalUser -Name "Guest"
+
+platforms:
+  - windows
+
+references:
+  cis: "1.1.5"
+  description: Disable Guest Account

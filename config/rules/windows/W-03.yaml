@@ -1,0 +1,30 @@
+id: W-03
+name: 패스워드 복잡성 정책 설정
+category: 계정관리
+severity: high
+description: |
+  패스워드 복잡성 정책을 활성화하여 약한 패스워드 사용을 방지합니다.
+  대문자, 소문자, 숫자, 특수문자를 조합한 패스워드를 요구합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "PasswordComplexity" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty PasswordComplexity
+
+validator: validators.windows.check_w03
+
+remediation:
+  auto: false
+  description: 패스워드 복잡성 정책을 활성화합니다 (secedit 사용).
+  backup_files:
+    - Registry:HKLM\System\CurrentControlSet\Control\Lsa
+  commands:
+    - secedit /export /cfg C:\secpol.cfg
+    - (Get-Content C:\secpol.cfg) -replace 'PasswordComplexity = 0', 'PasswordComplexity = 1' | Set-Content C:\secpol.cfg
+    - secedit /configure /db C:\windows\security\local.sdb /cfg C:\secpol.cfg /areas SECURITYPOLICY
+
+platforms:
+  - windows
+
+references:
+  cis: "1.1.6"
+  description: Password Complexity Requirements

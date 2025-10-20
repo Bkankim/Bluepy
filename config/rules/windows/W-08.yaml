@@ -1,0 +1,27 @@
+id: W-08
+name: Windows Firewall 활성화 (도메인 프로필)
+category: 서비스관리
+severity: high
+description: |
+  Windows Firewall의 도메인 프로필을 활성화하여 네트워크 공격을 방어합니다.
+  도메인 환경에서 방화벽이 활성화되어 있는지 확인합니다.
+
+check:
+  commands:
+    - Get-NetFirewallProfile -Profile Domain | Select-Object -ExpandProperty Enabled
+
+validator: validators.windows.check_w08
+
+remediation:
+  auto: true
+  description: Windows Firewall 도메인 프로필을 활성화합니다.
+  backup_files: []
+  commands:
+    - Set-NetFirewallProfile -Profile Domain -Enabled True
+
+platforms:
+  - windows
+
+references:
+  cis: "9.1.1"
+  description: Windows Firewall Domain Profile

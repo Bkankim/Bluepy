@@ -1,0 +1,27 @@
+id: W-06
+name: 계정 잠금 임계값 설정
+category: 계정관리
+severity: high
+description: |
+  계정 잠금 임계값을 5회 이하로 설정하여 무차별 대입 공격을 방어합니다.
+  잘못된 로그인 시도가 임계값을 초과하면 계정이 잠깁니다.
+
+check:
+  commands:
+    - net accounts | findstr "Lockout threshold"
+
+validator: validators.windows.check_w06
+
+remediation:
+  auto: true
+  description: 계정 잠금 임계값을 5회로 설정합니다.
+  backup_files: []
+  commands:
+    - net accounts /lockoutthreshold:5
+
+platforms:
+  - windows
+
+references:
+  cis: "1.2.1"
+  description: Account Lockout Threshold

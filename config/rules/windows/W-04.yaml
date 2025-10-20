@@ -1,0 +1,26 @@
+id: W-04
+name: 패스워드 최소 길이 설정
+category: 계정관리
+severity: high
+description: |
+  패스워드 최소 길이를 8자 이상으로 설정하여 단순한 패스워드 사용을 방지합니다.
+
+check:
+  commands:
+    - net accounts | findstr "Minimum password length"
+
+validator: validators.windows.check_w04
+
+remediation:
+  auto: true
+  description: 패스워드 최소 길이를 8자로 설정합니다.
+  backup_files: []
+  commands:
+    - net accounts /minpwlen:8
+
+platforms:
+  - windows
+
+references:
+  cis: "1.1.7"
+  description: Minimum Password Length

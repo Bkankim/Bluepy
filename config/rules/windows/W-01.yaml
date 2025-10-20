@@ -1,0 +1,27 @@
+id: W-01
+name: Administrator 계정 이름 변경
+category: 계정관리
+severity: high
+description: |
+  기본 Administrator 계정 이름을 변경하여 무차별 대입 공격을 방어합니다.
+  SID *-500을 가진 계정이 "Administrator"가 아닌지 확인합니다.
+
+check:
+  commands:
+    - Get-LocalUser | Where-Object {$_.SID -like '*-500'} | Select-Object -ExpandProperty Name
+
+validator: validators.windows.check_w01
+
+remediation:
+  auto: true
+  description: Administrator 계정을 Admin_Renamed로 변경합니다.
+  backup_files: []
+  commands:
+    - Rename-LocalUser -Name "Administrator" -NewName "Admin_Renamed"
+
+platforms:
+  - windows
+
+references:
+  cis: "1.1.1"
+  description: Rename Administrator Account

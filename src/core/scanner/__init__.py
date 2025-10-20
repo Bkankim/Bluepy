@@ -8,12 +8,14 @@
 - unix_scanner: UnixScanner (Linux, macOS 공통)
 - linux_scanner: Linux 서버 스캐너
 - macos_scanner: macOS 서버 스캐너
+- windows_scanner: Windows 서버 스캐너
 """
 
 from .base_scanner import BaseScanner, ScanResult
 from .unix_scanner import UnixScanner
 from .linux_scanner import LinuxScanner
 from .macos_scanner import MacOSScanner
+from .windows_scanner import WindowsScanner
 from .rule_loader import RuleLoaderError, load_rules
 
 __all__ = [
@@ -22,6 +24,7 @@ __all__ = [
     "UnixScanner",
     "LinuxScanner",
     "MacOSScanner",
+    "WindowsScanner",
     "RuleLoaderError",
     "load_rules",
 ]

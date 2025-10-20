@@ -1,0 +1,26 @@
+id: W-09
+name: Windows Defender 실시간 보호 활성화
+category: 서비스관리
+severity: high
+description: |
+  Windows Defender 실시간 보호를 활성화하여 악성 코드를 실시간으로 탐지하고 차단합니다.
+
+check:
+  commands:
+    - Get-MpPreference | Select-Object -ExpandProperty DisableRealtimeMonitoring
+
+validator: validators.windows.check_w09
+
+remediation:
+  auto: true
+  description: Windows Defender 실시간 보호를 활성화합니다.
+  backup_files: []
+  commands:
+    - Set-MpPreference -DisableRealtimeMonitoring $false
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.46.3.1"
+  description: Windows Defender Real-time Protection

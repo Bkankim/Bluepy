@@ -1,0 +1,28 @@
+id: W-10
+name: 원격 데스크톱 NLA 요구 설정
+category: 서비스관리
+severity: high
+description: |
+  원격 데스크톱 연결 시 Network Level Authentication (NLA)을 요구하여
+  인증되지 않은 접근을 차단합니다.
+
+check:
+  commands:
+    - Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty UserAuthentication
+
+validator: validators.windows.check_w10
+
+remediation:
+  auto: true
+  description: 원격 데스크톱 NLA를 활성화합니다.
+  backup_files:
+    - Registry:HKLM\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp
+  commands:
+    - Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Value 1
+
+platforms:
+  - windows
+
+references:
+  cis: "18.9.60.3.9.1"
+  description: Remote Desktop NLA Requirement

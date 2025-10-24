@@ -144,9 +144,9 @@ Legend:
 - [ ] .gitignore 업데이트
 
 **결과물**:
-- ✅ 프로젝트 구조 완성
-- ✅ 의존성 설치 완료
-- ✅ Git 저장소 설정
+-  프로젝트 구조 완성
+-  의존성 설치 완료
+-  Git 저장소 설정
 
 #### Day 3-5: Python 2 → 3 마이그레이션
 
@@ -226,86 +226,86 @@ Legend:
 - [ ] 10개 함수 시범 마이그레이션 완료 및 보고서 생성 - 진행 예정 (Task 5.0-6.0)
 
 **결과물** (Task 1.0 완료):
-- ✅ Legacy 코드 분석 문서 (LEGACY_ANALYSIS_DETAIL.md, 530+ 줄)
-- ✅ 도메인 모델 설계 문서 (DOMAIN_MODEL_DESIGN.md)
-- ✅ 도메인 모델 구현 (src/core/domain/models.py, 207줄)
+-  Legacy 코드 분석 문서 (LEGACY_ANALYSIS_DETAIL.md, 530+ 줄)
+-  도메인 모델 설계 문서 (DOMAIN_MODEL_DESIGN.md)
+-  도메인 모델 구현 (src/core/domain/models.py, 207줄)
   - Status, Severity Enum
   - CheckResult dataclass (is_passed/is_failed/is_manual 헬퍼)
   - RemediationInfo, RuleMetadata (pydantic v2, frozen=True)
   - 완전한 type hints 및 validation
-- ✅ YAML 스키마 가이드 (YAML_SCHEMA_GUIDE.md, 400+ 줄)
-- ✅ 3개 YAML 규칙 예시 (U-01, U-04, U-18)
-- ✅ 마이그레이션 전략 문서 (MIGRATION_STRATEGY.md, 850+ 줄)
-- ✅ Task List 생성 및 추적 (tasks/tasks-prd-python2-to-3-migration.md, Task 1.0 완료)
+-  YAML 스키마 가이드 (YAML_SCHEMA_GUIDE.md, 400+ 줄)
+-  3개 YAML 규칙 예시 (U-01, U-04, U-18)
+-  마이그레이션 전략 문서 (MIGRATION_STRATEGY.md, 850+ 줄)
+-  Task List 생성 및 추적 (tasks/tasks-prd-python2-to-3-migration.md, Task 1.0 완료)
 
 **결과물** (Task 2.0 완료):
-- ✅ 마이그레이션 스크립트 핵심 엔진 (scripts/migrate_legacy.py, 700+ 줄)
+-  마이그레이션 스크립트 핵심 엔진 (scripts/migrate_legacy.py, 700+ 줄)
   - CLI 인터페이스: argparse, --input, --output-dir, --all, --functions, --dry-run, --verbose
   - 듀얼 로깅: console (INFO/DEBUG) + file (모든 레벨, migration.log)
   - 다중 인코딩 지원: utf-8-sig → utf-8 → cp949 → euc-kr → latin-1 fallback
   - 정규식 기반 Python 2→3 변환 (lib2to3 대체, Python 3.12 호환)
   - FunctionInfo dataclass (7 fields)
   - AST 기반 함수 추출 엔진 (extract_severity, extract_function_info, extract_functions)
-- ✅ tasks-prd 파일 업데이트 (Task 2.0-2.6 완료 표시)
+-  tasks-prd 파일 업데이트 (Task 2.0-2.6 완료 표시)
 
 **검증 완료** (Task 1.0):
-- ✅ Python 구문 검증 (py_compile)
-- ✅ 도메인 모델 동작 테스트 (Status, Severity, CheckResult, RemediationInfo)
-- ✅ pydantic validation 테스트 (RuleMetadata, 패턴 매칭, 필드 제약)
-- ✅ YAML 파싱 및 검증 (3개 파일 pydantic 통과)
+-  Python 구문 검증 (py_compile)
+-  도메인 모델 동작 테스트 (Status, Severity, CheckResult, RemediationInfo)
+-  pydantic validation 테스트 (RuleMetadata, 패턴 매칭, 필드 제약)
+-  YAML 파싱 및 검증 (3개 파일 pydantic 통과)
 
 **검증 완료** (Task 2.0):
-- ✅ 인코딩 변환 테스트: Legacy 파일 18,421 문자, utf-8-sig 성공
-- ✅ Python 2→3 변환 테스트: 6개 bare except 변환, 구문 검증 통과
-- ✅ 통합 테스트: 73개 함수 추출 성공 (U-01 ~ U-73)
-- ✅ 복잡도 측정: 21 ~ 128 AST 노드
-- ✅ 심각도 분류: 44 HIGH, 17 MID, 12 LOW (1개 경고: _42SCRIPT)
+-  인코딩 변환 테스트: Legacy 파일 18,421 문자, utf-8-sig 성공
+-  Python 2→3 변환 테스트: 6개 bare except 변환, 구문 검증 통과
+-  통합 테스트: 73개 함수 추출 성공 (U-01 ~ U-73)
+-  복잡도 측정: 21 ~ 128 AST 노드
+-  심각도 분류: 44 HIGH, 17 MID, 12 LOW (1개 경고: _42SCRIPT)
 
 **검증 완료** (Task 3.1-3.2):
-- ✅ bash 스크립트 파싱: Linux_Check_1.txt (684줄) 파싱 성공
-- ✅ 명령어 추출: 35개 KISA 코드에서 총 35개 명령어 추출 (평균 1.0개/규칙)
-- ✅ KISA_NAMES 매핑: 73개 전체 규칙 이름 매핑 완료
-- ✅ 카테고리 자동 추론: 5개 카테고리 정확 분류
+-  bash 스크립트 파싱: Linux_Check_1.txt (684줄) 파싱 성공
+-  명령어 추출: 35개 KISA 코드에서 총 35개 명령어 추출 (평균 1.0개/규칙)
+-  KISA_NAMES 매핑: 73개 전체 규칙 이름 매핑 완료
+-  카테고리 자동 추론: 5개 카테고리 정확 분류
   - 계정관리 (U-01~15), 파일 및 디렉터리 관리 (U-16~35)
   - 서비스 관리 (U-36~70), 패치 관리 (U-71), 로그 관리 (U-72~73)
-- ✅ YAML 템플릿 생성: U-01 샘플 성공 (완전한 YAML 구조)
-- ✅ validator 함수명: validators.linux.check_u01 형식 자동 생성
+-  YAML 템플릿 생성: U-01 샘플 성공 (완전한 YAML 구조)
+-  validator 함수명: validators.linux.check_u01 형식 자동 생성
 
 **검증 완료** (Task 3.3):
-- ✅ YAML 파일 저장: 73개 파일 전체 생성 성공 (config/rules/linux/)
-- ✅ UTF-8 인코딩: 한글 정상 출력 (U-01: root 계정 원격 접속 제한)
-- ✅ YAML 구조 검증: U-01, U-18, U-72 샘플 확인
+-  YAML 파일 저장: 73개 파일 전체 생성 성공 (config/rules/linux/)
+-  UTF-8 인코딩: 한글 정상 출력 (U-01: root 계정 원격 접속 제한)
+-  YAML 구조 검증: U-01, U-18, U-72 샘플 확인
   - U-01: commands 정상 (cat /etc/inetd.conf), category: 계정관리
   - U-18: 변수 유지 ($APACHE_DIRECTORY), category: 파일 및 디렉터리 관리
   - U-72: commands 빈 리스트 (수동 점검 규칙), category: 로그 관리
-- ✅ YAML 파싱 테스트: yaml.safe_load() 성공, 데이터 무결성 확인
-- ✅ 파일 개수 확인: ls config/rules/linux/*.yaml | wc -l = 73
+-  YAML 파싱 테스트: yaml.safe_load() 성공, 데이터 무결성 확인
+-  파일 개수 확인: ls config/rules/linux/*.yaml | wc -l = 73
 
 **재검증 완료** (Task 3.3 - 5단계):
-1. ✅ **파일 생성 재검증**:
+1.  **파일 생성 재검증**:
    - 73개 파일 확인 (0바이트 파일 없음)
    - 파일 크기: 255~412 바이트 (YAML 구조에 따라 정상 범위)
    - 파일명 패턴: U-01.yaml ~ U-73.yaml 정확
 
-2. ✅ **내용 재검증 (5개 카테고리 샘플)**:
+2.  **내용 재검증 (5개 카테고리 샘플)**:
    - 계정관리 (U-08): commands 1개, severity mid, 한글 정상
    - 파일 관리 (U-27): commands 1개, severity high, 한글 정상
    - 서비스 관리 (U-42, U-59): commands 빈 리스트 (수동 점검), severity high/mid
    - 패치 관리 (U-71): commands 빈 리스트, severity high
    - 로그 관리 (U-73): commands 빈 리스트, severity low
 
-3. ✅ **파싱 재검증**:
+3.  **파싱 재검증**:
    - 3개 샘플 (U-01, U-42, U-73) yaml.safe_load() 성공
    - 데이터 타입 검증: str, dict, list, bool 모두 정확
    - 중첩 구조: check.commands, remediation.auto 접근 정상
    - 8개 필드 전체 존재 및 순서 일치
 
-4. ✅ **코드 재검증**:
+4.  **코드 재검증**:
    - import yaml 존재 (Line 37)
    - save_yaml_file() 함수: UTF-8 인코딩, yaml.dump() 옵션, 에러 처리 정확
    - main() 함수: 출력 디렉토리 생성, results 루프, 에러 처리 정확
 
-5. ✅ **문서/Git 재검증**:
+5.  **문서/Git 재검증**:
    - commit 3f8fd58: "feat: Complete Task 3.3 - YAML file saving and generation"
    - 76 files changed, 1359 insertions(+), 154 deletions(-)
    - working tree clean (추가 변경사항 없음)
@@ -631,9 +631,9 @@ Batch 3 (1개):
   - config/rules/linux/U-01.yaml ~ U-73.yaml
 
 **결과물**:
-- ✅ BaseScanner, LinuxScanner 클래스 (완료)
-- ✅ 73개 규칙 YAML (완료)
-- ✅ SSH 클라이언트 (ssh_client.py, 190 lines)
+-  BaseScanner, LinuxScanner 클래스 (완료)
+-  73개 규칙 YAML (완료)
+-  SSH 클라이언트 (ssh_client.py, 190 lines)
 
 #### Day 9-10: Analyzer 엔진
 
@@ -650,8 +650,8 @@ Batch 3 (1개):
   - patch_management.py (1개)
 
 **결과물**:
-- ✅ Analyzer 모듈 완성 (완료)
-- ✅ 73개 validator 함수 (완료)
+-  Analyzer 모듈 완성 (완료)
+-  73개 validator 함수 (완료)
 
 ---
 
@@ -680,8 +680,8 @@ Batch 3 (1개):
   - 색상 코드 (Green/Red/Yellow)
 
 **결과물**:
-- ✅ 기본 GUI 레이아웃 (완료)
-- ✅ 3개 주요 뷰 완성 (완료)
+-  기본 GUI 레이아웃 (완료)
+-  3개 주요 뷰 완성 (완료)
 
 #### Day 14-15: 서버 관리 + DB
 
@@ -701,8 +701,8 @@ Batch 3 (1개):
 - [x] `src/gui/app.py` Entry point (52 lines)
 
 **결과물**:
-- ✅ Server 모델 + Repository (완료)
-- ✅ 서버 관리 UI (완료)
+-  Server 모델 + Repository (완료)
+-  서버 관리 UI (완료)
 
 ---
 
@@ -723,7 +723,7 @@ Batch 3 (1개):
   - 통계 시트: 카테고리별 분석
 
 **결과물**:
-- ✅ Excel 보고서 생성 기능 (완료)
+-  Excel 보고서 생성 기능 (완료)
 
 #### Day 18-19: 통합 + Scanner 연동
 
@@ -742,9 +742,9 @@ Batch 3 (1개):
   - GUI에서 스캔 시작 → 보고서 생성까지
 
 **결과물**:
-- ✅ 73개 규칙 전부 마이그레이션 (Week 1 완료)
-- ✅ End-to-End 동작 확인 (완료)
-- ✅ Linux MVP 완성!
+-  73개 규칙 전부 마이그레이션 (Week 1 완료)
+-  End-to-End 동작 확인 (완료)
+-  Linux MVP 완성!
 
 #### Day 20: 문서화
 
@@ -754,7 +754,7 @@ Batch 3 (1개):
   - 개발 로드맵 업데이트
 
 **결과물**:
-- ✅ 문서화 완료 (진행 중)
+-  문서화 완료 (진행 중)
 
 ---
 
@@ -772,7 +772,7 @@ Batch 3 (1개):
 ### 3.7 Phase 1 결과물
 
 ```
-✅ 완성된 파일 목록:
+ 완성된 파일 목록:
 
 src/
 ├── core/
@@ -823,8 +823,8 @@ docs/USER_MANUAL.md
 - [ ] 회귀 테스트 (Linux 기능 유지 확인)
 
 **결과물**:
-- ✅ UnixScanner 추상 클래스
-- ✅ Linux 기능 유지
+-  UnixScanner 추상 클래스
+-  Linux 기능 유지
 
 #### Day 23-25: macOS 규칙 작성
 
@@ -849,7 +849,7 @@ docs/USER_MANUAL.md
   - SSH 설정 (동일)
 
 **결과물**:
-- ✅ macOS 50개 규칙 YAML
+-  macOS 50개 규칙 YAML
 
 ---
 
@@ -867,8 +867,8 @@ docs/USER_MANUAL.md
 - [ ] macOS 전용 validator 함수 10개
 
 **결과물**:
-- ✅ MacOSScanner 클래스
-- ✅ macOS validator
+-  MacOSScanner 클래스
+-  macOS validator
 
 #### Day 28-30: 테스트 + 통합
 
@@ -883,8 +883,8 @@ docs/USER_MANUAL.md
 - [ ] 문서 업데이트
 
 **결과물**:
-- ✅ macOS 50개 규칙 동작
-- ✅ Linux + macOS 통합 GUI
+-  macOS 50개 규칙 동작
+-  Linux + macOS 통합 GUI
 
 ---
 
@@ -932,7 +932,7 @@ docs/USER_MANUAL.md
   - launchd
 
 **결과물**:
-- ✅ Remediation 엔진 기본 구조
+-  Remediation 엔진 기본 구조
 
 #### Day 34-35: 백업 시스템
 
@@ -956,7 +956,7 @@ docs/USER_MANUAL.md
   ```
 
 **결과물**:
-- ✅ 백업/롤백 시스템
+-  백업/롤백 시스템
 
 ---
 
@@ -977,8 +977,8 @@ docs/USER_MANUAL.md
 - [ ] 실패 시 자동 롤백
 
 **결과물**:
-- ✅ Dry-run 모드
-- ✅ 자동 롤백
+-  Dry-run 모드
+-  자동 롤백
 
 #### Day 38-40: GUI 미리보기
 
@@ -990,11 +990,11 @@ docs/USER_MANUAL.md
   ┌─────────────────────────────────┐
   │ 자동 수정 미리보기               │
   ├─────────────────────────────────┤
-  │ ☑ U-01: root 원격 로그인 제한   │
+  │  U-01: root 원격 로그인 제한   │
   │   변경: /etc/pam.d/login 수정   │
   │   백업: Yes                     │
   │                                 │
-  │ ☑ U-02: 패스워드 복잡도         │
+  │  U-02: 패스워드 복잡도         │
   │   변경: /etc/pam.d/system-auth  │
   │                                 │
   │ [Dry-run] [실제 수정]  [취소]   │
@@ -1004,8 +1004,8 @@ docs/USER_MANUAL.md
 - [ ] 진행률 표시
 
 **결과물**:
-- ✅ 미리보기 UI
-- ✅ 배치 수정
+-  미리보기 UI
+-  배치 수정
 
 ---
 
@@ -1051,7 +1051,7 @@ docs/USER_MANUAL.md
   ```
 
 **결과물**:
-- ✅ WinRM 연결 모듈
+-  WinRM 연결 모듈
 
 #### Day 44-45: WindowsScanner 기본
 
@@ -1069,8 +1069,8 @@ docs/USER_MANUAL.md
   - 등등
 
 **결과물**:
-- ✅ WindowsScanner 기본 구조
-- ✅ 10개 규칙 동작
+-  WindowsScanner 기본 구조
+-  10개 규칙 동작
 
 ---
 
@@ -1095,7 +1095,7 @@ docs/USER_MANUAL.md
 - [x] 601줄 신규 코드
 
 **결과물**:
-- ✅ W-11~W-20 완전 구현
+-  W-11~W-20 완전 구현
 
 #### Day 2: 레지스트리 규칙 10개 (완료, commit dff93ae)
 
@@ -1116,8 +1116,8 @@ docs/USER_MANUAL.md
 - [x] 603줄 신규 코드
 
 **결과물**:
-- ✅ W-21~W-30 완전 구현
-- ✅ Windows 30/50 규칙 완료 (60%)
+-  W-21~W-30 완전 구현
+-  Windows 30/50 규칙 완료 (60%)
 
 #### Day 3: 서비스 관리 규칙 10개 (완료)
 
@@ -1139,8 +1139,8 @@ docs/USER_MANUAL.md
 - [x] 654줄 신규 코드 (YAML 323줄 + Validator 331줄)
 
 **결과물**:
-- ✅ W-31~W-40 완전 구현
-- ✅ Windows 40/50 규칙 완료 (80%)
+-  W-31~W-40 완전 구현
+-  Windows 40/50 규칙 완료 (80%)
 
 #### Day 4: 패치/로깅 규칙 10개 (완료)
 
@@ -1163,9 +1163,9 @@ docs/USER_MANUAL.md
 - [x] 700줄 신규 코드 (YAML 328줄 + Validator 372줄)
 
 **결과물**:
-- ✅ W-41~W-50 완전 구현
-- ✅ Windows 50/50 규칙 완료 (100%)!
-- ✅ 버그 1개 수정 (W-43 로직 버그)
+-  W-41~W-50 완전 구현
+-  Windows 50/50 규칙 완료 (100%)!
+-  버그 1개 수정 (W-43 로직 버그)
 
 #### Day 5: 통합 테스트 + 문서화 (선택사항)
 
@@ -1196,10 +1196,10 @@ docs/USER_MANUAL.md
 - [x] 502줄 신규 코드 (windows_remediator.py)
 
 **결과물**:
-- ✅ WindowsRemediator MVP 완성
-- ✅ 30개 레지스트리 규칙 자동 수정 지원 (W-11~W-30, W-41~W-50)
-- ✅ 코드 품질: Black, Ruff, py_compile 모두 PASS
-- ✅ Import 테스트: WindowsRemediator 성공
+-  WindowsRemediator MVP 완성
+-  30개 레지스트리 규칙 자동 수정 지원 (W-11~W-30, W-41~W-50)
+-  코드 품질: Black, Ruff, py_compile 모두 PASS
+-  Import 테스트: WindowsRemediator 성공
 
 #### Day 54-55: GUI 통합 + 테스트
 
@@ -1211,7 +1211,7 @@ docs/USER_MANUAL.md
 - [ ] 문서 업데이트
 
 **결과물**:
-- ✅ 3-OS 완전 통합
+-  3-OS 완전 통합
 
 ---
 
@@ -1258,8 +1258,8 @@ docs/USER_MANUAL.md
   - 트랜잭션 테스트
 
 **결과물**:
-- ✅ Phase 1.5 완전 완성 (커버리지 65%+)
-- ✅ 약 100-150개 테스트 추가
+-  Phase 1.5 완전 완성 (커버리지 65%+)
+-  약 100-150개 테스트 추가
 
 #### Day 3-5: Linux Remediation 구현
 
@@ -1286,8 +1286,8 @@ docs/USER_MANUAL.md
 - [ ] 테스트 작성 및 검증
 
 **결과물**:
-- ✅ Linux Remediation 완성
-- ✅ Linux MVP 완전 완성 (스캔 + 분석 + 자동 수정)
+-  Linux Remediation 완성
+-  Linux MVP 완전 완성 (스캔 + 분석 + 자동 수정)
 
 ### Week 2: Phase 5 Quick Wins
 
@@ -1305,7 +1305,7 @@ docs/USER_MANUAL.md
 - [ ] 테스트 작성
 
 **결과물**:
-- ✅ 과거 스캔 이력 조회 기능
+-  과거 스캔 이력 조회 기능
 
 #### Day 9: 다크 모드 구현
 
@@ -1330,7 +1330,7 @@ docs/USER_MANUAL.md
   ```
 
 **결과물**:
-- ✅ 다크 모드 지원
+-  다크 모드 지원
 
 #### Day 10: 설정 UI 구현
 
@@ -1346,7 +1346,7 @@ docs/USER_MANUAL.md
 - [ ] MainWindow 메뉴에 "설정" 추가
 
 **결과물**:
-- ✅ 설정 UI 완성
+-  설정 UI 완성
 
 ### 성공 기준
 
@@ -1401,7 +1401,7 @@ docs/USER_MANUAL.md
   ```
 
 **결과물**:
-- ✅ 이력 관리 기능
+-  이력 관리 기능
 
 #### Day 59-60: 대시보드
 
@@ -1421,7 +1421,7 @@ docs/USER_MANUAL.md
   ```
 
 **결과물**:
-- ✅ 대시보드 (그래프, 통계)
+-  대시보드 (그래프, 통계)
 
 ---
 
@@ -1448,9 +1448,9 @@ docs/USER_MANUAL.md
   - 수정 가이드
 
 **결과물**:
-- ✅ PDF 보고서
-- ✅ 스케줄러
-- ✅ 교육 콘텐츠
+-  PDF 보고서
+-  스케줄러
+-  교육 콘텐츠
 
 #### Day 64-65: UX 개선
 
@@ -1470,8 +1470,8 @@ docs/USER_MANUAL.md
   - 로그 레벨
 
 **결과물**:
-- ✅ 다크 모드
-- ✅ 다국어
+-  다크 모드
+-  다국어
 
 #### Day 66: 최종 테스트 + 빌드
 
@@ -1487,7 +1487,7 @@ docs/USER_MANUAL.md
 - [ ] 릴리스 노트 작성
 
 **결과물**:
-- ✅ 배포 패키지 (.exe, .app, .deb)
+-  배포 패키지 (.exe, .app, .deb)
 
 ---
 

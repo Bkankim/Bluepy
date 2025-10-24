@@ -8,7 +8,7 @@
 
 ---
 
-## 📖 프로젝트 개요
+##  프로젝트 개요
 
 **BluePy 2.0**은 Linux, macOS, Windows 서버의 보안 취약점을 자동으로 점검하고 원클릭으로 수정할 수 있는 GUI 기반 보안 관리 플랫폼입니다.
 
@@ -19,37 +19,37 @@
 
 ---
 
-## ✨ 주요 기능
+##  주요 기능
 
-### 🌐 멀티플랫폼 지원
-- **Linux** (73개 점검 항목) ✅ - KISA 기준 완전 준수
-- **macOS** (50개 점검 항목) ✅ - SIP, Gatekeeper, FileVault 등 (Phase 2 완료)
-- **Windows** (완료, 50/50개 항목, 100%) ✅ - 레지스트리, 서비스, 패치, 로깅
+###  멀티플랫폼 지원
+- **Linux** (73개 점검 항목)  - KISA 기준 완전 준수
+- **macOS** (50개 점검 항목)  - SIP, Gatekeeper, FileVault 등 (Phase 2 완료)
+- **Windows** (완료, 50/50개 항목, 100%)  - 레지스트리, 서비스, 패치, 로깅
 
-### ⚡ 원클릭 자동 수정 (Phase 3-4 완료)
-- 취약점 자동 수정 ✅ - Windows 30개 + macOS 5개 + Linux 10개 규칙 지원
-- 안전한 백업 + 롤백 ✅ - SHA256 체크섬 (Linux/macOS), reg export/import (Windows)
-- Dry-run 모드 ✅ - 실제 실행 전 시뮬레이션
-- GUI 통합 ✅ - 미리보기, 배치 수정 (commit 78bb83d)
-- Linux Remediation ✅ - 완료 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
-- Windows Remediation ✅ - MVP 완료 (30개 레지스트리 규칙: W-11~W-30, W-41~W-50)
+###  원클릭 자동 수정 (Phase 3-4 완료)
+- 취약점 자동 수정  - Windows 30개 + macOS 5개 + Linux 10개 규칙 지원
+- 안전한 백업 + 롤백  - SHA256 체크섬 (Linux/macOS), reg export/import (Windows)
+- Dry-run 모드  - 실제 실행 전 시뮬레이션
+- GUI 통합  - 미리보기, 배치 수정 (commit 78bb83d)
+- Linux Remediation  - 완료 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
+- Windows Remediation  - MVP 완료 (30개 레지스트리 규칙: W-11~W-30, W-41~W-50)
 
-### 🖥️ 비전공자 친화 GUI
+### ️ 비전공자 친화 GUI
 - PySide6 기반 네이티브 GUI
 - 직관적인 대시보드 (점수, 차트)
 - 색상 코드 (🔴 위험, 🟡 경고, 🟢 안전)
 - 내장 교육 콘텐츠 (왜 위험한지, 어떻게 고치는지)
 
-### 📊 이력 관리 및 분석 (Phase 5 부분 완료)
-- 과거 점검 결과 저장 ✅
-- 트렌드 분석 (개선/악화 추세) ✅ - PyQtGraph 차트
-- History View ✅ - QTableWidget + 트렌드 차트 (commit 4ceb74c)
-- 다크 모드 지원 ✅ - VSCode 색상 팔레트 (commit ca08e0c)
-- PDF/Excel/HTML 보고서 생성 ✅ - Excel 완료 (commit b2cd6cc)
+###  이력 관리 및 분석 (Phase 5 부분 완료)
+- 과거 점검 결과 저장 
+- 트렌드 분석 (개선/악화 추세)  - PyQtGraph 차트
+- History View  - QTableWidget + 트렌드 차트 (commit 4ceb74c)
+- 다크 모드 지원  - VSCode 색상 팔레트 (commit ca08e0c)
+- PDF/Excel/HTML 보고서 생성  - Excel 완료 (commit b2cd6cc)
 
 ---
 
-## 🚀 빠른 시작
+##  빠른 시작
 
 ### 요구사항
 - Python 3.12 이상
@@ -85,7 +85,7 @@ python -m src.cli.commands scan --server myserver.com
 
 ---
 
-## 📁 프로젝트 구조
+##  프로젝트 구조
 
 ```
 bluepy/
@@ -100,9 +100,9 @@ bluepy/
 │
 ├── config/                  # 설정 파일
 │   └── rules/              # 점검 규칙 (YAML)
-│       ├── linux/          # Linux 73개 규칙 ✅
-│       ├── macos/          # macOS 10개 전용 + 40개 공유 ✅
-│       └── windows/        # Windows 50개 규칙 ✅
+│       ├── linux/          # Linux 73개 규칙 
+│       ├── macos/          # macOS 10개 전용 + 40개 공유 
+│       └── windows/        # Windows 50개 규칙 
 │
 ├── data/                    # 데이터 저장소
 │   ├── databases/          # SQLite
@@ -120,19 +120,19 @@ bluepy/
 
 ---
 
-## 🗓️ 개발 로드맵
+## ️ 개발 로드맵
 
 | Phase | 기간 | 주요 기능 | 상태 |
 |-------|------|----------|------|
-| **Phase 1** | Week 1-4 | Linux MVP (Scanner, Analyzer, GUI, Excel) | ✅ 완료 |
-| **Phase 1 기술 부채** | 2일 | 테스트 271/272 통과, 커버리지 56% | ✅ 완료 |
-| **Phase 1.5** | Day 1-3 | Testing Infrastructure | ✅ 완료 (커버리지 65% 달성) |
-| **Phase 2** | Day 1-5 | macOS 지원 (50개 규칙, UnixScanner 추상화) | ✅ 완료 |
-| **Phase 3** | Week 7-8 | Remediation 엔진 + GUI 통합 (macOS 완성) | ✅ 완료 |
-| **테스트 강화** | 2일 | Remediation/Database/Repository 테스트 | ✅ 완료 (커버리지 63%) |
-| **Linux Remediation** | 2일 | Linux 자동 수정 10개 규칙 (Tier 1+2) | ✅ 완료 |
-| **Phase 4** | 3주 | Windows 지원 (50/50개 규칙) | ✅ 완료 (100%) |
-| **Phase 5** | 2주 | 고급 기능 (대시보드, 이력, 다크 모드) | 🔄 진행 중 (2/3 완료) |
+| **Phase 1** | Week 1-4 | Linux MVP (Scanner, Analyzer, GUI, Excel) |  완료 |
+| **Phase 1 기술 부채** | 2일 | 테스트 271/272 통과, 커버리지 56% |  완료 |
+| **Phase 1.5** | Day 1-3 | Testing Infrastructure |  완료 (커버리지 65% 달성) |
+| **Phase 2** | Day 1-5 | macOS 지원 (50개 규칙, UnixScanner 추상화) |  완료 |
+| **Phase 3** | Week 7-8 | Remediation 엔진 + GUI 통합 (macOS 완성) |  완료 |
+| **테스트 강화** | 2일 | Remediation/Database/Repository 테스트 |  완료 (커버리지 63%) |
+| **Linux Remediation** | 2일 | Linux 자동 수정 10개 규칙 (Tier 1+2) |  완료 |
+| **Phase 4** | 3주 | Windows 지원 (50/50개 규칙) |  완료 (100%) |
+| **Phase 5** | 2주 | 고급 기능 (대시보드, 이력, 다크 모드) |  진행 중 (2/3 완료) |
 
 **진행률**: **98% 완료 (약 11.5주 작업)**
 
@@ -143,7 +143,7 @@ bluepy/
 - Linux Remediation 완성 (10개 규칙: chmod 6개, PAM 3개, sed 1개)
 - macOS Remediation 완성 (5개 규칙)
 - Phase 5 Quick Wins 완료 (다크 모드, History View)
-- Windows 50개 규칙 완성 (W-01~W-50, 100%) ✅
+- Windows 50개 규칙 완성 (W-01~W-50, 100%) 
   * Week 1: 계정/서비스 관리 10개 (commit 3735972)
   * Week 2 Day 1: 레지스트리 10개 W-11~W-20 (commit 1bcef01)
   * Week 2 Day 2: 레지스트리 10개 W-21~W-30 (commit dff93ae)
@@ -155,7 +155,7 @@ bluepy/
 
 ---
 
-## 📚 문서
+##  문서
 
 | 문서 | 설명 |
 |------|------|
@@ -166,7 +166,7 @@ bluepy/
 
 ---
 
-## 🏗️ 기술 스택
+## ️ 기술 스택
 
 ### 핵심 기술
 - **언어**: Python 3.12+
@@ -182,7 +182,7 @@ bluepy/
 
 ---
 
-## 🤝 기여 방법
+##  기여 방법
 
 현재 프로젝트는 **개발 초기 단계**입니다.
 
@@ -194,13 +194,13 @@ bluepy/
 
 ---
 
-## 📄 라이선스
+##  라이선스
 
 MIT License - 자유롭게 사용, 수정, 배포 가능
 
 ---
 
-## 🔗 관련 링크
+##  관련 링크
 
 - **2017년 Legacy 프로젝트**: `legacy/infra/`
 - **KISA 취약점 가이드**: https://www.kisa.or.kr
@@ -208,7 +208,7 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
 
 ---
 
-## 📞 문의
+##  문의
 
 프로젝트 관련 문의는 Issues에 남겨주세요.
 

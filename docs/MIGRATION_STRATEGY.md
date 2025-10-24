@@ -397,8 +397,8 @@ def {func_name}(command_outputs: Dict[str, str]) -> CheckResult:
 
 | KISA | 함수명 | 복잡도 | 명령어 | YAML | Validator |
 |------|--------|--------|--------|------|-----------|
-| U-01 | _1SCRIPT | 높음 | 2개 | ✓ | ✓ |
-| U-04 | _4SCRIPT | 매우낮음 | 1개 | ✓ | ✓ |
+| U-01 | _1SCRIPT | 높음 | 2개 |  |  |
+| U-04 | _4SCRIPT | 매우낮음 | 1개 |  |  |
 ...
 
 ## 경고
@@ -472,7 +472,7 @@ for yaml_file in glob.glob('config/rules/linux/*.yaml'):
 
     # ValidationError 발생 시 실패
     rule = RuleMetadata(**data)
-    print(f"✓ {rule.id}: {rule.name}")
+    print(f" {rule.id}: {rule.name}")
 ```
 
 **3단계: 통합 검증 (Integration Validation)**
@@ -492,7 +492,7 @@ for yaml_file in glob.glob('config/rules/linux/*.yaml'):
     # CheckResult 반환 확인
     result = func({})
     assert isinstance(result, CheckResult)
-    print(f"✓ {data['id']}: {func_name} 호출 성공")
+    print(f" {data['id']}: {func_name} 호출 성공")
 ```
 
 **자동 테스트:**
@@ -724,29 +724,29 @@ pytest tests/unit/
 ### 11.1 마이그레이션 완료 요약
 
 **Phase 1 (Week 1): Python 2→3 마이그레이션 완료**
-- ✅ 73개 함수 추출 성공 (FunctionInfo 데이터 구조)
-- ✅ 73개 YAML 규칙 파일 생성 (UTF-8 인코딩, 한글 보존)
-- ✅ 73개 Validator 함수 구현 (Python 3.12, Status 판단 로직)
-- ✅ 5개 카테고리 완성 (account_management, file_management, service_management, patch_management, log_management)
-- ✅ 마이그레이션 스크립트 완성 (scripts/migrate_legacy.py, 700+ 줄)
+-  73개 함수 추출 성공 (FunctionInfo 데이터 구조)
+-  73개 YAML 규칙 파일 생성 (UTF-8 인코딩, 한글 보존)
+-  73개 Validator 함수 구현 (Python 3.12, Status 판단 로직)
+-  5개 카테고리 완성 (account_management, file_management, service_management, patch_management, log_management)
+-  마이그레이션 스크립트 완성 (scripts/migrate_legacy.py, 700+ 줄)
 
 **완료 비율**: 100% (73/73 함수)
 
 ### 11.2 검증 결과
 
 **구문 검증 (Syntax Validation)**:
-- ✅ 모든 Python 파일 py_compile 통과
-- ✅ AST 파싱 성공 (구문 오류 0개)
+-  모든 Python 파일 py_compile 통과
+-  AST 파싱 성공 (구문 오류 0개)
 
 **스키마 검증 (Schema Validation)**:
-- ✅ 73개 YAML 파일 yaml.safe_load() 성공
-- ✅ RuleMetadata pydantic 검증 통과
-- ✅ 필수 필드 (id, name, commands, validator) 모두 존재
+-  73개 YAML 파일 yaml.safe_load() 성공
+-  RuleMetadata pydantic 검증 통과
+-  필수 필드 (id, name, commands, validator) 모두 존재
 
 **통합 검증 (Integration Validation)**:
-- ✅ Validator 함수 import 성공 (73/73)
-- ✅ CheckResult 반환 타입 일치
-- ✅ 테스트 354개 통과 (100% 통과율)
+-  Validator 함수 import 성공 (73/73)
+-  CheckResult 반환 타입 일치
+-  테스트 354개 통과 (100% 통과율)
 
 ### 11.3 최종 통계
 
@@ -763,24 +763,24 @@ pytest tests/unit/
 ### 11.4 달성한 목표
 
 **기술적 목표**:
-1. ✅ Python 2 → Python 3.12 완전 변환
-2. ✅ 하드코딩 제거 (YAML 규칙 시스템 구축)
-3. ✅ UTF-8 인코딩 통일 (한글 깨짐 해결)
-4. ✅ 확장 가능한 아키텍처 (Clean Architecture)
-5. ✅ 테스트 자동화 (pytest, 354개 테스트)
+1.  Python 2 → Python 3.12 완전 변환
+2.  하드코딩 제거 (YAML 규칙 시스템 구축)
+3.  UTF-8 인코딩 통일 (한글 깨짐 해결)
+4.  확장 가능한 아키텍처 (Clean Architecture)
+5.  테스트 자동화 (pytest, 354개 테스트)
 
 **비즈니스 목표**:
-1. ✅ 개발 시간 단축 (70% 로직 재사용)
-2. ✅ 검증된 규칙 활용 (KISA 73개 항목)
-3. ✅ 빠른 MVP 출시 (4주 만에 Linux MVP 완성)
+1.  개발 시간 단축 (70% 로직 재사용)
+2.  검증된 규칙 활용 (KISA 73개 항목)
+3.  빠른 MVP 출시 (4주 만에 Linux MVP 완성)
 
 ### 11.5 다음 단계
 
 **완료된 Phase**:
-- ✅ Phase 1: Linux MVP (Week 1-4)
-- ✅ Phase 1.5: Testing Infrastructure (커버리지 63%)
-- ✅ Phase 2: macOS 확장 (50개 규칙)
-- ✅ Phase 3: Remediation 엔진 + Linux Remediation (15개 자동 수정 규칙)
+-  Phase 1: Linux MVP (Week 1-4)
+-  Phase 1.5: Testing Infrastructure (커버리지 63%)
+-  Phase 2: macOS 확장 (50개 규칙)
+-  Phase 3: Remediation 엔진 + Linux Remediation (15개 자동 수정 규칙)
 
 **진행 중**:
 - Phase 5: Quick Wins (History View, 다크 모드, 설정 UI)

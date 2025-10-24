@@ -121,3 +121,10 @@ Desktop.ini
 *.swp
 *.swo
 .~*
+
+# ===== Claude Code =====
+# Claude Code 관련 파일/폴더 제외
+.claude/
+CLAUDE.md
+ai-dev-tasks/
+tasks/

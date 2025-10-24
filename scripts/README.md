@@ -4,18 +4,18 @@ BluePy 2.0 유틸리티 스크립트
 
 ---
 
-## 📁 스크립트 목록
+##  스크립트 목록
 
 | 스크립트 | 용도 | 상태 |
 |----------|------|------|
-| `migrate_legacy.py` | 2017년 Legacy 코드 마이그레이션 | 🔄 개발 예정 |
-| `import_rules.py` | YAML 규칙 파일 가져오기/검증 | 🔄 개발 예정 |
-| `build.py` | PyInstaller 빌드 자동화 | 🔄 개발 예정 |
-| `setup_dev.sh` | 개발 환경 설정 (가상환경, 의존성) | 🔄 개발 예정 |
+| `migrate_legacy.py` | 2017년 Legacy 코드 마이그레이션 |  개발 예정 |
+| `import_rules.py` | YAML 규칙 파일 가져오기/검증 |  개발 예정 |
+| `build.py` | PyInstaller 빌드 자동화 |  개발 예정 |
+| `setup_dev.sh` | 개발 환경 설정 (가상환경, 의존성) |  개발 예정 |
 
 ---
 
-## 🔧 스크립트 설명
+##  스크립트 설명
 
 ### migrate_legacy.py
 **목적**: Legacy Python 2 코드를 Python 3로 마이그레이션
@@ -89,7 +89,7 @@ bash scripts/setup_dev.sh
 
 ---
 
-## 📝 스크립트 작성 가이드
+##  스크립트 작성 가이드
 
 ### 템플릿
 ```python
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
 ---
 
-## 🚀 공통 실행 패턴
+##  공통 실행 패턴
 
 ### 건식 실행 (Dry-run)
 대부분의 스크립트는 `--dry-run` 옵션 지원:
